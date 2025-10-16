@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html>
+<head>
+  <meta charset="utf-8">
+  <title>{{ title || "Home" }}</title>
+  @if ($slots.meta)
+    {{{ await $slots.meta() }}}
+  @endif
+</head>
+<body>
+  {{{ await $slots.main() }}}
+</body>
+</html>

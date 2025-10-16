@@ -1,10 +1,10 @@
 import { DateTime } from 'luxon'
 import { BaseModel, column, belongsTo, hasMany } from '@adonisjs/lucid/orm'
-import type { BelongsTo } from '@adonisjs/lucid/types/relations'
-import type { HasMany } from '@adonisjs/lucid/types/relations'
+import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations'
 import User from '#models/user'
 import Comment from '#models/comment'
 import Media from '#models/media'
+import Like from '#models/like'
 
 export default class Tweet extends BaseModel {
   @column({ isPrimary: true })
@@ -71,4 +71,8 @@ export default class Tweet extends BaseModel {
 
   @hasMany(() => Media, { foreignKey: 'tweet_id' })
   declare media: HasMany<typeof Media>
+
+  // ✅ Correction ici : ajout du "!" et nom au pluriel
+  @hasMany(() => Like, { foreignKey: 'tweet_id' })
+  declare likes: HasMany<typeof Like>
 }

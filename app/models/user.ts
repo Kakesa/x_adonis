@@ -1,10 +1,12 @@
 import { DateTime } from 'luxon'
 import hash from '@adonisjs/core/services/hash'
 import { compose } from '@adonisjs/core/helpers'
-import { BaseModel, column, hasMany, beforeSave } from '@adonisjs/lucid/orm'
-import type { HasMany } from '@adonisjs/lucid/types/relations'
+import { BaseModel, column, hasMany, beforeSave, manyToMany } from '@adonisjs/lucid/orm'
+import type { HasMany, ManyToMany } from '@adonisjs/lucid/types/relations'
 import { withAuthFinder } from '@adonisjs/auth/mixins/lucid'
+
 import Tweet from '#models/tweet'
+import Like from '#models/like'
 import Comment from '#models/comment'
 
 const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
@@ -67,13 +69,46 @@ export default class User extends compose(BaseModel, AuthFinder) {
   @column.dateTime({ autoCreate: true, autoUpdate: true })
   declare updatedAt: DateTime
 
+  // 🔹 Relations
   @hasMany(() => Tweet)
   declare tweets: HasMany<typeof Tweet>
 
   @hasMany(() => Comment)
   declare comments: HasMany<typeof Comment>
 
-  // Hook perso pour TypeScript + AuthFinder
+  /**
+   * ✅ Likes faits par l’utilisateur
+   */
+  @hasMany(() => Like)
+  declare likes: HasMany<typeof Like>
+
+  /**
+   * ✅ Utilisateurs suivis (following)
+   */
+  @manyToMany(() => User, {
+    pivotTable: 'followers',
+    localKey: 'id',
+    pivotForeignKey: 'follower_id',
+    relatedKey: 'id',
+    pivotRelatedForeignKey: 'following_id',
+  })
+  declare following: ManyToMany<typeof User>
+
+  /**
+   * ✅ Utilisateurs qui suivent cet utilisateur
+   */
+  @manyToMany(() => User, {
+    pivotTable: 'followers',
+    localKey: 'id',
+    pivotForeignKey: 'following_id',
+    relatedKey: 'id',
+    pivotRelatedForeignKey: 'follower_id',
+  })
+  declare followers: ManyToMany<typeof User>
+
+  /**
+   * 🔐 Hook pour hacher le mot de passe avant sauvegarde
+   */
   @beforeSave()
   public static async hashPasswordHook(user: User) {
     if (user.$dirty.password) {
