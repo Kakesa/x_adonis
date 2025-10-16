@@ -1,13 +1,33 @@
 <!DOCTYPE html>
-<html>
+<html lang="fr" class="bg-black text-white">
 <head>
   <meta charset="utf-8">
-  <title>{{ title || "Home" }}</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1" />
+  <link rel="shortcut icon" href="/assets/images/logo/logo.png" class="w-3" type="image/x-icon">
+  <title>{{ title || "Authentification Réseau Social X" }}</title>
+    <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="stylesheet" href="/assets/css/main.css">
+    <style>
+        /* Scrollbar styling for modal */
+        .modal-main::-webkit-scrollbar {
+            width: 6px;
+        }
+
+        .modal-main::-webkit-scrollbar-thumb {
+            background-color: rgba(255 255 255 / 0.2);
+            border-radius: 50px;
+        }
+
+        .modal-main {
+            scrollbar-width: thin;
+            scrollbar-color: rgba(255 255 255 / 0.2) transparent;
+        }
+    </style>
   @if ($slots.meta)
     {{{ await $slots.meta() }}}
   @endif
 </head>
-<body>
+<body class="flex items-center justify-center min-h-screen bg-black px-4">
   {{{ await $slots.main() }}}
 </body>
 </html>
