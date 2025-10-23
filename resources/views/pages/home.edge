@@ -12,31 +12,20 @@
   </div>
 
   <section class="flex-1 max-w-md mx-auto space-y-6">
-    {{-- ✅ Flash Messages --}}
-    @if (flashMessages.has('success'))
-      <div class="p-3 bg-green-600 text-white text-center rounded-lg">
-        {{ flashMessages.get('success') }}
-      </div>
-    @endif
-
-    @if (flashMessages.has('error'))
-      <div class="p-3 bg-red-600 text-white text-center rounded-lg">
-        {{ flashMessages.get('error') }}
-      </div>
-    @endif
+    
+    <!-- Toast messages -->
+    <div id="toastContainer" class="fixed top-6 right-6 z-50 flex flex-col gap-2"></div>
 
     <h1 class="text-5xl font-extrabold">Ça se passe maintenant</h1>
     <p class="font-semibold text-gray-300">Inscrivez-vous.</p>
 
-    <button id="btnGoogle"
-      class="w-full py-3 bg-white text-black rounded-full flex items-center justify-center gap-2 hover:bg-gray-200 transition">
+    <button id="btnGoogle" class="w-full py-3 bg-white text-black rounded-full flex items-center justify-center gap-2 hover:bg-gray-200 transition">
       <img src="/resources/images/logo/google.png" alt="Google" class="w-6 h-6" />
       S’inscrire avec Google
     </button>
 
-    <button id="btnApple"
-      class="w-full py-3 bg-white text-black rounded-full flex items-center justify-center gap-2 hover:bg-gray-200 transition">
-      <img src="/resources/images/logo/apple.png" alt="apple" class="w-6 h-6" />
+    <button id="btnApple" class="w-full py-3 bg-white text-black rounded-full flex items-center justify-center gap-2 hover:bg-gray-200 transition">
+      <img src="/resources/images/logo/apple.png" alt="Apple" class="w-6 h-6" />
       S’inscrire avec Apple
     </button>
 
@@ -45,64 +34,84 @@
       <div class="border-t border-gray-700 absolute top-1/2 left-0 right-0 -translate-y-1/2"></div>
     </div>
 
-    <button id="btnCreateAccount"
-      class="w-full py-3 bg-[#1d9bf0] rounded-full hover:bg-[#1d9bf0] transition font-semibold">Créer un
-      compte</button>
-
-    <p class="text-xs text-gray-400 mt-4 max-w-xs">
-      En vous inscrivant, vous acceptez les
-      <a href="#" class="underline hover:text-[#1d9bf0] text-[#1d9bf0]">Conditions d’utilisation</a> et la
-      <a href="#" class="underline hover:text-[#1d9bf0] text-[#1d9bf0]">Politique de confidentialité</a>,
-      notamment l’<a href="#" class="underline hover:text-[#1d9bf0] text-[#1d9bf0]">utilisation des cookies.</a>
-    </p>
+    <button id="btnCreateAccount" class="w-full py-3 bg-[#1d9bf0] rounded-full hover:bg-[#1d9bf0] transition font-semibold">
+      Créer un compte
+    </button>
 
     <p class="text-center text-sm text-gray-400 mt-4">Vous avez déjà un compte ?</p>
-    <button id="btnLogin"
-      class="w-full border border-gray-600 text-[#1d9bf0] py-3 rounded-full hover:border-[#1d9bf0] hover:text-[#1d9bf0] transition font-semibold">Se
-      connecter</button>
+    <button id="btnLogin" class="w-full border border-gray-600 text-[#1d9bf0] py-3 rounded-full hover:border-[#1d9bf0] hover:text-[#1d9bf0] transition font-semibold">
+      Se connecter
+    </button>
   </section>
 </main>
 
-<footer>
-  <div
-    class="fixed bottom-0 left-0 right-0 bg-black bg-opacity-90 backdrop-blur-sm p-4 text-center text-xs text-gray-500">
-    <a href="#" class="hover:underline">À propos</a> ·
-    <a href="#" class="hover:underline">Télécharger l'application X</a> ·
-    <a href="#" class="hover:underline">Grok</a> ·
-    <a href="#" class="hover:underline">Centre d'assistance</a> ·
-    <a href="#" class="hover:underline">Conditions d’utilisation</a> ·
-    <a href="#" class="hover:underline">Politique de confidentialité</a> ·
-    <a href="#" class="hover:underline">Politique relative aux cookies</a> ·
-    <a href="#" class="hover:underline">Accessibilité</a> ·
-    <a href="#" class="hover:underline">Informations sur les publicités</a> ·
-    <a href="#" class="hover:underline">Blog</a> ·
-    <a href="#" class="hover:underline">Carrières</a> ·
-    <a href="#" class="hover:underline">Ressources de la marque</a> ·
-    <a href="#" class="hover:underline">Publicité</a> ·
-    <a href="#" class="hover:underline">Marketing</a> ·
-    <a href="#" class="hover:underline">X pour les professionnels</a> ·
-    <a href="#" class="hover:underline">Développeurs</a> ·
-    <a href="#" class="hover:underline">Répertoire</a> ·
-    <a href="#" class="hover:underline">Paramètres</a> ·
-    <span>© 2025 X Corp.</span>
-  </div>
-</footer>
-
 {{-- ✅ Modal Auth (inscription & connexion) --}}
-<div id="authModal"
-  class="fixed inset-0 bg-black bg-opacity-90 backdrop-blur-sm flex items-center justify-center p-6 opacity-0 pointer-events-none transition-opacity z-60">
+<div id="authModal" class="fixed inset-0 bg-black bg-opacity-90 backdrop-blur-sm flex items-center justify-center p-6 opacity-0 pointer-events-none transition-opacity z-60">
   <div class="bg-zinc-900 rounded-lg max-w-md w-full max-h-[90vh] flex flex-col overflow-hidden">
-   
     <main class="modal-main p-6 overflow-y-auto flex-grow text-white text-left">
       {{-- ✅ Modal d’inscription --}}
       @include('auth/register')
 
       {{-- ✅ Modal de connexion --}}
       @include('auth/login')
-
     </main>
   </div>
 </div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const authModal = document.getElementById('authModal')
+  const registerModal = document.getElementById('registerModal')
+  const loginModal = document.getElementById('loginModal')
+
+  const btnCreateAccount = document.getElementById('btnCreateAccount')
+  const btnLogin = document.getElementById('btnLogin')
+  const toastContainer = document.getElementById('toastContainer')
+
+  // Fonction pour afficher un toast
+  const showToast = (message, type = 'success') => {
+    const toast = document.createElement('div')
+    toast.className = `px-4 py-2 rounded-lg text-white shadow-md transform transition-all ${
+      type === 'success' ? 'bg-green-600' : 'bg-red-600'
+    }`
+    toast.textContent = message
+    toastContainer.appendChild(toast)
+    setTimeout(() => toast.remove(), 5000)
+  }
+
+  // Flash messages depuis Edge
+  @if(flashMessages.has('success'))
+    showToast('{{ flashMessages.get("success") }}', 'success')
+  @endif
+  @if(flashMessages.has('error'))
+    showToast('{{ flashMessages.get("error") }}', 'error')
+  @endif
+
+  // Ouvrir modales depuis la home
+  btnCreateAccount?.addEventListener('click', () => {
+    authModal.classList.remove('opacity-0','pointer-events-none')
+    registerModal.classList.remove('hidden')
+    loginModal.classList.add('hidden')
+  })
+
+  btnLogin?.addEventListener('click', () => {
+    authModal.classList.remove('opacity-0','pointer-events-none')
+    loginModal.classList.remove('hidden')
+    registerModal.classList.add('hidden')
+  })
+
+  // Ouvrir automatiquement la modal si flash message
+  @if(flashMessages.has('success'))
+    authModal.classList.remove('opacity-0','pointer-events-none')
+    loginModal.classList.remove('hidden')
+    registerModal.classList.add('hidden')
+  @elseif(flashMessages.has('error'))
+    authModal.classList.remove('opacity-0','pointer-events-none')
+    registerModal.classList.remove('hidden')
+    loginModal.classList.add('hidden')
+  @endif
+})
+</script>
 
 <script src="/resources/js/app.js"></script>
 @endslot

@@ -2,12 +2,23 @@
 <html lang="fr">
   <head>
     <meta charset="UTF-8" />
-    <title>Vérifie ton e-mail</title>
+    <title>Vérification de compte</title>
   </head>
-  <body>
-    <h2>Salut {{ name }} 👋</h2>
-    <p>Merci de t’être inscrit !</p>
-    <p>Cliquez sur ce lien pour activer votre compte : <a href="{{ appUrl }}/verify-email?token={{ token }}">Activer mon compte</a></p>
-    <p>Ce lien expirera bientôt. Si tu n’as pas créé de compte, ignore ce message.</p>
+  <body style="font-family: Arial, sans-serif; background-color: #f8fafc; padding: 20px;">
+    <div style="max-width: 600px; margin: auto; background-color: #fff; border-radius: 10px; padding: 20px;">
+      <h2>Bienvenue {{ name }} 👋</h2>
+      <p>Merci de vous être inscrit sur <strong>X-Cloune</strong> !</p>
+      <p>
+        Pour activer votre compte, cliquez sur le bouton ci-dessous :
+      </p>
+      <p style="text-align: center;">
+        <a href="{{ verifyUrl }}" style="background-color: #2563eb; color: #fff; padding: 12px 24px; text-decoration: none; border-radius: 6px;">
+          Activer mon compte
+        </a>
+      </p>
+      <p style="font-size: 14px; color: #555;">
+        Si vous n’avez pas créé de compte, ignorez simplement cet e-mail.
+      </p>
+    </div>
   </body>
 </html>

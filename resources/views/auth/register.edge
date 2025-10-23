@@ -1,3 +1,4 @@
+
 <div id="registerModal" class="fixed inset-0 bg-black bg-opacity-90 backdrop-blur-sm flex items-center justify-center p-6 z-50">
   <div class="bg-zinc-900 rounded-lg max-w-md w-full max-h-[90vh] flex flex-col overflow-hidden">
 
@@ -17,7 +18,7 @@
     </header>
 
     <main class="p-6 flex-grow overflow-y-auto space-y-6 text-white">
-      <form method="POST" action="/register">
+      <form method="POST" action="/auth/register">
         {{ csrfField() }}
 
         <!-- Étape 1 : infos personnelles -->

@@ -1,52 +1,22 @@
-/*
-|--------------------------------------------------------------------------
-| Routes file
-|--------------------------------------------------------------------------
-|
-| The routes file is used for defining the HTTP routes.
-|
-*/
-
 import router from '@adonisjs/core/services/router'
 import AuthController from '#controllers/auth_controller'
 import { middleware } from '#start/kernel'
-import HomeController from '#controllers/home_controller'
-import User from '#models/user'
 
-// -------------------
-// Home
-// -------------------
-// router.on('/').render('pages/home')
-router.get('/', (ctx) => new HomeController().index(ctx)).as('pages/home')
-
-// Page après connexion
+// Page d’accueil
 router
-  .get('/index', async ({ view }) => {
-    return view.render('pages/index')
+  .get('/', async ({ view }) => {
+    return view.render('pages/home') // ici tu peux mettre tes modales login/register
   })
-  .middleware([middleware.auth()]) // 🔒 Protège la page /index
-// -------------------
-// Auth
-// -------------------
-router.get('/login', (ctx) => new AuthController().showLogin(ctx))
-router.post('/login', (ctx) => new AuthController().login(ctx))
+  .as('home')
 
-router.get('/register', (ctx) => new AuthController().showRegister(ctx)).as('register.show')
-router.post('/register', (ctx) => new AuthController().register(ctx)).as('register')
-
-router.post('/logout', (ctx) => new AuthController().logout(ctx)).middleware([middleware.auth()])
+// Actions Auth
+router.get('/auth/login', (ctx) => new AuthController().showLogin(ctx)).as('auth.login.show')
+router.post('/auth/login', (ctx) => new AuthController().login(ctx)).as('auth.login')
+router.post('/auth/register', (ctx) => new AuthController().register(ctx)).as('auth.register')
+router
+  .post('/auth/logout', (ctx) => new AuthController().logout(ctx))
+  .middleware([middleware.auth()])
+  .as('auth.logout')
 
 // Vérification email
-// router.get('/verify-email', (ctx) => new AuthController().verifyEmail(ctx)).as('verify-email')
-router.get('/verify-email/:token', async ({ params, response }) => {
-  const user = await User.findBy('email_token', params.token)
-  if (!user) {
-    return response.badRequest('Lien invalide ou expiré.')
-  }
-
-  user.is_verified = true
-  user.email_token = null
-  await user.save()
-
-  return response.redirect('/login')
-})
+router.get('/verify-email/:token', (ctx) => new AuthController().verifyEmail(ctx)).as('auth.verify')

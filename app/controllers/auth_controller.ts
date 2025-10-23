@@ -8,14 +8,12 @@ import mail from '@adonisjs/mail/services/main'
 import crypto from 'node:crypto'
 
 export default class AuthController {
-  // Page de connexion
+  // Page de connexion / inscription
   async showLogin({ view }: HttpContext) {
-    return view.render('auth/login')
+    return view.render('pages/home') // Tout se fait dans home
   }
-
-  // Page d'inscription
   async showRegister({ view }: HttpContext) {
-    return view.render('auth/register')
+    return view.render('pages/home') // Tout se fait dans home
   }
 
   // Générer un username unique
@@ -40,16 +38,12 @@ export default class AuthController {
       const rawData = request.body()
       const payload = await request.validateUsing(registerValidator, { data: rawData })
 
-      // Créer la birthdate depuis day, month, year si tu utilises le formulaire en 3 parties
       const birthdate = DateTime.fromISO(payload.birthdate)
-
       const hashedPassword = await hash.make(payload.password)
       const username = await this.generateUsername(payload.name)
 
-      // Générer token de validation
       const emailToken = crypto.randomBytes(32).toString('hex')
 
-      // Créer l'utilisateur
       const user = await User.create({
         ...payload,
         password: hashedPassword,
@@ -59,44 +53,52 @@ export default class AuthController {
         email_token: emailToken,
       })
 
-      // Envoyer email de validation
+      const verifyUrl = `http://localhost:3333/verify-email/${emailToken}`
+
       await mail.send((message) => {
         message
-          .from('no-reply@tonapp.com', 'X-Cloune') // ← ici
           .to(user.email)
-          .subject('Validez votre compte')
-          .htmlView('emails/verify', { name: user.name, token: emailToken })
+          .from('no-reply@tonapp.com', 'X-Cloune')
+          .subject('Activez votre compte X-Cloune')
+          .htmlView('emails/verify', { name: user.name, verifyUrl })
       })
 
-      session.flash('success', 'Compte créé ! Vérifiez votre email pour activer votre compte.')
-      return response.redirect('/login')
+      // ✅ Message flash et redirection vers home
+      session.flash(
+        'success',
+        'Votre compte a été créé avec succès ! Vérifiez votre boîte mail pour activer votre compte.'
+      )
+      return response.redirect('/')
     } catch (error) {
       console.error('❌ Erreur register:', error)
-      session.flash('error', 'Erreur lors de la création du compte')
-      return response.redirect('/register')
+      session.flash('error', 'Une erreur est survenue lors de la création du compte.')
+      return response.redirect('/')
     }
   }
 
   // Validation du compte par email
-  public async verifyEmail({ request, response, session }: HttpContext) {
-    const token = request.input('token')
+  public async verifyEmail({ params, response, session }: HttpContext) {
+    const { token } = params
     if (!token) {
-      session.flash('error', 'Token manquant')
-      return response.redirect('/login')
+      session.flash('error', 'Lien de vérification manquant.')
+      return response.redirect('/')
     }
 
-    const user = await User.query().where('email_token', token).first()
+    const user = await User.findBy('email_token', token)
     if (!user) {
-      session.flash('error', 'Token invalide ou expiré')
-      return response.redirect('/login')
+      session.flash('error', 'Lien de vérification invalide ou expiré.')
+      return response.redirect('/')
     }
 
     user.is_verified = true
     user.email_token = null
     await user.save()
 
-    session.flash('success', 'Compte activé ! Vous pouvez maintenant vous connecter.')
-    return response.redirect('/login')
+    session.flash(
+      'success',
+      'Votre compte a été activé avec succès 🎉 Vous pouvez maintenant vous connecter.'
+    )
+    return response.redirect('/')
   }
 
   // Connexion utilisateur
@@ -108,22 +110,22 @@ export default class AuthController {
 
       if (!user.is_verified) {
         session.flash('error', 'Veuillez vérifier votre email avant de vous connecter.')
-        return response.redirect('/login')
+        return response.redirect('/')
       }
 
       await auth.use('web').login(user)
       session.flash('success', `Bienvenue ${user.name || user.email} 👋`)
-      return response.redirect('/index')
+      return response.redirect('/index') // Page protégée après connexion
     } catch (error) {
       console.error('❌ Erreur login:', error)
       session.flash('error', 'Email ou mot de passe incorrect.')
-      return response.redirect('/login')
+      return response.redirect('/')
     }
   }
 
   // Déconnexion
   public async logout({ auth, response }: HttpContext) {
     await auth.use('web').logout()
-    return response.redirect('/login')
+    return response.redirect('/')
   }
 }
