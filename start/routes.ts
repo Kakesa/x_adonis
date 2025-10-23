@@ -5,7 +5,7 @@ import { middleware } from '#start/kernel'
 // Page d’accueil
 router
   .get('/', async ({ view }) => {
-    return view.render('pages/home') // ici tu peux mettre tes modales login/register
+    return view.render('pages/home')
   })
   .as('home')
 router
@@ -18,7 +18,7 @@ router.get('/auth/login', (ctx) => new AuthController().showLogin(ctx)).as('auth
 router.post('/auth/login', (ctx) => new AuthController().login(ctx)).as('auth.login')
 router.post('/auth/register', (ctx) => new AuthController().register(ctx)).as('auth.register')
 router
-  .post('/auth/logout', (ctx) => new AuthController().logout(ctx))
+  .get('/auth/logout', (ctx) => new AuthController().logout(ctx))
   .middleware([middleware.auth()])
   .as('auth.logout')
 

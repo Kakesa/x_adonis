@@ -23,7 +23,7 @@ export default async function copyStaticAssets() {
       await fs.copyFile(srcPath, destPath)
     }
 
-    console.log('✅ Images copiées de resources/images/logo vers public/images/logo')
+    // console.log('✅ Images copiées de resources/images/logo vers public/images/logo')
   } catch (error) {
     console.error('⚠️ Erreur lors de la copie des images :', error)
   }

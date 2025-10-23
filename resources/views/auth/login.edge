@@ -194,7 +194,7 @@ document.addEventListener("DOMContentLoaded", () => {
         return;
       }
 
-      showToast(data.message || "Bienvenue 🎉", "success");
+      showToast(data.message || "Bienvenue ", "success");
       setTimeout(() => (window.location.href = "/index"), 1500);
     } catch (err) {
       console.error("Erreur lors du login:", err);
