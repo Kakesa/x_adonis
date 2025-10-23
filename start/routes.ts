@@ -8,7 +8,11 @@ router
     return view.render('pages/home') // ici tu peux mettre tes modales login/register
   })
   .as('home')
-
+router
+  .get('/index', async ({ view }) => {
+    return view.render('pages/index')
+  })
+  .as('index')
 // Actions Auth
 router.get('/auth/login', (ctx) => new AuthController().showLogin(ctx)).as('auth.login.show')
 router.post('/auth/login', (ctx) => new AuthController().login(ctx)).as('auth.login')

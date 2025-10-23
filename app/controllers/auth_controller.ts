@@ -101,25 +101,55 @@ export default class AuthController {
     return response.redirect('/')
   }
 
-  // Connexion utilisateur
+  // Connexion utilisateur (version robuste pour fetch + form)
   public async login({ request, response, auth, session }: HttpContext) {
-    const { email, password } = await request.validateUsing(loginValidator)
+    const wantsJson = request.header('accept')?.includes('application/json')
+    const raw = request.body()
+
+    try {
+      await request.validateUsing(loginValidator, { data: raw })
+    } catch (err: any) {
+      console.error('❌ Validation error:', err)
+      if (wantsJson) {
+        return response.status(422).json({
+          success: false,
+          message: 'Les données sont invalides.',
+          errors: err.messages || err,
+        })
+      }
+      session.flash('error', 'Les données du formulaire sont invalides.')
+      return response.redirect().back()
+    }
+
+    const { email, password } = raw
 
     try {
       const user = await User.verifyCredentials(email, password)
 
       if (!user.is_verified) {
-        session.flash('error', 'Veuillez vérifier votre email avant de vous connecter.')
-        return response.redirect('/')
+        const msg = 'Veuillez vérifier votre email avant de vous connecter.'
+        if (wantsJson) return response.status(401).json({ success: false, message: msg })
+        session.flash('error', msg)
+        return response.redirect().back()
       }
 
       await auth.use('web').login(user)
-      session.flash('success', `Bienvenue ${user.name || user.email} 👋`)
-      return response.redirect('/index') // Page protégée après connexion
+      const msg = `Bienvenue ${user.name || user.email} 👋`
+
+      if (wantsJson) {
+        return response.status(200).json({ success: true, message: msg })
+      }
+
+      session.flash('success', msg)
+      return response.redirect('/index')
     } catch (error) {
       console.error('❌ Erreur login:', error)
-      session.flash('error', 'Email ou mot de passe incorrect.')
-      return response.redirect('/')
+      const msg = 'Email ou mot de passe incorrect.'
+      if (wantsJson) {
+        return response.status(401).json({ success: false, message: msg })
+      }
+      session.flash('error', msg)
+      return response.redirect().back()
     }
   }
 
