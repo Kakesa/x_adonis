@@ -1,0 +1,33 @@
+@layout.app({ title: "Accueil" })
+
+@slot('main')
+<div class="min-h-screen flex flex-col items-center justify-center text-center p-6">
+  {{-- ✅ Message de bienvenue flash --}}
+  @if (flashMessages.has('success'))
+    <div id="flash-message"
+      class="mb-6 px-6 py-3 bg-green-600 text-white rounded-full shadow-md text-sm font-semibold transition-opacity duration-700">
+      {{ flashMessages.get('success') }}
+    </div>
+  @endif
+
+  <h1 class="text-4xl md:text-6xl font-bold text-white">Bienvenue sur X 🚀</h1>
+  <p class="mt-4 text-gray-400 max-w-lg">Explorez, partagez et connectez-vous avec le monde.</p>
+
+  <a href="/logout"
+    class="mt-10 bg-red-600 hover:bg-red-700 text-white font-semibold py-3 px-6 rounded-full transition">
+    Déconnexion
+  </a>
+</div>
+
+{{-- Script pour masquer automatiquement le message flash après 3s --}}
+<script>
+  const flash = document.getElementById('flash-message');
+  if (flash) {
+    setTimeout(() => {
+      flash.style.opacity = '0';
+      setTimeout(() => flash.remove(), 700);
+    }, 3000);
+  }
+</script>
+@endslot
+@end

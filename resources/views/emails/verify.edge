@@ -1,0 +1,13 @@
+<!DOCTYPE html>
+<html lang="fr">
+  <head>
+    <meta charset="UTF-8" />
+    <title>Vérifie ton e-mail</title>
+  </head>
+  <body>
+    <h2>Salut {{ name }} 👋</h2>
+    <p>Merci de t’être inscrit !</p>
+    <p>Cliquez sur ce lien pour activer votre compte : <a href="{{ appUrl }}/verify-email?token={{ token }}">Activer mon compte</a></p>
+    <p>Ce lien expirera bientôt. Si tu n’as pas créé de compte, ignore ce message.</p>
+  </body>
+</html>

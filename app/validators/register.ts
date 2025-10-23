@@ -2,23 +2,26 @@ import vine from '@vinejs/vine'
 
 export const registerValidator = vine.compile(
   vine.object({
-    // Nom complet (Nom + Prénom)
+    // Nom complet (obligatoire)
     name: vine.string().trim().minLength(3).maxLength(200),
 
-    // Email
+    // Email (obligatoire)
     email: vine.string().trim().email(),
 
-    // Mot de passe avec confirmation
-    password: vine.string().trim().minLength(6).confirmed(),
+    // Mot de passe (obligatoire, min 6 caractères)
+    password: vine.string().trim().minLength(6),
+
+    // Téléphone (obligatoire)
+    phone: vine.string().trim().minLength(8).maxLength(20),
+
+    /// Date de naissance (obligatoire, format YYYY-MM-DD)
+    birthdate: vine
+      .string()
+      .trim()
+      .regex(/^\d{4}-\d{2}-\d{2}$/),
 
     // Genre (facultatif)
     gender: vine.enum(['male', 'female', 'other']).optional(),
-
-    // Date de naissance (facultatif)
-    birthdate: vine.string().trim(), // obligatoire
-
-    // Téléphone (facultatif)
-    phone: vine.string().trim().optional(),
 
     // Site web (facultatif)
     website: vine.string().trim().url().optional(),

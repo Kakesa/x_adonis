@@ -23,7 +23,10 @@ export default class UsersSchema extends BaseSchema {
 
       // Compte vérifié par défaut = false
       table.boolean('verified').defaultTo(false)
+      table.boolean('is_verified').defaultTo(false)
 
+      // Token pour vérification email
+      table.string('email_token').nullable()
       // Compteurs pour optimisation (peuvent être mis à jour dynamiquement)
       table.integer('tweets_count').defaultTo(0)
       table.integer('followers_count').defaultTo(0)

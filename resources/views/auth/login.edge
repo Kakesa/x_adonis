@@ -1,0 +1,123 @@
+<div id="loginModal" class="fixed inset-0 bg-black bg-opacity-90 backdrop-blur-sm flex items-center justify-center p-6 z-50 hidden">
+  <div class="bg-zinc-900 rounded-lg max-w-md w-full max-h-[90vh] flex flex-col overflow-hidden">
+    <header class="flex justify-between items-center px-6 py-4 border-b border-zinc-700">
+      <button id="closeLogin" aria-label="Fermer modal" class="text-zinc-400 hover:text-white focus:outline-none p-2 rounded-full hover:bg-zinc-700 transition">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+
+      <div class="font-black text-xl select-none absolute left-1/2 transform -translate-x-1/2">
+        <img src="/resources/images/logo/logo.png" alt="Logo" class="h-8 inline-block mr-2" />
+      </div>
+
+      <div class="w-10"></div>
+    </header>
+
+    <main class="p-6 flex-grow overflow-y-auto space-y-6 text-white">
+      <!-- Étape 1 : email ou username -->
+      <section id="loginStep1" class="space-y-4">
+        <button class="w-full py-3 bg-white text-black rounded-full flex items-center justify-center gap-2 hover:bg-gray-200 transition">
+          <img src="/resources/images/logo/google.png" alt="Google" class="w-5 h-5" /> Se connecter avec Google
+        </button>
+        <button class="w-full py-3 bg-white text-black rounded-full flex items-center justify-center gap-2 hover:bg-gray-200 transition">
+          <img src="/resources/images/logo/apple.png" alt="Apple" class="w-5 h-5" /> Se connecter avec Apple
+        </button>
+
+        <input type="email" id="loginEmail" placeholder="Email ou nom d'utilisateur" class="w-full p-3 rounded bg-zinc-800 focus:ring-2 focus:ring-[#1d9bf0] outline-none" required />
+        <button id="nextLoginStep" class="w-full py-3 bg-[#1d9bf0] rounded-full font-semibold hover:bg-blue-700">Suivant</button>
+      </section>
+
+      <!-- Étape 2 : mot de passe -->
+      <section id="loginStep2" class="space-y-4 hidden">
+        <input type="password" id="loginPassword" placeholder="Mot de passe" class="w-full p-3 rounded bg-zinc-800 focus:ring-2 focus:ring-[#1d9bf0] outline-none pr-10" required />
+        <button id="submitLogin" class="w-full py-3 bg-[#1d9bf0] rounded-full font-semibold hover:bg-blue-700">Se connecter</button>
+        <button id="forgotPasswordBtn" class="underline hover:text-[#1d9bf0] font-semibold text-left p-0 mt-2">Mot de passe oublié ?</button>
+      </section>
+
+      <!-- Lien vers inscription -->
+      <p class="mt-3 text-sm text-center select-none">
+        Vous n’avez pas de compte ? 
+        <button id="gotoRegisterFromLogin" class="underline hover:text-[#1d9bf0] font-semibold cursor-pointer">Inscrivez-vous</button>
+      </p>
+    </main>
+  </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const modalLogin = document.getElementById('loginModal');
+  const step1 = document.getElementById('loginStep1');
+  const step2 = document.getElementById('loginStep2');
+  const openLogin = document.getElementById('btnLogin');
+  const closeLogin = document.getElementById('closeLogin');
+  const nextBtn = document.getElementById('nextLoginStep');
+  const submitBtn = document.getElementById('submitLogin');
+  const gotoRegister = document.getElementById('gotoRegisterFromLogin');
+
+  // Ouvrir / fermer modal
+  openLogin?.addEventListener('click', () => modalLogin.classList.remove('hidden'));
+  closeLogin?.addEventListener('click', () => {
+    modalLogin.classList.add('hidden');
+    step1.classList.remove('hidden');
+    step2.classList.add('hidden');
+  });
+
+  // Étape 1 → Étape 2
+  nextBtn?.addEventListener('click', () => {
+    step1.classList.add('hidden');
+    step2.classList.remove('hidden');
+  });
+
+  // Soumission login
+  submitBtn?.addEventListener('click', async () => {
+    const email = document.getElementById('loginEmail')?.value.trim();
+    const password = document.getElementById('loginPassword')?.value;
+
+    if (!email || !password) {
+      alert("Veuillez remplir tous les champs.");
+      return;
+    }
+
+    try {
+      const res = await fetch('/api/login', {
+        method: 'POST',
+        headers: { 'Content-Type':'application/json', 'Accept':'application/json' },
+        body: JSON.stringify({ email, password })
+      });
+
+      const rawText = await res.text();
+      let result;
+      try {
+        result = JSON.parse(rawText);
+      } catch {
+        console.error("Réponse HTML reçue au lieu de JSON :", rawText);
+        alert("Erreur serveur : la réponse n’est pas au format JSON.");
+        return;
+      }
+
+      if (res.ok) {
+        alert(result.message || 'Bienvenue !');
+        modalLogin.classList.add('hidden');
+        step1.classList.remove('hidden');
+        step2.classList.add('hidden');
+        window.location.href = '/index';
+      } else {
+        const errors = result.errors ? JSON.stringify(result.errors) : '';
+        alert('Erreur : ' + (result.message || errors));
+      }
+
+    } catch(err) {
+      console.error('Erreur lors de la soumission :', err);
+      alert('Une erreur est survenue.');
+    }
+  });
+
+  // Lien vers modal inscription
+  gotoRegister?.addEventListener('click', () => {
+    modalLogin.classList.add('hidden');
+    const modalRegister = document.getElementById('registerModal');
+    modalRegister?.classList.remove('hidden');
+  });
+});
+</script>

@@ -1,465 +1,109 @@
 @layout.app({ title: "Welcome page home" })
+
 @slot('meta')
 <meta name="description" content="A welcome page made with EdgeJS">
 @endslot
 
 @slot('main')
-    <main class="max-w-4xl w-full flex flex-col md:flex-row gap-40 items-center justify-center py-10">
+<main class="max-w-4xl w-full flex flex-col md:flex-row gap-40 items-center justify-center py-10">
 
-        <div class="hidden md:flex flex-1 items-center justify-center">
-            <img src="/assets/images/logo/logo.png" alt="Logo X" class="h-80 w-auto" />
-        </div>
+  <div class="hidden md:flex flex-1 items-center justify-center">
+    <img src="/resources/images/logo/logo.png" alt="Logo X" class="h-80 w-auto" />
+  </div>
 
-        <section class="flex-1 max-w-md mx-auto space-y-6">
+  <section class="flex-1 max-w-md mx-auto space-y-6">
+    {{-- ✅ Flash Messages --}}
+    @if (flashMessages.has('success'))
+      <div class="p-3 bg-green-600 text-white text-center rounded-lg">
+        {{ flashMessages.get('success') }}
+      </div>
+    @endif
 
-            <h1 class="text-5xl font-extrabold">Ça se passe maintenant</h1>
-            <p class="font-semibold text-gray-300">Inscrivez-vous.</p>
+    @if (flashMessages.has('error'))
+      <div class="p-3 bg-red-600 text-white text-center rounded-lg">
+        {{ flashMessages.get('error') }}
+      </div>
+    @endif
 
-            <button id="btnGoogle"
-                class="w-full py-3 bg-white text-black rounded-full flex items-center justify-center gap-2 hover:bg-gray-200 transition">
-                <img src="/assets/images/logo/google.png" alt="Google" class="w-6 h-6" />
-                S’inscrire avec Google
-            </button>
+    <h1 class="text-5xl font-extrabold">Ça se passe maintenant</h1>
+    <p class="font-semibold text-gray-300">Inscrivez-vous.</p>
 
-            <button id="btnApple"
-                class="w-full py-3 bg-white text-black rounded-full flex items-center justify-center gap-2 hover:bg-gray-200 transition">
-                <img src="/assets/images/logo/apple.png" alt="apple" class="w-6 h-6" />
-                S’inscrire avec Apple
-            </button>
+    <button id="btnGoogle"
+      class="w-full py-3 bg-white text-black rounded-full flex items-center justify-center gap-2 hover:bg-gray-200 transition">
+      <img src="/resources/images/logo/google.png" alt="Google" class="w-6 h-6" />
+      S’inscrire avec Google
+    </button>
 
-            <div class="relative text-center my-6 font-semibold text-gray-500">
-                <span class="bg-black px-4 relative z-10">OU</span>
-                <div class="border-t border-gray-700 absolute top-1/2 left-0 right-0 -translate-y-1/2"></div>
-            </div>
+    <button id="btnApple"
+      class="w-full py-3 bg-white text-black rounded-full flex items-center justify-center gap-2 hover:bg-gray-200 transition">
+      <img src="/resources/images/logo/apple.png" alt="apple" class="w-6 h-6" />
+      S’inscrire avec Apple
+    </button>
 
-            <button id="btnCreateAccount"
-                class="w-full py-3 bg-[#1d9bf0] rounded-full hover:bg-[#1d9bf0] transition font-semibold">Créer un
-                compte</button>
-
-            <p class="text-xs text-gray-400 mt-4 max-w-xs">
-                En vous inscrivant, vous acceptez les
-                <a href="#" class="underline hover:text-[#1d9bf0] text-[#1d9bf0]">Conditions d’utilisation</a> et la
-                <a href="#" class="underline hover:text-[#1d9bf0] text-[#1d9bf0]">Politique de
-                    confidentialité</a>,notamment l
-                <a href="#" class="underline hover:text-[#1d9bf0] text-[#1d9bf0]">’utilisation des cookies.</a>
-            </p>
-
-            <p class="text-center text-sm text-gray-400 mt-4">Vous avez déjà un compte ?</p>
-            <button id="btnLogin"
-                class="w-full border border-gray-600 text-[#1d9bf0] py-3 rounded-full hover:border-[#1d9bf0] hover:text-[#1d9bf0] transition font-semibold">Se
-                connecter</button>
-
-        </section>
-    </main>
-    <footer>
-        <div
-            class="fixed bottom-0 left-0 right-0 bg-black bg-opacity-90 backdrop-blur-sm p-4 text-center text-xs text-gray-500">
-            <a href="#" class="hover:underline">À propos</a>
-            <span>·</span>
-            <a href="#" class="hover:underline">Télécharger l'application X</a>
-            <span>·</span>
-            <a href="#" class="hover:underline">Grok</a>
-            <span>·</span>
-            <a href="#" class="hover:underline">Centre d'assistance</a>
-            <span>·</span>
-            <a href="#" class="hover:underline">Conditions d’utilisation</a>
-            <span>·</span>
-            <a href="#" class="hover:underline">Politique de confidentialité</a>
-            <span>·</span>
-            <a href="#" class="hover:underline">Politique relative aux cookies</a>
-            <span>·</span>
-            <a href="#" class="hover:underline">Accessibilité</a>
-            <span>·</span>
-            <a href="#" class="hover:underline">Informations sur les publicités</a>
-            <span>·</span>
-            <a href="#" class="hover:underline">Blog</a>
-            <span>·</span>
-            <a href="#" class="hover:underline">Carrières</a>
-            <span>·</span>
-            <a href="#" class="hover:underline">Ressources de la marque</a>
-            <span>·</span>
-            <a href="#" class="hover:underline">Publicité</a>
-            <span>·</span>
-            <a href="#" class="hover:underline">Marketing</a>
-            <span>·</span>
-            <a href="#" class="hover:underline">X pour les professionnels</a>
-            <span>·</span>
-            <a href="#" class="hover:underline">Développeurs</a>
-            <span>·</span>
-            <a href="#" class="hover:underline">Répertoire</a>
-            <span>·</span>
-            <a href="#" class="hover:underline">Paramètres</a>
-            <span>·</span>
-            <span>© 2025 X Corp.</span>
-        </div>
-    </footer>
-    <div id="authModal"
-        class="fixed inset-0 bg-black bg-opacity-90 backdrop-blur-sm flex items-center justify-center p-6 opacity-0 pointer-events-none transition-opacity z-60">
-        <div class="bg-zinc-900 rounded-lg max-w-md w-full max-h-[90vh] flex flex-col overflow-hidden">
-            <header class="flex justify-between items-center px-6 py-4 border-b border-zinc-700">
-                <button id="modalClose" aria-label="Fermer modal"
-                    class="text-zinc-400 hover:text-white focus:outline-none p-2 rounded-full hover:bg-zinc-700 transition">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                    </svg>
-                </button>
-
-                <div class="font-black text-xl select-none absolute left-1/2 transform -translate-x-1/2">
-                    <img src="/assets/images/logo/logo.png" alt="Logo" class="h-8 inline-block mr-2" />
-                </div>
-
-                <div class="w-10"></div> 
-            </header>
-
-            <main class="modal-main p-6 overflow-y-auto flex-grow text-white text-left">
-
-                <section id="modalCreateAccount" class="hidden space-y-4">
-                    <h2 class="text-2xl font-bold mb-2">Créer votre compte</h2>
-                    <form id="formCreate" class="space-y-4 text-sm">
-                        <input type="text" id="full-name" placeholder="Nom et prénom"
-                            class="w-full p-3 rounded bg-zinc-800 focus:ring-2 focus:ring-[#1d9bf0] border border-transparent focus:border-[#1d9bf0] outline-none"
-                            required />
-                        <input type="tel" id="phone" placeholder="Téléphone"
-                            class="w-full p-3 rounded bg-zinc-800 focus:ring-2 focus:ring-[#1d9bf0] border border-transparent focus:border-[#1d9bf0] outline-none"
-                            required />
-                        <input type="text" id="username" placeholder="Nom d'utilisateur (ex: johndoe)"
-                            class="w-full p-3 rounded bg-zinc-800 focus:ring-2 focus:ring-[#1d9bf0] border border-transparent focus:border-[#1d9bf0] outline-none"
-                            required />
-                        <input type="email" id="email" placeholder="Adresse email"
-                            class="w-full p-3 rounded bg-zinc-800 focus:ring-2 focus:ring-[#1d9bf0] border border-transparent focus:border-[#1d9bf0] outline-none"
-                            required />
-                        <div class="text-xs text-zinc-400">
-                            Date de naissance
-                            <div class="flex gap-3 mt-1">
-                                <select id="monthSelect" required
-                                    class="flex-1 p-3 rounded bg-zinc-800 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#1d9bf0] focus:border-[#1d9bf0] border border-transparent">
-                                    <option value="" disabled selected>Mois</option>
-                                    <option value="1">Janvier</option>
-                                    <option value="2">Février</option>
-                                    <option value="3">Mars</option>
-                                    <option value="4">Avril</option>
-                                    <option value="5">Mai</option>
-                                    <option value="6">Juin</option>
-                                    <option value="7">Juillet</option>
-                                    <option value="8">Août</option>
-                                    <option value="9">Septembre</option>
-                                    <option value="10">Octobre</option>
-                                    <option value="11">Novembre</option>
-                                    <option value="12">Décembre</option>
-                                </select>
-                                <select id="daySelect" required
-                                    class="w-20 p-3 rounded bg-zinc-800 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#1d9bf0] focus:border-[#1d9bf0] border border-transparent"></select>
-                                <select id="yearSelect" required
-                                    class="w-24 p-3 rounded bg-zinc-800 text-white placeholder-zinc-500 focus:outline-none focus:ring-2 focus:ring-[#1d9bf0] focus:border-[#1d9bf0] border border-transparent"></select>
-                            </div>
-                            <p class="mt-2 text-xs text-zinc-400">Cette information ne sera pas affichée publiquement.
-                                Confirmez votre âge, même si ce compte est pour une entreprise, un animal de compagnie
-                                ou autre chose.</p>
-                        </div>
-                        <button type="submit"
-                            class="w-full py-3 bg-[#1d9bf0] rounded-full hover:bg-blue-700 transition font-semibold mt-4">Suivant</button>
-                    </form>
-                    <p class="text-center text-sm mt-4">Vous avez déjà un compte ? <button id="gotoLoginFromCreate"
-                            class="underline hover:text-[#1d9bf0] font-semibold cursor-pointer">Se connecter</button>
-                    </p>
-                </section>
-
-                <section id="modalLoginStep1" class="hidden space-y-4">
-                    <h2 class="text-2xl font-bold mb-4">Connectez-vous à X</h2>
-                    <button id="btnGoogle"
-                        class="w-full py-3 bg-white text-black rounded-full flex items-center justify-center gap-2 hover:bg-gray-200 transition">
-                        <img src="/assets/images/logo/google.png" alt="Google" class="w-5 h-5" />
-                        Se connecter avec Gmail
-                    </button>
-                    <button id="btnApple"
-                        class="w-full py-3 bg-white text-black rounded-full flex items-center justify-center gap-2 hover:bg-gray-200 transition">
-                        <img src="/assets/images/logo/apple.png" alt="" class="w-5 h-5" />
-                        Se connecter avec Apple
-                    </button>
-                    <form id="formLoginStep1" class="mt-6 space-y-4">
-                        <input type="email" id="loginUserField" placeholder="Adresse email ou nom d'utilisateur" required
-                            class="w-full p-3 rounded bg-zinc-800 focus:ring-2 focus:ring-[#1d9bf0] border border-transparent focus:border-[#1d9bf0] outline-none" />
-                        <button type="submit"
-                            class="w-full py-3 bg-[#1d9bf0] rounded-full hover:bg-blue-700 transition font-semibold">Suivant</button>
-                    </form>
-                    <p class="mt-4 text-sm text-center select-none">Vous n’avez pas de compte ? <button
-                            id="gotoCreateFromLogin1"
-                            class="underline hover:text-[#1d9bf0] font-semibold cursor-pointer">Inscrivez-vous</button>
-                    </p>
-                </section>
-
-                <section id="modalCreateAccountStep2" class="hidden space-y-6">
-                    <h2 class="text-2xl font-bold mb-4">Entrez votre mot de passe</h2>
-                    <form id="formCreateAccountStep2" class="space-y-4">
-                        <div class="relative">
-                            <input id="createPassword" type="password" placeholder="Mot de passe" required
-                                class="w-full p-3 rounded bg-zinc-800 focus:ring-2 focus:ring-[#1d9bf0] border border-transparent focus:border-[#1d9bf0] outline-none pr-10" />
-                            <button type="button" id="toggleCreatePassword"
-                                class="absolute top-1/2 right-3 -translate-y-1/2 text-zinc-400 hover:text-white focus:outline-none"
-                                aria-label="Afficher/masquer mot de passe">Afficher</button>
-                        </div>
-                        <button type="submit"
-                            class="w-full py-3 bg-[#1d9bf0] rounded-full hover:bg-[#1d9bf0] transition font-semibold">Créer
-                            le compte</button>
-                    </form>
-                    <p class="mt-3 text-sm text-center select-none">Vous avez déjà un compte ? <button
-                            id="gotoLoginFromCreateAccountStep2"
-                            class="underline hover:text-[#1d9bf0] font-semibold cursor-pointer">Se
-                            connecter</button>
-                    </p>
-                </section>
-
-                <section id="modalLoginStep2Actual" class="hidden space-y-6">
-                    <h2 class="text-2xl font-bold mb-4">Entrez votre mot de passe</h2>
-                    <form id="formLoginStep2Actual" class="space-y-4">
-                        <div class="relative">
-                            <input id="loginPasswordActual" type="password" placeholder="Mot de passe" required
-                                class="w-full p-3 rounded bg-zinc-800 focus:ring-2 focus:ring-[#1d9bf0] border border-transparent focus:border-[#1d9bf0] outline-none pr-10" />
-                            <button type="button" id="togglePasswordActual"
-                                class="absolute top-1/2 right-3 -translate-y-1/2 text-zinc-400 hover:text-white focus:outline-none"
-                                aria-label="Afficher/masquer mot de passe">Afficher</button>
-                        </div>
-                        <button type="button" id="forgotPasswordBtnLogin2Actual"
-                            class="underline hover:text-[#1d9bf0] font-semibold cursor-pointer text-left p-0 mb-4">Mot
-                            de passe oublié ?</button>
-                        <button type="submit"
-                            class="w-full py-3 bg-[#1d9bf0] rounded-full hover:bg-[#1d9bf0] transition font-semibold">Se
-                            connecter</button>
-                    </form>
-                    <p class="mt-3 text-sm text-center select-none">Vous n’avez pas de compte ? <button
-                            id="gotoCreateFromLogin2Actual"
-                            class="underline hover:text-[#1d9bf0] font-semibold cursor-pointer">Inscrivez-vous</button>
-                    </p>
-                </section>
-
-
-                <section id="modalForgotPassword" class="hidden space-y-6">
-                    <h2 class="text-2xl font-bold mb-4">Mot de passe oublié</h2>
-                    <form id="formForgotPassword" class="space-y-4">
-                        <input type="email" placeholder="Entrez votre email" required
-                            class="w-full p-3 rounded bg-zinc-800 focus:ring-2 focus:ring-[#1d9bf0] border border-transparent focus:border-[#1d9bf0] outline-none" />
-                        <button type="submit"
-                            class="w-full py-3 bg-[#1d9bf0] rounded-full hover:bg-[#1d9bf0] transition font-semibold">Envoyer
-                            un lien de réinitialisation</button>
-                    </form>
-                    <p class="mt-4 text-center text-sm"><button id="gotoLoginFromForgot"
-                            class="underline hover:text-[#1d9bf0] font-semibold cursor-pointer">Retour à la
-                            connexion</button></p>
-                </section>
-
-            </main>
-        </div>
+    <div class="relative text-center my-6 font-semibold text-gray-500">
+      <span class="bg-black px-4 relative z-10">OU</span>
+      <div class="border-t border-gray-700 absolute top-1/2 left-0 right-0 -translate-y-1/2"></div>
     </div>
 
-    <script>
-      document.addEventListener('DOMContentLoaded', () => {
-    // --- Éléments du DOM ---
-    const authModal = document.getElementById('authModal');
-    const modalCloseBtn = document.getElementById('modalClose');
-    const btnCreateAccount = document.getElementById('btnCreateAccount');
-    const btnLogin = document.getElementById('btnLogin');
+    <button id="btnCreateAccount"
+      class="w-full py-3 bg-[#1d9bf0] rounded-full hover:bg-[#1d9bf0] transition font-semibold">Créer un
+      compte</button>
 
-    // Sections de la modale
-    const sections = {
-        create: document.getElementById('modalCreateAccount'),
-        loginStep1: document.getElementById('modalLoginStep1'),
-        createStep2: document.getElementById('modalCreateAccountStep2'),
-        loginStep2: document.getElementById('modalLoginStep2Actual'),
-        forgotPassword: document.getElementById('modalForgotPassword')
-    };
+    <p class="text-xs text-gray-400 mt-4 max-w-xs">
+      En vous inscrivant, vous acceptez les
+      <a href="#" class="underline hover:text-[#1d9bf0] text-[#1d9bf0]">Conditions d’utilisation</a> et la
+      <a href="#" class="underline hover:text-[#1d9bf0] text-[#1d9bf0]">Politique de confidentialité</a>,
+      notamment l’<a href="#" class="underline hover:text-[#1d9bf0] text-[#1d9bf0]">utilisation des cookies.</a>
+    </p>
 
-    // Boutons de navigation dans la modale
-    const gotoLoginFromCreate = document.getElementById('gotoLoginFromCreate');
-    const gotoCreateFromLogin1 = document.getElementById('gotoCreateFromLogin1');
-    const forgotPasswordBtnLogin2Actual = document.getElementById('forgotPasswordBtnLogin2Actual');
-    const gotoLoginFromForgot = document.getElementById('gotoLoginFromForgot');
-    const gotoCreateFromLogin2Actual = document.getElementById('gotoCreateFromLogin2Actual');
-    const gotoLoginFromCreateAccountStep2 = document.getElementById('gotoLoginFromCreateAccountStep2');
+    <p class="text-center text-sm text-gray-400 mt-4">Vous avez déjà un compte ?</p>
+    <button id="btnLogin"
+      class="w-full border border-gray-600 text-[#1d9bf0] py-3 rounded-full hover:border-[#1d9bf0] hover:text-[#1d9bf0] transition font-semibold">Se
+      connecter</button>
+  </section>
+</main>
 
-    // Formulaires
-    const formLoginStep1 = document.getElementById('formLoginStep1');
-    const formCreate = document.getElementById('formCreate');
+<footer>
+  <div
+    class="fixed bottom-0 left-0 right-0 bg-black bg-opacity-90 backdrop-blur-sm p-4 text-center text-xs text-gray-500">
+    <a href="#" class="hover:underline">À propos</a> ·
+    <a href="#" class="hover:underline">Télécharger l'application X</a> ·
+    <a href="#" class="hover:underline">Grok</a> ·
+    <a href="#" class="hover:underline">Centre d'assistance</a> ·
+    <a href="#" class="hover:underline">Conditions d’utilisation</a> ·
+    <a href="#" class="hover:underline">Politique de confidentialité</a> ·
+    <a href="#" class="hover:underline">Politique relative aux cookies</a> ·
+    <a href="#" class="hover:underline">Accessibilité</a> ·
+    <a href="#" class="hover:underline">Informations sur les publicités</a> ·
+    <a href="#" class="hover:underline">Blog</a> ·
+    <a href="#" class="hover:underline">Carrières</a> ·
+    <a href="#" class="hover:underline">Ressources de la marque</a> ·
+    <a href="#" class="hover:underline">Publicité</a> ·
+    <a href="#" class="hover:underline">Marketing</a> ·
+    <a href="#" class="hover:underline">X pour les professionnels</a> ·
+    <a href="#" class="hover:underline">Développeurs</a> ·
+    <a href="#" class="hover:underline">Répertoire</a> ·
+    <a href="#" class="hover:underline">Paramètres</a> ·
+    <span>© 2025 X Corp.</span>
+  </div>
+</footer>
 
-    // Champs de mot de passe et boutons d'affichage
-    const createPasswordInput = document.getElementById('createPassword');
-    const toggleCreatePasswordBtn = document.getElementById('toggleCreatePassword');
-    const loginPasswordActualInput = document.getElementById('loginPasswordActual');
-    const togglePasswordActualBtn = document.getElementById('togglePasswordActual');
+{{-- ✅ Modal Auth (inscription & connexion) --}}
+<div id="authModal"
+  class="fixed inset-0 bg-black bg-opacity-90 backdrop-blur-sm flex items-center justify-center p-6 opacity-0 pointer-events-none transition-opacity z-60">
+  <div class="bg-zinc-900 rounded-lg max-w-md w-full max-h-[90vh] flex flex-col overflow-hidden">
+   
+    <main class="modal-main p-6 overflow-y-auto flex-grow text-white text-left">
+      {{-- ✅ Modal d’inscription --}}
+      @include('auth/register')
 
-    // Champs de date de naissance
-    const daySelect = document.getElementById('daySelect');
-    const monthSelect = document.getElementById('monthSelect');
-    const yearSelect = document.getElementById('yearSelect');
+      {{-- ✅ Modal de connexion --}}
+      @include('auth/login')
 
-    // --- Fonctions utilitaires ---
+    </main>
+  </div>
+</div>
 
-    /**
-     * Ouvre la modale et affiche la section spécifiée.
-     * @param {HTMLElement} sectionToShow - La section à afficher initialement.
-     */
-    const openModal = (sectionToShow) => {
-        // Cache toutes les sections
-        Object.values(sections).forEach(section => section.classList.add('hidden'));
-
-        // Affiche la section demandée
-        if (sectionToShow) {
-            sectionToShow.classList.remove('hidden');
-        }
-
-        // Affiche la modale (modifie l'opacité et pointer-events)
-        authModal.classList.remove('opacity-0', 'pointer-events-none');
-        document.body.style.overflow = 'hidden'; // Empêche le défilement du body
-    };
-
-    /**
-     * Ferme la modale.
-     */
-    const closeModal = () => {
-        authModal.classList.add('opacity-0', 'pointer-events-none');
-        document.body.style.overflow = ''; // Rétablit le défilement du body
-    };
-
-    /**
-     * Change la section visible dans la modale.
-     * @param {HTMLElement} sectionToShow - La section à afficher.
-     */
-    const navigateToSection = (sectionToShow) => {
-        Object.values(sections).forEach(section => section.classList.add('hidden'));
-        sectionToShow.classList.remove('hidden');
-    };
-
-    /**
-     * Bascule la visibilité du mot de passe.
-     * @param {HTMLInputElement} inputElement - L'élément input du mot de passe.
-     * @param {HTMLElement} buttonElement - Le bouton d'affichage/masquage.
-     */
-    const togglePasswordVisibility = (inputElement, buttonElement) => {
-        const isPassword = inputElement.type === 'password';
-        inputElement.type = isPassword ? 'text' : 'password';
-        buttonElement.textContent = isPassword ? 'Masquer' : 'Afficher';
-    };
-
-    /**
-     * Remplit les options de sélection de l'année et du jour.
-     */
-    const populateDateSelectors = () => {
-        // Remplir les années (de l'année actuelle jusqu'à il y a 100 ans)
-        const currentYear = new Date().getFullYear();
-        for (let i = currentYear; i >= currentYear - 100; i--) {
-            const option = document.createElement('option');
-            option.value = i;
-            option.textContent = i;
-            yearSelect.appendChild(option);
-        }
-
-        // Remplir les jours
-        const populateDays = (year, month) => {
-            daySelect.innerHTML = '<option value="" disabled selected>Jour</option>';
-            if (!month) return;
-
-            const daysInMonth = new Date(year || currentYear, month, 0).getDate();
-            for (let i = 1; i <= daysInMonth; i++) {
-                const option = document.createElement('option');
-                option.value = i;
-                option.textContent = i;
-                daySelect.appendChild(option);
-            }
-        };
-
-        // Initialiser les jours
-        populateDays(null, null);
-
-        // Mettre à jour les jours lors du changement de mois ou d'année
-        monthSelect.addEventListener('change', () => {
-            populateDays(yearSelect.value, monthSelect.value);
-        });
-        yearSelect.addEventListener('change', () => {
-            populateDays(yearSelect.value, monthSelect.value);
-        });
-    };
-
-    // --- Gestionnaires d'événements (Event Listeners) ---
-
-    // 1. Ouverture de la modale
-    btnCreateAccount.addEventListener('click', () => {
-        openModal(sections.create);
-    });
-    btnLogin.addEventListener('click', () => {
-        openModal(sections.loginStep1);
-    });
-
-    // 2. Fermeture de la modale
-    modalCloseBtn.addEventListener('click', closeModal);
-    authModal.addEventListener('click', (e) => {
-        if (e.target === authModal) {
-            closeModal();
-        }
-    });
-
-    // 3. Navigation dans la modale
-
-    // Créer compte -> Se connecter
-    gotoLoginFromCreate.addEventListener('click', () => {
-        navigateToSection(sections.loginStep1);
-    });
-
-    // Se connecter (Step 1) -> Créer compte
-    gotoCreateFromLogin1.addEventListener('click', () => {
-        navigateToSection(sections.create);
-    });
-
-    // Mot de passe oublié -> Se connecter (Step 2)
-    gotoLoginFromForgot.addEventListener('click', () => {
-        navigateToSection(sections.loginStep2);
-    });
-
-    // Se connecter (Step 2) -> Créer compte
-    gotoCreateFromLogin2Actual.addEventListener('click', () => {
-        navigateToSection(sections.create);
-    });
-
-    // Créer compte (Step 2 - Mot de passe) -> Se connecter (Step 1)
-    gotoLoginFromCreateAccountStep2.addEventListener('click', () => {
-        navigateToSection(sections.loginStep1);
-    });
-
-    // Mot de passe oublié (depuis Step 2)
-    forgotPasswordBtnLogin2Actual.addEventListener('click', () => {
-        navigateToSection(sections.forgotPassword);
-    });
-
-    // 4. Soumission des formulaires (Pour la navigation)
-    
-    // Formulaire de création de compte (Étape 1 -> Étape 2)
-    formCreate.addEventListener('submit', (e) => {
-        e.preventDefault();
-        // Ici vous auriez la validation des données d'entrée
-        // Si la validation est OK, passez à l'étape 2 (mot de passe)
-        navigateToSection(sections.createStep2);
-    });
-
-    // Formulaire de connexion (Étape 1 -> Étape 2)
-    formLoginStep1.addEventListener('submit', (e) => {
-        e.preventDefault();
-        // Ici vous devriez vérifier si l'email/username existe.
-        // Si l'utilisateur est trouvé, passez à l'étape 2 (mot de passe)
-        navigateToSection(sections.loginStep2);
-    });
-
-    // 5. Affichage/Masquage des mots de passe
-    toggleCreatePasswordBtn.addEventListener('click', () => {
-        togglePasswordVisibility(createPasswordInput, toggleCreatePasswordBtn);
-    });
-
-    togglePasswordActualBtn.addEventListener('click', () => {
-        togglePasswordVisibility(loginPasswordActualInput, togglePasswordActualBtn);
-    });
-
-    // 6. Initialisation
-    populateDateSelectors();
-});
-    </script>
-    
-  @endslot
-  @end
+<script src="/resources/js/app.js"></script>
+@endslot
+@end

@@ -1,0 +1,138 @@
+<div id="registerModal" class="fixed inset-0 bg-black bg-opacity-90 backdrop-blur-sm flex items-center justify-center p-6 z-50">
+  <div class="bg-zinc-900 rounded-lg max-w-md w-full max-h-[90vh] flex flex-col overflow-hidden">
+
+    <header class="flex justify-between items-center px-6 py-4 border-b border-zinc-700">
+      <button id="closeRegister" aria-label="Fermer modal"
+        class="text-zinc-400 hover:text-white focus:outline-none p-2 rounded-full hover:bg-zinc-700 transition">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+        </svg>
+      </button>
+
+      <div class="font-black text-xl select-none absolute left-1/2 transform -translate-x-1/2">
+        <img src="/resources/images/logo/logo.png" alt="Logo" class="h-8 inline-block mr-2" />
+      </div>
+
+      <div class="w-10"></div>
+    </header>
+
+    <main class="p-6 flex-grow overflow-y-auto space-y-6 text-white">
+      <form method="POST" action="/register">
+        {{ csrfField() }}
+
+        <!-- Étape 1 : infos personnelles -->
+        <section id="registerStep1" class="space-y-4">
+          <input type="text" name="name" placeholder="Nom et prénom" 
+                 value=""
+                 class="w-full p-3 rounded bg-zinc-800 focus:ring-2 focus:ring-[#1d9bf0] outline-none" required />
+          @if(errors && errors.name)
+            <p class="text-xs text-red-500 mt-1">{{ errors.name[0] }}</p>
+          @endif
+
+          <input type="tel" name="phone" placeholder="Téléphone" 
+                 value=""
+                 class="w-full p-3 rounded bg-zinc-800 focus:ring-2 focus:ring-[#1d9bf0] outline-none" required />
+          @if(errors && errors.phone)
+            <p class="text-xs text-red-500 mt-1">{{ errors.phone[0] }}</p>
+          @endif
+
+          <input type="email" name="email" placeholder="Email" 
+                 value=""
+                 class="w-full p-3 rounded bg-zinc-800 focus:ring-2 focus:ring-[#1d9bf0] outline-none" required />
+          @if(errors && errors.email)
+            <p class="text-xs text-red-500 mt-1">{{ errors.email[0] }}</p>
+          @endif
+
+          <div class="text-xs text-zinc-400">
+            Date de naissance
+            <div class="flex gap-3 mt-1">
+              <select name="day" id="daySelect" class="flex-1 p-3 rounded bg-zinc-800 text-white focus:outline-none focus:ring-2 focus:ring-[#1d9bf0] border border-transparent"></select>
+              <select name="month" id="monthSelect" class="flex-1 p-3 rounded bg-zinc-800 text-white focus:outline-none focus:ring-2 focus:ring-[#1d9bf0] border border-transparent">
+                <option value="" disabled selected>Mois</option>
+              </select>
+              <select name="year" id="yearSelect" class="flex-1 p-3 rounded bg-zinc-800 text-white focus:outline-none focus:ring-2 focus:ring-[#1d9bf0] border border-transparent"></select>
+            </div>
+            @if(errors && errors.birthdate)
+              <p class="text-xs text-red-500 mt-1">{{ errors.birthdate[0] }}</p>
+            @endif
+            <p class="mt-2 text-xs text-zinc-400">Cette information ne sera pas affichée publiquement.</p>
+          </div>
+
+          <button type="button" id="nextRegisterStep" class="w-full py-3 bg-[#1d9bf0] rounded-full font-semibold hover:bg-blue-700">Suivant</button>
+        </section>
+
+        <!-- Étape 2 : mot de passe -->
+        <section id="registerStep2" class="space-y-4 hidden">
+          <input type="password" name="password" placeholder="Mot de passe" 
+                 class="w-full p-3 rounded bg-zinc-800 focus:ring-2 focus:ring-[#1d9bf0] outline-none" required />
+          @if(errors && errors.password)
+            <p class="text-xs text-red-500 mt-1">{{ errors.password[0] }}</p>
+          @endif
+          <button type="submit" class="w-full py-3 bg-[#1d9bf0] rounded-full font-semibold hover:bg-blue-700">Créer le compte</button>
+        </section>
+
+        <!-- Champ caché pour la date ISO -->
+        <input type="hidden" name="birthdate">
+      </form>
+
+      <p class="text-center text-sm mt-4">
+        Vous avez déjà un compte ?
+        <button id="gotoLoginFromRegister" class="underline hover:text-[#1d9bf0] font-semibold cursor-pointer">Se connecter</button>
+      </p>
+    </main>
+  </div>
+</div>
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const step1 = document.getElementById("registerStep1");
+  const step2 = document.getElementById("registerStep2");
+  const nextBtn = document.getElementById("nextRegisterStep");
+  const closeBtn = document.getElementById("closeRegister");
+  const registerModal = document.getElementById("registerModal");
+
+  const daySelect = document.getElementById("daySelect");
+  const monthSelect = document.getElementById("monthSelect");
+  const yearSelect = document.getElementById("yearSelect");
+  const form = registerModal.querySelector("form");
+  const hiddenBirthdate = form.querySelector("input[name='birthdate']");
+
+  // Remplir jours
+  for(let i=1; i<=31; i++) daySelect.innerHTML += `<option value="${i}">${i}</option>`;
+
+  // Remplir mois
+  const months = [
+    'Janvier','Février','Mars','Avril','Mai','Juin',
+    'Juillet','Août','Septembre','Octobre','Novembre','Décembre'
+  ];
+  for(let m=1; m<=12; m++) monthSelect.innerHTML += `<option value="${m}">${months[m-1]}</option>`;
+
+  // Remplir années
+  const currentYear = new Date().getFullYear();
+  for(let i=currentYear; i>=1900; i--) yearSelect.innerHTML += `<option value="${i}">${i}</option>`;
+
+  // Étape 1 → Étape 2
+  nextBtn?.addEventListener("click", () => {
+    step1.classList.add("hidden");
+    step2.classList.remove("hidden");
+  });
+
+  // Fermer modal
+  closeBtn.addEventListener("click", () => registerModal.style.display = "none");
+
+  // Avant la soumission : combiner day/month/year en ISO
+  form.addEventListener("submit", (e) => {
+    const day = daySelect.value;
+    const month = monthSelect.value;
+    const year = yearSelect.value;
+
+    if (!day || !month || !year) {
+      e.preventDefault();
+      alert("Veuillez sélectionner votre date de naissance complète");
+      return;
+    }
+
+    hiddenBirthdate.value = `${year}-${month.padStart(2,'0')}-${day.padStart(2,'0')}`;
+  });
+});
+</script>

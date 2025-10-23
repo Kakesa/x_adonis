@@ -15,6 +15,7 @@ const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
 })
 
 export default class User extends compose(BaseModel, AuthFinder) {
+  // 🔹 Colonnes
   @column({ isPrimary: true })
   declare id: number
 
@@ -52,6 +53,12 @@ export default class User extends compose(BaseModel, AuthFinder) {
   declare bio?: string | null
 
   @column()
+  declare is_verified: boolean
+
+  @column()
+  declare email_token: string | null
+
+  @column()
   declare verified: boolean
 
   @column()
@@ -76,15 +83,9 @@ export default class User extends compose(BaseModel, AuthFinder) {
   @hasMany(() => Comment)
   declare comments: HasMany<typeof Comment>
 
-  /**
-   * ✅ Likes faits par l’utilisateur
-   */
   @hasMany(() => Like)
   declare likes: HasMany<typeof Like>
 
-  /**
-   * ✅ Utilisateurs suivis (following)
-   */
   @manyToMany(() => User, {
     pivotTable: 'followers',
     localKey: 'id',
@@ -94,9 +95,6 @@ export default class User extends compose(BaseModel, AuthFinder) {
   })
   declare following: ManyToMany<typeof User>
 
-  /**
-   * ✅ Utilisateurs qui suivent cet utilisateur
-   */
   @manyToMany(() => User, {
     pivotTable: 'followers',
     localKey: 'id',
@@ -106,9 +104,7 @@ export default class User extends compose(BaseModel, AuthFinder) {
   })
   declare followers: ManyToMany<typeof User>
 
-  /**
-   * 🔐 Hook pour hacher le mot de passe avant sauvegarde
-   */
+  // 🔐 Hook pour hacher le mot de passe avant sauvegarde
   @beforeSave()
   public static async hashPasswordHook(user: User) {
     if (user.$dirty.password) {
