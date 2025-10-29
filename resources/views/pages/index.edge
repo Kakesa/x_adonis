@@ -15,13 +15,13 @@
     </div>
 
     <!-- Section Auth -->
-    <section class="flex-1 max-w-md mx-auto space-y-6">
+    <section class="flex-1 max-w-md mx-auto space-y-6 text-white">
 
       <!-- Toast container -->
       <div id="toastContainer" class="fixed top-6 right-6 z-50 flex flex-col gap-2"></div>
 
-      <h1 class="text-5xl font-extrabold text-white">Ça se passe maintenant</h1>
-      <p class="font-semibold text-gray-300">Inscrivez-vous.</p>
+      <h1 class="text-5xl font-extrabold">Ça se passe maintenant</h1>
+      <p class="font-semibold text-gray-300">Inscrivez-vous ou connectez-vous.</p>
 
       <!-- Auth buttons -->
       <button id="btnGoogle" class="w-full py-3 bg-white text-black rounded-full flex items-center justify-center gap-2 hover:bg-gray-200 transition">
@@ -39,28 +39,28 @@
         <div class="border-t border-gray-700 absolute top-1/2 left-0 right-0 -translate-y-1/2"></div>
       </div>
 
-      <button id="btnCreateAccount" class="w-full py-3 bg-[#1d9bf0] rounded-full hover:bg-[#1d9bf0] transition font-semibold">
+      <button id="btnCreateAccount" class="w-full py-3 bg-[#1d9bf0] rounded-full font-semibold hover:bg-blue-700 transition">
         Créer un compte
       </button>
 
-      <p class="text-center text-sm text-gray-400 mt-4">Vous avez déjà un compte ?</p>
-      <button id="btnLogin" class="w-full border border-gray-600 text-[#1d9bf0] py-3 rounded-full hover:border-[#1d9bf0] hover:text-[#1d9bf0] transition font-semibold">
+      <button id="btnLogin" class="w-full border border-gray-600 text-[#1d9bf0] py-3 rounded-full font-semibold hover:border-[#1d9bf0] hover:text-[#1d9bf0] transition">
         Se connecter
       </button>
+
     </section>
   </main>
 
-  {{-- Modale Auth --}}
+  <!-- Modal Auth -->
   <div id="authModal" class="fixed inset-0 bg-black bg-opacity-90 backdrop-blur-sm flex items-center justify-center p-6 opacity-0 pointer-events-none transition-opacity z-60">
     <div class="bg-zinc-900 rounded-lg max-w-md w-full max-h-[90vh] flex flex-col overflow-hidden">
-      <main class="modal-main p-6 overflow-y-auto flex-grow text-white text-left">
-        
-        {{-- Modal d’inscription --}}
+      <main class="p-6 overflow-y-auto flex-grow text-white text-left">
+
+        {{-- Modal Register --}}
         @include('auth/register')
 
-        {{-- Modal de connexion --}}
+        {{-- Modal Login --}}
         @include('auth/login')
-        
+
       </main>
     </div>
   </div>
@@ -76,14 +76,10 @@
     const btnLogin = document.getElementById('btnLogin');
 
     const nextLoginStep = document.getElementById("nextLoginStep");
-    const submitLogin = document.getElementById("submitLogin");
-
     const loginEmailInput = document.getElementById("loginEmail");
     const loginPasswordInput = document.getElementById("loginPassword");
 
-    const csrfToken = document.querySelector('meta[name="csrf-token"]').content;
-
-    // Fonction toast
+    // Toast
     const showToast = (message, type = "success") => {
       const toast = document.createElement("div");
       toast.className = `px-4 py-2 rounded-lg text-white shadow-md transform transition-all ${type === "success" ? "bg-green-600" : "bg-red-600"}`;
@@ -123,39 +119,15 @@
       loginPasswordInput.closest(".form-step")?.classList.remove("hidden");
     });
 
-    // Soumission login fetch
-    submitLogin?.addEventListener("click", async () => {
-      const email = loginEmailInput?.value.trim();
-      const password = loginPasswordInput?.value;
+    // Navigation entre modales
+    document.getElementById("gotoLoginFromRegister")?.addEventListener("click", () => {
+      registerModal.classList.add("hidden");
+      loginModal.classList.remove("hidden");
+    });
 
-      if (!email || !password) return showToast("Veuillez remplir tous les champs.", "error");
-
-      try {
-        const res = await fetch("/auth/login", {
-          method: "POST",
-          headers: {
-            "Content-Type": "application/json",
-            Accept: "application/json",
-            "X-CSRF-TOKEN": csrfToken,
-          },
-          body: JSON.stringify({ email, password }),
-        });
-
-        const data = await res.json().catch(() => ({}));
-
-        if (!res.ok) {
-          showToast(data.message || "Erreur de connexion", "error");
-          return;
-        }
-
-        showToast(data.message || "Bienvenue !", "success");
-        setTimeout(() => {
-          window.location.href = "/home";
-        }, 1000);
-      } catch (err) {
-        console.error("Erreur login:", err);
-        showToast("Erreur réseau, réessayez.", "error");
-      }
+    document.getElementById("gotoRegisterFromLogin")?.addEventListener("click", () => {
+      loginModal.classList.add("hidden");
+      registerModal.classList.remove("hidden");
     });
   });
   </script>

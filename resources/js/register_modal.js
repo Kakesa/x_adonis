@@ -14,7 +14,7 @@ document.addEventListener("DOMContentLoaded", () => {
   const toast = document.getElementById("toastRegister");
   const toastMsg = document.getElementById("toastRegisterMessage");
 
-  // Toast
+  // Fonction toast
   function showToast(message, type = "success") {
     toastMsg.textContent = message;
     toast.style.backgroundColor = type === "success" ? "#16a34a" : "#dc2626";
@@ -59,15 +59,51 @@ document.addEventListener("DOMContentLoaded", () => {
   closeBtn.addEventListener("click", () => registerModal.classList.add("hidden"));
 
   // Avant soumission : date ISO
-  form.addEventListener("submit", (e) => {
+  form.addEventListener("submit", async (e) => {
+    e.preventDefault();
+
     const day = daySelect.value.padStart(2,'0');
     const month = monthSelect.value.padStart(2,'0');
     const year = yearSelect.value;
 
     hiddenBirthdate.value = `${year}-${month}-${day}`;
+
+    const formData = Object.fromEntries(new FormData(form));
+
+    try {
+      const res = await fetch("/auth/register", {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          Accept: "application/json",
+          "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content,
+        },
+        credentials: 'same-origin',
+        body: JSON.stringify(formData),
+      });
+
+      const data = await res.json().catch(() => ({}));
+
+      if (!res.ok) {
+        showToast(data.message || "Erreur lors de l'inscription", "error");
+        return;
+      }
+
+      showToast("Compte créé ! Vérifiez votre email.", "success");
+
+      setTimeout(() => {
+        registerModal.classList.add("hidden");
+        const loginModal = document.getElementById("loginModal");
+        loginModal?.classList.remove("hidden");
+      }, 1500);
+
+    } catch (err) {
+      console.error("Erreur register:", err);
+      showToast("Erreur réseau, réessayez.", "error");
+    }
   });
 
-  // Bouton aller à login
+  // Aller à login
   const gotoLogin = document.getElementById("gotoLoginFromRegister");
   gotoLogin?.addEventListener("click", () => {
     registerModal.classList.add("hidden");

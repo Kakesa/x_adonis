@@ -1,7 +1,7 @@
 import { DateTime } from 'luxon'
 import hash from '@adonisjs/core/services/hash'
 import { compose } from '@adonisjs/core/helpers'
-import { BaseModel, column, hasMany, beforeSave, manyToMany } from '@adonisjs/lucid/orm'
+import { BaseModel, column, hasMany, manyToMany } from '@adonisjs/lucid/orm'
 import type { HasMany, ManyToMany } from '@adonisjs/lucid/types/relations'
 import { withAuthFinder } from '@adonisjs/auth/mixins/lucid'
 
@@ -103,12 +103,4 @@ export default class User extends compose(BaseModel, AuthFinder) {
     pivotRelatedForeignKey: 'follower_id',
   })
   declare followers: ManyToMany<typeof User>
-
-  // 🔐 Hook pour hacher le mot de passe avant sauvegarde
-  @beforeSave()
-  public static async hashPasswordHook(user: User) {
-    if (user.$dirty.password) {
-      user.password = await hash.make(user.password)
-    }
-  }
 }
