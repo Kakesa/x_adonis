@@ -54,30 +54,67 @@
                     More
                 </a>
                 <button
-                    class="mt-4 w-full bg-white text-black font-semibold py-2 rounded-full hover:bg-white transition">Post</button>
+                    class="mt-4 w-full bg-white text-black font-semibold py-2 rounded-full hover:bg-white transition mb-4">Post
+                    </button>
             </nav>
-            @if(authUser)
-    <div class="p-4 border-t border-gray-700">
-        <div class="flex items-center gap-3 px-3 py-2 rounded hover:bg-gray-700 transition">
-            <img 
-              src="{{ authUser.profile_picture || 'https://ui-avatars.com/api/?name=' + authUser.username }}" 
-              alt="Photo {{ authUser.username }}" 
-              class="w-11 h-11 rounded-full object-cover"
-            />
-            <div class="flex flex-col">
-                <span class="font-bold">{{ authUser.name || authUser.username }}</span>
-                <span class="text-gray-400 text-sm">@{{ authUser.username }}</span>
-            </div>
-        </div>
+                <div class="p-4 border-t border-gray-700">
+                    @if(auth.user)
+                    <div class="flex items-center gap-3 px-3 py-2 rounded hover:bg-gray-700 transition">
+                        <!-- Avatar -->
+                        @if(auth.user.profile_picture)
+                            <img id="desktop-sidebar-avatar"
+                                src="{{ auth.user.profile_picture }}"
+                                alt="Photo {{ auth.user.name }}"
+                                class="w-11 h-11 rounded-full object-cover" />
+                        @else
+                            <div id="user-initials"
+                                class="w-11 h-11 rounded-full flex items-center justify-center text-white font-bold"></div>
+                        @endif
 
-        <form action="/logout" method="post">
-            @csrf
-            <button type="submit"
-              class="w-full mt-3 bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-full transition-colors duration-200 text-sm">
-              Se déconnecter
-            </button>
-        </form>
-    </div>
-    @endif
+                        <!-- Infos utilisateur -->
+                        <div class="flex flex-col">
+                            <span id="desktop-sidebar-name" class="font-bold">{{ auth.user.name }}</span>
+                            <span id="desktop-sidebar-username" class="text-gray-400 text-sm">
+                                {{ auth.user.username }}
+                            </span>
+                        </div>
+
+                        <!-- Bouton options -->
+                        <button id="btnOpenAccountOptionsDesktop" aria-label="Plus d'options"
+                                class="ml-auto text-gray-400 hover:text-white">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24"
+                                stroke="currentColor" stroke-width="2">
+                                <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
+                            </svg>
+                        </button>
+                    </div>
+
+                    <!-- Bouton déconnexion -->
+                    <form action="/logout" method="POST">
+                        {{ csrfField() }}
+                        <button id="logoutButton"
+                                class="w-full mt-3 bg-red-600 hover:bg-red-700 text-white font-semibold py-2 px-4 rounded-full transition-colors duration-200 text-sm">
+                            Se déconnecter
+                        </button>
+                    </form>
+                    @endif
+                </div>
 
         </aside>
+        <script>
+            document.addEventListener("DOMContentLoaded", function() {
+                const userInitialsDiv = document.getElementById('user-initials');
+                const userName = "{{ auth.user.name }}"; // Utilisateur actuel
+                const initials = userName.charAt(0).toUpperCase() + (userName.split(' ')[1]?.charAt(0).toUpperCase() || '');
+
+                // Fonction pour générer une couleur aléatoire
+                function getRandomColor() {
+                    const colors = ['bg-blue-500', 'bg-red-500', 'bg-green-500', 'bg-yellow-500', 'bg-purple-500', 'bg-pink-500'];
+                    return colors[Math.floor(Math.random() * colors.length)];
+                }
+
+                // Appliquer les initiales et la couleur
+                userInitialsDiv.textContent = initials;
+                userInitialsDiv.classList.add(getRandomColor());
+            });
+        </script>

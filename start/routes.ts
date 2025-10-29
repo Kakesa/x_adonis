@@ -17,10 +17,7 @@ router
 router.get('/auth/login', (ctx) => new AuthController().showLogin(ctx)).as('auth.login.show')
 router.post('/auth/login', (ctx) => new AuthController().login(ctx)).as('auth.login')
 router.post('/auth/register', (ctx) => new AuthController().register(ctx)).as('auth.register')
-router
-  .get('/auth/logout', (ctx) => new AuthController().logout(ctx))
-  .middleware([middleware.auth()])
-  .as('auth.logout')
+router.post('/logout', (ctx) => new AuthController().logout(ctx)).middleware([middleware.auth()])
 
 // Vérification email
 router.get('/verify-email/:token', (ctx) => new AuthController().verifyEmail(ctx)).as('auth.verify')
