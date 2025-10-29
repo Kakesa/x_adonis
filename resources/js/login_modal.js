@@ -2,7 +2,6 @@ document.addEventListener("DOMContentLoaded", () => {
   const modalLogin = document.getElementById("loginModal");
   const step1 = document.getElementById("loginStep1");
   const step2 = document.getElementById("loginStep2");
-  const openLogin = document.getElementById("btnLogin");
   const closeLogin = document.getElementById("closeLogin");
   const nextBtn = document.getElementById("nextLoginStep");
   const submitBtn = document.getElementById("submitLogin");
@@ -10,7 +9,10 @@ document.addEventListener("DOMContentLoaded", () => {
   const toast = document.getElementById("toast");
   const toastMsg = document.getElementById("toast-message");
 
-  // ✅ Toast
+  const loginEmail = document.getElementById("loginEmail");
+  const loginPassword = document.getElementById("loginPassword");
+
+  // Fonction toast
   function showToast(message, type = "success") {
     toastMsg.textContent = message;
     toast.style.backgroundColor = type === "success" ? "#16a34a" : "#dc2626";
@@ -28,30 +30,27 @@ document.addEventListener("DOMContentLoaded", () => {
     }, 4000);
   }
 
-  // ✅ Ouverture / fermeture
-  openLogin?.addEventListener("click", () => modalLogin.classList.remove("hidden"));
+  // Fermer modal
   closeLogin?.addEventListener("click", () => {
     modalLogin.classList.add("hidden");
     step1.classList.remove("hidden");
     step2.classList.add("hidden");
   });
 
-  // ✅ Étape 1 → Étape 2
+  // Étape 1 → Étape 2
   nextBtn?.addEventListener("click", () => {
-    const email = document.getElementById("loginEmail")?.value.trim();
+    const email = loginEmail.value.trim();
     if (!email) return showToast("Veuillez entrer votre email.", "error");
     step1.classList.add("hidden");
     step2.classList.remove("hidden");
   });
 
-  // ✅ Soumission
+  // Soumission login
   submitBtn?.addEventListener("click", async () => {
-    const email = document.getElementById("loginEmail")?.value.trim();
-    const password = document.getElementById("loginPassword")?.value;
+    const email = loginEmail.value.trim();
+    const password = loginPassword.value;
 
-    if (!email || !password) {
-      return showToast("Veuillez remplir tous les champs.", "error");
-    }
+    if (!email || !password) return showToast("Veuillez remplir tous les champs.", "error");
 
     try {
       const res = await fetch("/auth/login", {
@@ -59,26 +58,23 @@ document.addEventListener("DOMContentLoaded", () => {
         headers: {
           "Content-Type": "application/json",
           Accept: "application/json",
+          "X-CSRF-TOKEN": document.querySelector('meta[name="csrf-token"]').content,
         },
         body: JSON.stringify({ email, password }),
       });
 
       const data = await res.json().catch(() => ({}));
+      if (!res.ok) return showToast(data.message || "Erreur de connexion", "error");
 
-      if (!res.ok) {
-        showToast(data.message || "Erreur de connexion", "error");
-        return;
-      }
-
-      showToast(data.message || "Bienvenue ", "success");
-      setTimeout(() => (window.location.href = "/index"), 1500);
+      showToast(data.message || "Bienvenue !", "success");
+      setTimeout(() => window.location.href = "/home", 1000);
     } catch (err) {
-      console.error("Erreur lors du login:", err);
+      console.error("Erreur login:", err);
       showToast("Erreur réseau, réessayez.", "error");
     }
   });
 
-  // ✅ Aller à l'inscription
+  // Aller à l'inscription
   gotoRegister?.addEventListener("click", () => {
     modalLogin.classList.add("hidden");
     const modalRegister = document.getElementById("registerModal");

@@ -8,12 +8,15 @@ import mail from '@adonisjs/mail/services/main'
 import crypto from 'node:crypto'
 
 export default class AuthController {
-  // Page de connexion / inscription
-  async showLogin({ view }: HttpContext) {
-    return view.render('pages/home') // Tout se fait dans home
+  // Page login / home
+  public async showLogin({ view, request }: HttpContext) {
+    return view.render('pages/index', {
+      csrfToken: request.csrfToken, // ✅ avec ()
+    })
   }
-  async showRegister({ view }: HttpContext) {
-    return view.render('pages/home') // Tout se fait dans home
+
+  public async showRegister({ view }: HttpContext) {
+    return view.render('pages/index')
   }
 
   // Générer un username unique
@@ -32,16 +35,13 @@ export default class AuthController {
     return username
   }
 
-  // Inscription utilisateur
+  // Inscription
   public async register({ request, response, session }: HttpContext) {
     try {
-      const rawData = request.body()
-      const payload = await request.validateUsing(registerValidator, { data: rawData })
-
+      const payload = await request.validateUsing(registerValidator, { data: request.body() })
       const birthdate = DateTime.fromISO(payload.birthdate)
       const hashedPassword = await hash.make(payload.password)
       const username = await this.generateUsername(payload.name)
-
       const emailToken = crypto.randomBytes(32).toString('hex')
 
       const user = await User.create({
@@ -63,20 +63,19 @@ export default class AuthController {
           .htmlView('emails/verify', { name: user.name, verifyUrl })
       })
 
-      // ✅ Message flash et redirection vers home
       session.flash(
         'success',
-        'Votre compte a été créé avec succès ! Vérifiez votre boîte mail pour activer votre compte.'
+        'Votre compte a été créé ! Vérifiez votre boîte mail pour activer votre compte.'
       )
       return response.redirect('/')
     } catch (error) {
       console.error('❌ Erreur register:', error)
-      session.flash('error', 'Une erreur est survenue lors de la création du compte.')
-      return response.redirect('/')
+      session.flash('error', 'Erreur lors de la création du compte.')
+      return response.redirect().back()
     }
   }
 
-  // Validation du compte par email
+  // Vérification email
   public async verifyEmail({ params, response, session }: HttpContext) {
     const { token } = params
     if (!token) {
@@ -94,68 +93,63 @@ export default class AuthController {
     user.email_token = null
     await user.save()
 
-    session.flash(
-      'success',
-      'Votre compte a été activé avec succès 🎉 Vous pouvez maintenant vous connecter.'
-    )
+    session.flash('success', 'Compte activé 🎉 Vous pouvez maintenant vous connecter.')
     return response.redirect('/')
   }
 
-  // Connexion utilisateur (version robuste pour fetch + form)
+  // Login sécurisé
   public async login({ request, response, auth, session }: HttpContext) {
-    const wantsJson = request.header('accept')?.includes('application/json')
-    const raw = request.body()
+    const { email, password } = request.only(['email', 'password'])
 
     try {
-      await request.validateUsing(loginValidator, { data: raw })
-    } catch (err: any) {
-      console.error('❌ Validation error:', err)
-      if (wantsJson) {
-        return response.status(422).json({
-          success: false,
-          message: 'Les données sont invalides.',
-          errors: err.messages || err,
-        })
+      await request.validateUsing(loginValidator, { data: { email, password } })
+
+      // Vérifier identifiants
+      let user
+      try {
+        user = await User.verifyCredentials(email, password)
+      } catch {
+        session.flash('error', 'Email ou mot de passe incorrect.')
+        if (request.accepts(['json'])) {
+          return response.status(400).json({ message: 'Email ou mot de passe incorrect.' })
+        }
+        return response.redirect('/')
       }
-      session.flash('error', 'Les données du formulaire sont invalides.')
-      return response.redirect().back()
-    }
 
-    const { email, password } = raw
-
-    try {
-      const user = await User.verifyCredentials(email, password)
-
+      // Vérifier activation
       if (!user.is_verified) {
-        const msg = 'Veuillez vérifier votre email avant de vous connecter.'
-        if (wantsJson) return response.status(401).json({ success: false, message: msg })
-        session.flash('error', msg)
-        return response.redirect().back()
+        session.flash('error', 'Veuillez vérifier votre email avant de vous connecter.')
+        if (request.accepts(['json'])) {
+          return response
+            .status(400)
+            .json({ message: 'Veuillez vérifier votre email avant de vous connecter.' })
+        }
+        return response.redirect('/')
       }
 
+      // Connexion
       await auth.use('web').login(user)
-      const msg = `Bienvenue ${user.name || user.email} 👋`
 
-      if (wantsJson) {
-        return response.status(200).json({ success: true, message: msg })
+      // Succès
+      if (request.accepts(['json'])) {
+        return response.status(200).json({ message: `Bienvenue ${user.name || user.email}` })
       }
 
-      session.flash('success', msg)
-      return response.redirect('/index')
+      return response.redirect('/home')
     } catch (error) {
       console.error('❌ Erreur login:', error)
-      const msg = 'Email ou mot de passe incorrect.'
-      if (wantsJson) {
-        return response.status(401).json({ success: false, message: msg })
+      session.flash('error', 'Erreur pendant la connexion.')
+      if (request.accepts(['json'])) {
+        return response.status(400).json({ message: 'Erreur pendant la connexion.' })
       }
-      session.flash('error', msg)
-      return response.redirect().back()
+      return response.redirect('/')
     }
   }
 
   // Déconnexion
-  public async logout({ auth, response }: HttpContext) {
+  public async logout({ auth, response, session }: HttpContext) {
     await auth.use('web').logout()
+    session.flash('success', 'Vous êtes déconnecté.')
     return response.redirect('/')
   }
 }

@@ -8,17 +8,32 @@ document.addEventListener("DOMContentLoaded", () => {
   const daySelect = document.getElementById("daySelect");
   const monthSelect = document.getElementById("monthSelect");
   const yearSelect = document.getElementById("yearSelect");
-  const form = registerModal.querySelector("form");
+  const form = document.getElementById("registerForm");
   const hiddenBirthdate = form.querySelector("input[name='birthdate']");
+
+  const toast = document.getElementById("toastRegister");
+  const toastMsg = document.getElementById("toastRegisterMessage");
+
+  // Toast
+  function showToast(message, type = "success") {
+    toastMsg.textContent = message;
+    toast.style.backgroundColor = type === "success" ? "#16a34a" : "#dc2626";
+    toast.classList.remove("hidden");
+    toast.style.opacity = 0;
+    setTimeout(() => {
+      toast.style.opacity = 1;
+    }, 50);
+    setTimeout(() => {
+      toast.style.opacity = 0;
+      setTimeout(() => toast.classList.add("hidden"), 300);
+    }, 4000);
+  }
 
   // Remplir jours
   for(let i=1; i<=31; i++) daySelect.innerHTML += `<option value="${i}">${i}</option>`;
 
   // Remplir mois
-  const months = [
-    'Janvier','Février','Mars','Avril','Mai','Juin',
-    'Juillet','Août','Septembre','Octobre','Novembre','Décembre'
-  ];
+  const months = ['Janvier','Février','Mars','Avril','Mai','Juin','Juillet','Août','Septembre','Octobre','Novembre','Décembre'];
   for(let m=1; m<=12; m++) monthSelect.innerHTML += `<option value="${m}">${months[m-1]}</option>`;
 
   // Remplir années
@@ -26,26 +41,37 @@ document.addEventListener("DOMContentLoaded", () => {
   for(let i=currentYear; i>=1900; i--) yearSelect.innerHTML += `<option value="${i}">${i}</option>`;
 
   // Étape 1 → Étape 2
-  nextBtn?.addEventListener("click", () => {
-    step1.classList.add("hidden");
-    step2.classList.remove("hidden");
-  });
-
-  // Fermer modal
-  closeBtn.addEventListener("click", () => registerModal.style.display = "none");
-
-  // Avant la soumission : combiner day/month/year en ISO
-  form.addEventListener("submit", (e) => {
+  nextBtn.addEventListener("click", () => {
     const day = daySelect.value;
     const month = monthSelect.value;
     const year = yearSelect.value;
 
     if (!day || !month || !year) {
-      e.preventDefault();
-      alert("Veuillez sélectionner votre date de naissance complète");
+      showToast("Veuillez sélectionner votre date de naissance complète", "error");
       return;
     }
 
-    hiddenBirthdate.value = `${year}-${month.padStart(2,'0')}-${day.padStart(2,'0')}`;
+    step1.classList.add("hidden");
+    step2.classList.remove("hidden");
+  });
+
+  // Fermer modal
+  closeBtn.addEventListener("click", () => registerModal.classList.add("hidden"));
+
+  // Avant soumission : date ISO
+  form.addEventListener("submit", (e) => {
+    const day = daySelect.value.padStart(2,'0');
+    const month = monthSelect.value.padStart(2,'0');
+    const year = yearSelect.value;
+
+    hiddenBirthdate.value = `${year}-${month}-${day}`;
+  });
+
+  // Bouton aller à login
+  const gotoLogin = document.getElementById("gotoLoginFromRegister");
+  gotoLogin?.addEventListener("click", () => {
+    registerModal.classList.add("hidden");
+    const loginModal = document.getElementById("loginModal");
+    loginModal?.classList.remove("hidden");
   });
 });

@@ -3,7 +3,7 @@
   class="fixed inset-0 bg-black bg-opacity-90 backdrop-blur-sm flex items-center justify-center p-6 z-50 hidden"
 >
   <div class="bg-zinc-900 rounded-lg max-w-md w-full max-h-[90vh] flex flex-col overflow-hidden relative">
-    <!-- ✅ Toast -->
+    <!-- Toast -->
     <div
       id="toast"
       class="hidden absolute top-4 left-1/2 transform -translate-x-1/2 px-4 py-3 rounded-lg shadow-lg text-white font-semibold transition-all duration-300 z-50"
@@ -13,109 +13,43 @@
     </div>
 
     <!-- Header -->
-    <header
-      class="flex justify-between items-center px-6 py-4 border-b border-zinc-700"
-    >
-      <button
-        id="closeLogin"
-        aria-label="Fermer modal"
-        class="text-zinc-400 hover:text-white focus:outline-none p-2 rounded-full hover:bg-zinc-700 transition"
-      >
-        <svg
-          xmlns="http://www.w3.org/2000/svg"
-          class="w-6 h-6"
-          fill="none"
-          viewBox="0 0 24 24"
-          stroke="currentColor"
-          stroke-width="2"
-        >
-          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
+    <header class="flex justify-between items-center px-6 py-4 border-b border-zinc-700">
+      <button id="closeLogin" aria-label="Fermer modal" class="text-zinc-400 hover:text-white focus:outline-none p-2 rounded-full hover:bg-zinc-700 transition">
+        <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6" fill="none" viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
+          <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12"/>
         </svg>
       </button>
-
-      <div
-        class="font-black text-xl select-none absolute left-1/2 transform -translate-x-1/2"
-      >
-        <img
-          src="/resources/images/logo/logo.png"
-          alt="Logo"
-          class="h-8 inline-block mr-2"
-        />
+      <div class="font-black text-xl select-none absolute left-1/2 transform -translate-x-1/2">
+        <img src="/resources/images/logo/logo.png" alt="Logo" class="h-8 inline-block mr-2"/>
       </div>
-
       <div class="w-10"></div>
     </header>
 
+    <!-- Main -->
     <main class="p-6 flex-grow overflow-y-auto space-y-6 text-white">
       <!-- Étape 1 -->
       <section id="loginStep1" class="space-y-4">
-        <button
-          class="w-full py-3 bg-white text-black rounded-full flex items-center justify-center gap-2 hover:bg-gray-200 transition"
-        >
-          <img
-            src="/resources/images/logo/google.png"
-            alt="Google"
-            class="w-5 h-5"
-          />
-          Se connecter avec Google
+        <button class="w-full py-3 bg-white text-black rounded-full flex items-center justify-center gap-2 hover:bg-gray-200 transition">
+          <img src="/resources/images/logo/google.png" alt="Google" class="w-5 h-5"/> Se connecter avec Google
         </button>
-        <button
-          class="w-full py-3 bg-white text-black rounded-full flex items-center justify-center gap-2 hover:bg-gray-200 transition"
-        >
-          <img
-            src="/resources/images/logo/apple.png"
-            alt="Apple"
-            class="w-5 h-5"
-          />
-          Se connecter avec Apple
+        <button class="w-full py-3 bg-white text-black rounded-full flex items-center justify-center gap-2 hover:bg-gray-200 transition">
+          <img src="/resources/images/logo/apple.png" alt="Apple" class="w-5 h-5"/> Se connecter avec Apple
         </button>
 
-        <input
-          type="email"
-          id="loginEmail"
-          placeholder="Email ou nom d'utilisateur"
-          class="w-full p-3 rounded bg-zinc-800 focus:ring-2 focus:ring-[#1d9bf0] outline-none"
-          required
-        />
-        <button
-          id="nextLoginStep"
-          class="w-full py-3 bg-[#1d9bf0] rounded-full font-semibold hover:bg-blue-700"
-        >
-          Suivant
-        </button>
+        <input type="email" id="loginEmail" placeholder="Email ou nom d'utilisateur" class="w-full p-3 rounded bg-zinc-800 focus:ring-2 focus:ring-[#1d9bf0] outline-none" required/>
+        <button id="nextLoginStep" class="w-full py-3 bg-[#1d9bf0] rounded-full font-semibold hover:bg-blue-700">Suivant</button>
       </section>
 
       <!-- Étape 2 -->
       <section id="loginStep2" class="space-y-4 hidden">
-        <input
-          type="password"
-          id="loginPassword"
-          placeholder="Mot de passe"
-          class="w-full p-3 rounded bg-zinc-800 focus:ring-2 focus:ring-[#1d9bf0] outline-none pr-10"
-          required
-        />
-        <button
-          id="submitLogin"
-          class="w-full py-3 bg-[#1d9bf0] rounded-full font-semibold hover:bg-blue-700"
-        >
-          Se connecter
-        </button>
-        <button
-          id="forgotPasswordBtn"
-          class="underline hover:text-[#1d9bf0] font-semibold text-left p-0 mt-2"
-        >
-          Mot de passe oublié ?
-        </button>
+        <input type="password" id="loginPassword" placeholder="Mot de passe" class="w-full p-3 rounded bg-zinc-800 focus:ring-2 focus:ring-[#1d9bf0] outline-none pr-10" required/>
+        <button id="submitLogin" class="w-full py-3 bg-[#1d9bf0] rounded-full font-semibold hover:bg-blue-700">Se connecter</button>
+        <button id="forgotPasswordBtn" class="underline hover:text-[#1d9bf0] font-semibold text-left p-0 mt-2">Mot de passe oublié ?</button>
       </section>
 
       <p class="mt-3 text-sm text-center select-none">
         Vous n’avez pas de compte ?
-        <button
-          id="gotoRegisterFromLogin"
-          class="underline hover:text-[#1d9bf0] font-semibold cursor-pointer"
-        >
-          Inscrivez-vous
-        </button>
+        <button id="gotoRegisterFromLogin" class="underline hover:text-[#1d9bf0] font-semibold cursor-pointer">Inscrivez-vous</button>
       </p>
     </main>
   </div>

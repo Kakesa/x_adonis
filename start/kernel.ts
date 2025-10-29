@@ -49,5 +49,7 @@ export const middleware = router.named({
   auth: () => import('#middleware/auth_middleware'),
 })
 
-// 👇 Appelle la fonction de copie au lancement
+/**
+ * 👇 Appelle la fonction de copie au lancement
+ */
 await copyStaticAssets()

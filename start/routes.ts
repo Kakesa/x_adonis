@@ -2,17 +2,17 @@ import router from '@adonisjs/core/services/router'
 import AuthController from '#controllers/auth_controller'
 import { middleware } from '#start/kernel'
 
-// Page d’accueil
+// Page d’accueil publique
+router.get('/', async ({ view }) => view.render('pages/index')).as('index')
+
+// Page home protégée
 router
-  .get('/', async ({ view }) => {
-    return view.render('pages/home')
+  .get('/home', async ({ view }) => {
+    return view.render('pages/home') // Crée pages/home.edge
   })
+  .middleware([middleware.auth()])
   .as('home')
-router
-  .get('/index', async ({ view }) => {
-    return view.render('pages/index')
-  })
-  .as('index')
+
 // Actions Auth
 router.get('/auth/login', (ctx) => new AuthController().showLogin(ctx)).as('auth.login.show')
 router.post('/auth/login', (ctx) => new AuthController().login(ctx)).as('auth.login')
