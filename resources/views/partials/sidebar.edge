@@ -39,16 +39,17 @@
                     <img src="/resources/images/logo/logo-mini.png" alt="list" class="w-8 h-8 rounded-full" />
                     Premium
                 </a>
-                <a href="profil.html"
+                <a href="#"
                     class="flex items-center gap-3 px-3 py-2 rounded-full hover:bg-gray-700 transition">
                     <img src="/resources/images/logo/orga.png" alt="person" class="w-8 h-8 rounded-full" />
                     Verified Orgs
                 </a>
-                <a href="profil.html"
+                <a href="/profile"
                     class="flex items-center gap-3 px-3 py-2 rounded-full hover:bg-gray-700 transition">
                     <img src="/resources/images/logo/users.png" alt="person" class="w-8 h-8 rounded-full" />
                     Profil
                 </a>
+
                 <a href="#" class="flex items-center gap-3 px-3 py-2 rounded-full hover:bg-gray-700 transition">
                     <img src="/resources/images/logo/plus.png" alt="settings" class="w-8 h-8 rounded-full" />
                     More
@@ -75,7 +76,7 @@
                         <div class="flex flex-col">
                             <span id="desktop-sidebar-name" class="font-bold">{{ auth.user.name }}</span>
                             <span id="desktop-sidebar-username" class="text-gray-400 text-sm">
-                                {{ auth.user.username }}
+                                @ {{ auth.user.username }}
                             </span>
                         </div>
 

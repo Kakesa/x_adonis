@@ -1,6 +1,7 @@
 import router from '@adonisjs/core/services/router'
 import AuthController from '#controllers/auth_controller'
 import { middleware } from '#start/kernel'
+import ProfilesController from '#controllers/profiles_controller'
 
 // Page publique (login/register)
 router.get('/', async ({ view }) => view.render('pages/index')).as('index')
@@ -21,3 +22,6 @@ router.post('/logout', (ctx) => new AuthController().logout(ctx)).middleware([mi
 
 // Vérification email
 router.get('/verify-email/:token', (ctx) => new AuthController().verifyEmail(ctx)).as('auth.verify')
+
+// Profil utilisateur
+router.get('/profile', (ctx) => new ProfilesController().show(ctx)).middleware([middleware.auth()])
