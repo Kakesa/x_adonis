@@ -11,7 +11,7 @@ export default class AuthController {
   // Page login / home
   public async showLogin({ view, request }: HttpContext) {
     return view.render('pages/index', {
-      csrfToken: request.csrfToken, // ✅ avec ()
+      csrfToken: request.csrfToken, // ✅ il faut les parenthèses ici
     })
   }
 
@@ -97,51 +97,30 @@ export default class AuthController {
     return response.redirect('/')
   }
 
-  // Login sécurisé
+  // ✅ Login sécurisé (avec validation)
   public async login({ request, response, auth, session }: HttpContext) {
-    const { email, password } = request.only(['email', 'password'])
+    // Validation via le validator
+    const { email, password } = await request.validateUsing(loginValidator, {
+      data: request.body(),
+    })
 
     try {
-      await request.validateUsing(loginValidator, { data: { email, password } })
+      // Vérifie si l'utilisateur existe et le mot de passe est correct
+      const user = await User.verifyCredentials(email, password)
 
-      // Vérifier identifiants
-      let user
-      try {
-        user = await User.verifyCredentials(email, password)
-      } catch {
-        session.flash('error', 'Email ou mot de passe incorrect.')
-        if (request.accepts(['json'])) {
-          return response.status(400).json({ message: 'Email ou mot de passe incorrect.' })
-        }
-        return response.redirect('/')
-      }
-
-      // Vérifier activation
+      // Vérifie s’il a activé son compte
       if (!user.is_verified) {
         session.flash('error', 'Veuillez vérifier votre email avant de vous connecter.')
-        if (request.accepts(['json'])) {
-          return response
-            .status(400)
-            .json({ message: 'Veuillez vérifier votre email avant de vous connecter.' })
-        }
         return response.redirect('/')
       }
 
-      // Connexion
+      // Connecte l’utilisateur via la session
       await auth.use('web').login(user)
 
-      // Succès
-      if (request.accepts(['json'])) {
-        return response.status(200).json({ message: `Bienvenue ${user.name || user.email}` })
-      }
-
+      session.flash('success', `Bienvenue ${user.name || user.email}`)
       return response.redirect('/home')
-    } catch (error) {
-      console.error('❌ Erreur login:', error)
-      session.flash('error', 'Erreur pendant la connexion.')
-      if (request.accepts(['json'])) {
-        return response.status(400).json({ message: 'Erreur pendant la connexion.' })
-      }
+    } catch {
+      session.flash('error', 'Email ou mot de passe incorrect.')
       return response.redirect('/')
     }
   }
