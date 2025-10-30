@@ -61,9 +61,6 @@
                             src="https://pbs.twimg.com/profile_images/1715593779262252940/CLdbDNXL_400x400.jpg"
                             alt="profile" class="w-10 h-10 rounded-full" />
                         <div class="flex-1">
-                            {{-- <textarea id="new-tweet-content" rows="2" placeholder="What's happening?"
-                                class="w-full resize-none bg-black text-lg pb-2 px-1 placeholder-gray-500 text-white focus:outline-none">
-                            </textarea> --}}
                             <textarea
                                 id="new-tweet-content"
                                 name="content"
@@ -130,9 +127,117 @@
                         </div>
                     </div>
                 </section>
-                <div id="posts-container" class="p-4 space-y-6">
-                    <div class="text-center text-gray-500">Chargement des posts...</div>
+
+<!-- Conteneur pour la liste des tweets -->
+<div id="posts-container">
+    {{-- On vérifie s'il y a des tweets à afficher --}}
+    @if(tweets && tweets.length > 0)
+
+        {{-- On boucle sur chaque tweet passé par le contrôleur --}}
+        @each(tweet in tweets)
+        <!-- Début du composant Tweet -->
+        <article class="p-4 border-b border-gray-800 hover:bg-gray-900/50 transition-colors duration-200">
+            <div class="flex">
+                <!-- Colonne de l'avatar -->
+                <div class="flex-shrink-0 mr-3">
+                    <img 
+                        class="w-12 h-12 rounded-full" 
+                        src="{{ tweet.user.avatarUrl || 'https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png' }}" 
+                        alt="{{ tweet.user.name }} avatar"
+                    >
                 </div>
+
+                <!-- Colonne du contenu principal -->
+                <div class="flex-1">
+                    <!-- En-tête -->
+                    <div class="flex items-center justify-between">
+                        <div class="flex items-center space-x-1 whitespace-nowrap">
+                            <span class="font-bold text-gray-100 hover:underline cursor-pointer">{{ tweet.user.name }}</span>
+                            <!-- Icône de certification (optionnelle) -->
+                            <!-- <svg viewBox="0 0 22 22" class="h-5 w-5 text-blue-500 fill-current">...</svg> -->
+                            <span class="text-gray-500">@{{ tweet.user.username }}</span>
+                            <span class="text-gray-500">·</span>
+                            <span class="text-gray-500 hover:underline cursor-pointer">{{ tweet.createdAt.toRelative() }}</span>
+                        </div>
+                        <!-- Icône "Options" (trois points) -->
+                        <div class="text-gray-500 hover:text-blue-400 p-2 rounded-full hover:bg-blue-900/50 cursor-pointer">
+                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"></path></svg>
+                        </div>
+                    </div>
+
+                    <!-- Texte du Tweet -->
+                    <div class="mt-1 text-gray-100 whitespace-pre-wrap">
+                        <p>{{ tweet.content }}</p>
+                    </div>
+
+                    {{-- Section pour l'image (si votre tweet en a une) --}}
+                    {{-- @if(tweet.imageUrl)
+                    <div class="mt-3">
+                        <img class="rounded-xl border border-gray-700 w-full" src="{{ tweet.imageUrl }}" alt="Image du post">
+                    </div>
+                    @endif --}}
+
+                    <!-- Barre d'actions (les chiffres sont des exemples) -->
+                    <div class="flex items-center justify-between text-gray-500 mt-4">
+                        <!-- Actions principales (gauche) -->
+                        <div class="flex items-center -ml-2 space-x-1 md:space-x-4">
+                            <!-- Répondre -->
+                            <div class="flex items-center space-x-1 group cursor-pointer">
+                                <div class="p-2 rounded-full group-hover:bg-blue-900/50">
+                                    <svg class="h-5 w-5 group-hover:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 15c0-4.418-4.03-8-9-8s-9 3.582-9 8c0 1.444.403 2.802 1.11 3.975L3 21l3.525-1.855A9.92 9.92 0 0012 20c4.97 0 9-3.582 9-8z"></path></svg>
+                                </div>
+                                <span class="group-hover:text-blue-400 text-sm">4.7K</span>
+                            </div>
+
+                            <!-- Retweet -->
+                            <div class="flex items-center space-x-1 group cursor-pointer">
+                                <div class="p-2 rounded-full group-hover:bg-green-900/50">
+                                    <svg class="h-5 w-5 group-hover:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 12l-4-4m4 4l4-4m6 0v12m0-12l4 4m-4-4l-4 4"></path></svg>
+                                </div>
+                                <span class="group-hover:text-green-400 text-sm">8.9K</span>
+                            </div>
+
+                            <!-- Aimer -->
+                            <div class="flex items-center space-x-1 group cursor-pointer">
+                                <div class="p-2 rounded-full group-hover:bg-pink-900/50">
+                                    <svg class="h-5 w-5 group-hover:text-pink-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
+                                </div>
+                                <span class="group-hover:text-pink-400 text-sm">51K</span>
+                            </div>
+
+                            <!-- Vues -->
+                            <div class="flex items-center space-x-1 group cursor-pointer">
+                                <div class="p-2 rounded-full group-hover:bg-blue-900/50">
+                                    <svg class="h-5 w-5 group-hover:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8v5a2 2 0 01-2 2H8a2 2 0 01-2-2V8m10 0a2 2 0 00-2-2H8a2 2 0 00-2 2m8 11V5m-4 14V3"></path></svg>
+                                </div>
+                                <span class="group-hover:text-blue-400 text-sm">6.9M</span>
+                            </div>
+                        </div>
+
+                        <!-- Actions secondaires (droite) -->
+                        <div class="flex items-center space-x-0">
+                            <!-- Favori -->
+                            <div class="p-2 rounded-full hover:bg-blue-900/50 cursor-pointer">
+                                <svg class="h-5 w-5 text-gray-500 hover:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
+                            </div>
+                             <!-- Partager -->
+                            <div class="p-2 rounded-full hover:bg-blue-900/50 cursor-pointer">
+                                <svg class="h-5 w-5 text-gray-500 hover:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
+                            </div>
+                        </div>
+                    </div>
+                </div>
+            </div>
+        </article>
+        <!-- Fin du composant Tweet -->
+        @end
+    @else
+        {{-- Message si aucun tweet n'est trouvé --}}
+        <div class="text-center text-gray-500 p-8">
+            Aucun tweet à afficher pour le moment.
+        </div>
+    @end
+</div>
             </main>
 
             <aside class="hidden lg:block w-80 p-4 bg-black text-gray-100 flex-shrink-0">
