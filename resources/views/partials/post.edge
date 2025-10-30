@@ -1,11 +1,11 @@
 <!-- ========================= -->
-<!--  MODAL DE CRÉATION DE POST  (compact, non plein écran) -->
+<!--  MODAL DE CRÉATION DE TWEET  -->
 <!-- ========================= -->
 <div id="postModal"
     class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm flex items-start justify-center z-50 pt-10">
-    <!-- panel -> on toggle la classe "open" ici pour l'animer -->
-    <div id="postPanel" class="modal-panel bg-black text-white rounded-2xl w-full max-w-xl mx-auto p-5 border border-gray-700 shadow-lg
-              max-h-[60vh] overflow-y-auto flex flex-col justify-start">
+    <div id="postPanel"
+        class="modal-panel bg-black text-white rounded-2xl w-full max-w-xl mx-auto p-5 border border-gray-700 shadow-lg max-h-[70vh] overflow-y-auto flex flex-col justify-start">
+
         <!-- Header -->
         <div class="flex justify-between items-center mb-3 border-b border-gray-800 pb-2">
             <button id="closePostModal" class="text-gray-400 hover:text-white text-2xl font-light">&times;</button>
@@ -14,93 +14,49 @@
 
         <!-- Contenu principal -->
         <div class="flex gap-3">
-            <!-- Avatar (Edge/Adonis) -->
             @if(auth.user)
             <img src="{{ auth.user.profile_picture }}" alt="avatar" class="w-10 h-10 rounded-full" />
             @else
-            <div
-                class="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center text-white font-semibold text-lg">
+            <div class="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center text-white font-semibold text-lg">
                 {{ user.name.split(' ')[0].charAt(0).toUpperCase() }}
             </div>
             @endif
 
             <div class="flex-1">
-                <form id="postForm" action="/posts/create" method="POST" class="flex flex-col">
+                <form id="postForm" action="/tweets" method="POST" enctype="multipart/form-data" class="flex flex-col">
                     <input type="hidden" name="_csrf" value="{{ csrfToken }}">
-
                     <textarea id="modalTweetContent" name="content" rows="3" placeholder="What's happening?"
                         class="w-full resize-none bg-transparent text-gray-200 placeholder-gray-500 text-lg focus:outline-none min-h-[80px]"></textarea>
 
-                    <div
-                        class="flex items-center gap-1 text-blue-500 text-sm cursor-pointer w-fit mb-2 hover:underline">
+                    <!-- Inputs médias -->
+                    <input type="file" name="media" id="tweetMedia" multiple class="hidden">
+                    <input type="hidden" id="pollData" name="poll_data">
+
+                    <div class="flex items-center gap-1 text-blue-500 text-sm cursor-pointer w-fit mb-2 hover:underline">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12 12c2.21 0 4-1.79 4-4S14.21 4 12 4 8 5.79 8 8s1.79 4 4 4zm0 2c-2.67 
-                0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                            <path d="M12 12c2.21 0 4-1.79 4-4S14.21 4 12 4 8 5.79 8 8s1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
                         </svg>
                         <span>Everyone can reply</span>
                     </div>
 
                     <div class="border-b border-gray-800 mb-3"></div>
 
+                    <!-- Actions -->
                     <div class="flex items-center justify-between">
                         <div class="flex gap-1 text-blue-500">
-                            <!-- Icône Média -->
-                            <button aria-label="Add image"
-                                class="p-2 rounded-full hover:bg-blue-900/50 hover:text-blue-400">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                                    stroke="currentColor">
+                            <!-- Image -->
+                            <button type="button" aria-label="Add image" class="p-2 rounded-full hover:bg-blue-900/50 hover:text-blue-400">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                 </svg>
                             </button>
-                            <!-- Icône GIF -->
-                            <button aria-label="Add GIF"
-                                class="p-2 rounded-full hover:bg-blue-900/50 hover:text-blue-400">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                                    stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M4 8h16M4 16h16M8 4v4m8-4v4" />
-                                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2" stroke-width="2" />
-                                </svg>
-                            </button>
-                            <!-- Icône Sondage -->
-                            <button aria-label="Add poll"
-                                class="p-2 rounded-full hover:bg-blue-900/50 hover:text-blue-400">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                                    stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                </svg>
-                            </button>
-                            <!-- Icône Emoji -->
-                            <button aria-label="Add emoji"
-                                class="p-2 rounded-full hover:bg-blue-900/50 hover:text-blue-400">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                                    stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
-                                </svg>
-                            </button>
-                            <!-- Icône Planifier -->
-                            <button aria-label="Schedule"
-                                class="p-2 rounded-full hover:bg-blue-900/50 hover:text-blue-400">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                                    stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
-                                </svg>
-                            </button>
-                            <!-- Icône Localisation -->
-                            <button aria-label="Add location"
-                                class="p-2 rounded-full hover:bg-blue-900/50 hover:text-blue-400 opacity-50 cursor-not-allowed">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
-                                    stroke="currentColor">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
-                                </svg>
-                            </button>
+                            <!-- GIF -->
+                            <button type="button" id="addGifBtn" aria-label="Add GIF" class="p-2 rounded-full hover:bg-blue-900/50 hover:text-blue-400">GIF</button>
+                            <!-- Poll -->
+                            <button type="button" id="addPollBtn" aria-label="Add poll" class="p-2 rounded-full hover:bg-blue-900/50 hover:text-blue-400">Poll</button>
+                            <!-- Emoji -->
+                            <button type="button" id="addEmojiBtn" aria-label="Add emoji" class="p-2 rounded-full hover:bg-blue-900/50 hover:text-blue-400">😊</button>
                         </div>
 
                         <button id="postFromModal" type="submit"
@@ -109,105 +65,107 @@
                             Post
                         </button>
                     </div>
+
+                    <!-- Poll dynamique -->
+                    <div id="pollContainer" class="mt-3 hidden flex flex-col gap-2 text-gray-300">
+                        <div class="flex gap-2">
+                            <input type="text" placeholder="Option 1" class="flex-1 bg-gray-800 rounded px-2 py-1">
+                            <input type="text" placeholder="Option 2" class="flex-1 bg-gray-800 rounded px-2 py-1">
+                        </div>
+                        <button type="button" id="addPollOption" class="text-blue-400 text-sm hover:underline self-start">Add option</button>
+                    </div>
+
+                    <!-- Emoji picker -->
+                    <div id="emojiPicker" class="mt-2 hidden flex flex-wrap gap-1 max-h-32 overflow-y-auto border-t border-gray-800 pt-2"></div>
                 </form>
             </div>
         </div>
     </div>
 </div>
 
-<!-- ====== CSS local (animation simple / safe) ====== -->
+<!-- CSS -->
 <style>
-    /* panel initial state */
-    .modal-panel {
-        opacity: 0;
-        transform: translateY(12px) scale(0.99);
-        transition: opacity .18s ease-out, transform .22s cubic-bezier(.2, .8, .2, 1);
-    }
-
-    /* when opened */
-    .modal-panel.open {
-        opacity: 1;
-        transform: translateY(0) scale(1);
-    }
+.modal-panel {
+    opacity: 0;
+    transform: translateY(12px) scale(0.99);
+    transition: opacity .18s ease-out, transform .22s cubic-bezier(.2,.8,.2,1);
+}
+.modal-panel.open { opacity: 1; transform: translateY(0) scale(1); }
+#emojiPicker span { cursor: pointer; font-size: 1.2rem; }
 </style>
 
-<!-- ====== JS (robuste) ====== -->
+<!-- JS -->
 <script>
-    document.addEventListener("DOMContentLoaded", () => {
-        const modal = document.getElementById("postModal");
-        const panel = document.getElementById("postPanel");
-        const openBtn = document.getElementById("openPostModal");
-        const closeBtn = document.getElementById("closePostModal");
-        const textarea = document.getElementById("modalTweetContent");
-        const postBtn = document.getElementById("postFromModal");
-        const form = document.getElementById("postForm") || modal.querySelector("form");
+document.addEventListener("DOMContentLoaded", () => {
+    const modal = document.getElementById("postModal");
+    const panel = document.getElementById("postPanel");
+    const openBtn = document.getElementById("openPostModal");
+    const closeBtn = document.getElementById("closePostModal");
+    const textarea = document.getElementById("modalTweetContent");
+    const postBtn = document.getElementById("postFromModal");
+    const mediaInput = document.getElementById("tweetMedia");
+    const form = document.getElementById("postForm");
+    const pollContainer = document.getElementById("pollContainer");
+    const addPollBtn = document.getElementById("addPollBtn");
+    const addPollOption = document.getElementById("addPollOption");
+    const emojiPicker = document.getElementById("emojiPicker");
+    const addEmojiBtn = document.getElementById("addEmojiBtn");
+    const pollDataInput = document.getElementById("pollData");
 
-        // sécurité : vérifie l'existence des éléments essentiels
-        if (!modal) return console.warn("Modal container #postModal introuvable.");
-        if (!panel) return console.warn("Modal panel #postPanel introuvable.");
-        if (!openBtn) return console.warn("Bouton d'ouverture #openPostModal introuvable.");
-        if (!closeBtn) return console.warn("Bouton de fermeture #closePostModal introuvable.");
-        if (!textarea) return console.warn("Textarea #modalTweetContent introuvable.");
-        if (!postBtn) return console.warn("Bouton #postFromModal introuvable.");
+    if (!modal || !panel || !textarea || !postBtn) return;
 
-        // ouvre le modal
-        function openModal() {
-            modal.classList.remove("hidden");
-            // small tick to allow CSS transitions
-            requestAnimationFrame(() => panel.classList.add("open"));
-            setTimeout(() => textarea.focus(), 120);
-            // disable background scroll
-            document.documentElement.style.overflow = "hidden";
-            document.body.style.overflow = "hidden";
-        }
+    // -----------------------
+    // Modal open/close
+    // -----------------------
+    function openModal() { modal.classList.remove("hidden"); requestAnimationFrame(()=>panel.classList.add("open")); setTimeout(()=>textarea.focus(),120); document.documentElement.style.overflow="hidden"; document.body.style.overflow="hidden"; }
+    function closeModal() { panel.classList.remove("open"); setTimeout(()=>{ modal.classList.add("hidden"); form.reset(); textarea.value=""; postBtn.disabled=true; pollContainer.classList.add("hidden"); emojiPicker.classList.add("hidden"); document.documentElement.style.overflow=""; document.body.style.overflow=""; },220); }
 
-        // ferme le modal
-        function closeModal() {
-            // remove open state (animate out)
-            panel.classList.remove("open");
-            // after animation end, hide backdrop
-            setTimeout(() => {
-                modal.classList.add("hidden");
-                // reset form + inputs
-                if (form) form.reset();
-                textarea.value = "";
-                postBtn.disabled = true;
-                // re-enable background scroll
-                document.documentElement.style.overflow = "";
-                document.body.style.overflow = "";
-            }, 220); // should match transition duration
-        }
+    if(openBtn) openBtn.addEventListener("click", e=>{ e.preventDefault(); openModal(); });
+    if(closeBtn) closeBtn.addEventListener("click", e=>{ e.preventDefault(); closeModal(); });
+    modal.addEventListener("click", e=>{ if(e.target===modal) closeModal(); });
+    document.addEventListener("keydown", e=>{ if(e.key==="Escape"&&!modal.classList.contains("hidden")) closeModal(); });
 
-        openBtn.addEventListener("click", (e) => {
-            e.preventDefault();
-            openModal();
-        });
+    // -----------------------
+    // Enable/disable post button
+    // -----------------------
+    function toggleSubmit() { postBtn.disabled = textarea.value.trim()==="" && mediaInput.files.length===0 && pollContainer.querySelectorAll("input[type=text]").length===0; }
+    textarea.addEventListener("input", toggleSubmit);
+    mediaInput.addEventListener("change", toggleSubmit);
 
-        closeBtn.addEventListener("click", (e) => {
-            e.preventDefault();
-            closeModal();
-        });
+    // -----------------------
+    // Media button
+    // -----------------------
+    const imgBtn = modal.querySelector('[aria-label="Add image"]');
+    if(imgBtn) imgBtn.addEventListener("click", ()=>mediaInput.click());
 
-        // clic sur le backdrop (fermer)
-        modal.addEventListener("click", (e) => {
-            if (e.target === modal) closeModal();
-        });
-
-        // touche Esc
-        document.addEventListener("keydown", (e) => {
-            if (e.key === "Escape" && !modal.classList.contains("hidden")) closeModal();
-        });
-
-        // activation du bouton Post selon contenu
-        textarea.addEventListener("input", () => {
-            postBtn.disabled = textarea.value.trim() === "";
-        });
-
-        // si submit (soumission normale), ferme après léger délai
-        if (form) {
-            form.addEventListener("submit", () => {
-                setTimeout(() => closeModal(), 200);
-            });
-        }
+    // -----------------------
+    // Poll
+    // -----------------------
+    if(addPollBtn) addPollBtn.addEventListener("click", ()=>{ pollContainer.classList.toggle("hidden"); toggleSubmit(); });
+    if(addPollOption) addPollOption.addEventListener("click", ()=>{ 
+        const div = document.createElement("div"); 
+        div.className="flex gap-2 mt-1"; 
+        div.innerHTML=`<input type="text" placeholder="Option" class="flex-1 bg-gray-800 rounded px-2 py-1">`;
+        pollContainer.appendChild(div); 
     });
+
+    // -----------------------
+    // Emoji picker
+    // -----------------------
+    const emojis = ["😀","😂","😍","😎","😭","🤔","👍","🎉","💯"];
+    if(addEmojiBtn) addEmojiBtn.addEventListener("click", ()=>{
+        emojiPicker.innerHTML="";
+        emojis.forEach(e=>{ const span=document.createElement("span"); span.textContent=e; span.addEventListener("click", ()=>{ textarea.value+=e; toggleSubmit(); }); emojiPicker.appendChild(span); });
+        emojiPicker.classList.toggle("hidden");
+    });
+
+    // -----------------------
+    // Submit form
+    // -----------------------
+    if(form) form.addEventListener("submit", ()=>{
+        const pollOptions = Array.from(pollContainer.querySelectorAll("input[type=text]")).map(i=>i.value).filter(Boolean);
+        pollDataInput.value = JSON.stringify(pollOptions);
+        setTimeout(()=>closeModal(),200);
+    });
+});
 </script>

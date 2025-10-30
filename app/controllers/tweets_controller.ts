@@ -10,7 +10,7 @@ export default class TweetsController {
   /**
    * Lister tous les tweets
    */
-  public async index({ response }: HttpContext) {
+  async index({ response }: HttpContext) {
     const tweets = await Tweet.query()
       .preload('user')
       .preload('comments', (q) => q.preload('user'))
@@ -24,7 +24,7 @@ export default class TweetsController {
   /**
    * Détail d’un tweet
    */
-  public async show({ params, response }: HttpContext) {
+  async show({ params, response }: HttpContext) {
     try {
       const tweet = await Tweet.query()
         .where('id', params.id)
@@ -43,7 +43,7 @@ export default class TweetsController {
   /**
    * Créer un tweet avec médias
    */
-  public async store({ request, auth, response }: HttpContext) {
+  async store({ request, auth, response }: HttpContext) {
     const user = auth.user!
     const content = request.input('content')
     const visibility = request.input('visibility') || 'public'
@@ -80,13 +80,13 @@ export default class TweetsController {
       })
     }
 
-    return response.created({ tweet })
+    return response.redirect('/home')
   }
 
   /**
    * Mettre à jour un tweet et ajouter de nouveaux médias
    */
-  public async update({ params, request, auth, response }: HttpContext) {
+  async update({ params, request, auth, response }: HttpContext) {
     const tweet = await Tweet.findOrFail(params.id)
     if (tweet.user_id !== auth.user?.id)
       return response.unauthorized({ message: 'Action non autorisée' })
@@ -119,7 +119,7 @@ export default class TweetsController {
   /**
    * Supprimer un tweet et ses médias
    */
-  public async destroy({ params, auth, response }: HttpContext) {
+  async destroy({ params, auth, response }: HttpContext) {
     const tweet = await Tweet.findOrFail(params.id)
     if (tweet.user_id !== auth.user?.id)
       return response.unauthorized({ message: 'Action non autorisée' })
