@@ -175,7 +175,7 @@
               </svg>
               @endif
 
-              <span class="text-gray-400 text-sm ml-1">@{{ tweet.user?.username }}</span>
+              <span class="text-gray-400 text-sm ml-1">{{ `@${tweet.user?.username}` }}</span>
               <span class="text-gray-400 text-sm">• {{ tweet.created_at?.toRelative() }}</span>
             </div>
           </div>

@@ -71,7 +71,7 @@
             <div class="flex flex-col">
                 <span id="desktop-sidebar-name" class="font-bold">{{ auth.user.name }}</span>
                 <span id="desktop-sidebar-username" class="text-gray-400 text-sm">
-                    @ {{ auth.user.username }}
+                    {{ `@${auth.user.username}` }}
                 </span>
             </div>
 
