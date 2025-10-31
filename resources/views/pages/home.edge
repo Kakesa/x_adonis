@@ -29,7 +29,7 @@
 
     <div class="flex max-w-6xl mx-auto min-h-screen">
         {{-- Sidebar --}}
-         @include('partials/sidebar')
+        @include('partials/sidebar')
 
 
 
@@ -61,18 +61,16 @@
                             src="https://pbs.twimg.com/profile_images/1715593779262252940/CLdbDNXL_400x400.jpg"
                             alt="profile" class="w-10 h-10 rounded-full" />
                         <div class="flex-1">
-                            <textarea
-                                id="new-tweet-content"
-                                name="content"
-                                rows="3"
-                                placeholder="What's happening?"
-                                class="w-full resize-none bg-transparent text-gray-200 placeholder-gray-500 text-lg focus:outline-none sm:text-base sm:min-h-[100px]"
-                            ></textarea>
-                            
+                            <textarea id="new-tweet-content" name="content" rows="3" placeholder="What's happening?"
+                                class="w-full resize-none bg-transparent text-gray-200 placeholder-gray-500 text-lg focus:outline-none sm:text-base sm:min-h-[100px]"></textarea>
+
                             <!-- Choix de visibilité -->
-                            <div class="flex items-center gap-1 text-blue-500 text-sm cursor-pointer w-fit mb-2 hover:underline">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-                                <path d="M12 12c2.21 0 4-1.79 4-4S14.21 4 12 4 8 5.79 8 8s1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                            <div
+                                class="flex items-center gap-1 text-blue-500 text-sm cursor-pointer w-fit mb-2 hover:underline">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="currentColor"
+                                    viewBox="0 0 24 24">
+                                    <path
+                                        d="M12 12c2.21 0 4-1.79 4-4S14.21 4 12 4 8 5.79 8 8s1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
                                 </svg>
                                 <span>Everyone can reply</span>
                             </div>
@@ -83,41 +81,60 @@
                             <div class="flex items-center justify-between mt-1">
                                 <div class="flex gap-1 text-blue-500">
                                     <!-- Icône Média -->
-                                    <button aria-label="Add image" class="p-2 rounded-full hover:bg-blue-900/50 hover:text-blue-400">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    <button aria-label="Add image"
+                                        class="p-2 rounded-full hover:bg-blue-900/50 hover:text-blue-400">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                            viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                         </svg>
                                     </button>
                                     <!-- Icône GIF -->
-                                    <button aria-label="Add GIF" class="p-2 rounded-full hover:bg-blue-900/50 hover:text-blue-400">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 8h16M4 16h16M8 4v4m8-4v4" />
+                                    <button aria-label="Add GIF"
+                                        class="p-2 rounded-full hover:bg-blue-900/50 hover:text-blue-400">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                            viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M4 8h16M4 16h16M8 4v4m8-4v4" />
                                             <rect x="3" y="3" width="18" height="18" rx="2" ry="2" stroke-width="2" />
                                         </svg>
                                     </button>
                                     <!-- Icône Sondage -->
-                                    <button aria-label="Add poll" class="p-2 rounded-full hover:bg-blue-900/50 hover:text-blue-400">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    <button aria-label="Add poll"
+                                        class="p-2 rounded-full hover:bg-blue-900/50 hover:text-blue-400">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                            viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                         </svg>
                                     </button>
                                     <!-- Icône Emoji -->
-                                    <button aria-label="Add emoji" class="p-2 rounded-full hover:bg-blue-900/50 hover:text-blue-400">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
+                                    <button aria-label="Add emoji"
+                                        class="p-2 rounded-full hover:bg-blue-900/50 hover:text-blue-400">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                            viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M14.828 14.828a4 4 0 01-5.656 0M9 10h.01M15 10h.01M21 12a9 9 0 11-18 0 9 9 0 0118 0z" />
                                         </svg>
                                     </button>
                                     <!-- Icône Planifier -->
-                                    <button aria-label="Schedule" class="p-2 rounded-full hover:bg-blue-900/50 hover:text-blue-400">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                    <button aria-label="Schedule"
+                                        class="p-2 rounded-full hover:bg-blue-900/50 hover:text-blue-400">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                            viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                         </svg>
                                     </button>
                                     <!-- Icône Localisation -->
-                                    <button aria-label="Add location" class="p-2 rounded-full hover:bg-blue-900/50 hover:text-blue-400 opacity-50 cursor-not-allowed">
-                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                    <button aria-label="Add location"
+                                        class="p-2 rounded-full hover:bg-blue-900/50 hover:text-blue-400 opacity-50 cursor-not-allowed">
+                                        <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none"
+                                            viewBox="0 0 24 24" stroke="currentColor">
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                                d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
                                         </svg>
                                     </button>
                                 </div>
@@ -127,117 +144,117 @@
                         </div>
                     </div>
                 </section>
+              {{-- Posts section --}}
+                <div id="posts-container" class="p-4 space-y-6 bg-black min-h-screen text-white">
+                    <div class="bg-black border border-gray-700 rounded-xl p-4 shadow-lg max-w-lg mx-auto">
 
-<!-- Conteneur pour la liste des tweets -->
-<div id="posts-container">
-    {{-- On vérifie s'il y a des tweets à afficher --}}
-    @if(tweets && tweets.length > 0)
+                        <div class="flex items-start justify-between space-x-3 mb-4">
+                            <div class="flex items-start space-x-3">
+                                <div class="flex-shrink-0 relative">
+                                    <img src="https://pbs.twimg.com/profile_images/1792671048682977280/8t4fK6-G_400x400.jpg"
+                                        alt="Photo de profil Fabrizio Romano"
+                                        class="w-10 h-10 rounded-full object-cover">
+                                    <span
+                                        class="absolute bottom-0 right-0 block h-3 w-3 rounded-full ring-2 ring-black bg-blue-500 border-2 border-black">
+                                    </span>
+                                </div>
+                                <div class="flex-grow">
+                                    <div class="flex items-center space-x-1">
+                                        <span class="font-bold text-white">Fabrizio Romano</span>
+                                        <svg class="w-4 h-4 text-blue-500 fill-current" viewBox="0 0 24 24"
+                                            aria-label="Compte vérifié">
+                                            <path
+                                                d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z" />
+                                        </svg>
+                                    </div>
+                                    <div class="text-sm text-gray-400 flex items-center space-x-1">
+                                        <span>@FabrizioRomano</span>
+                                        <span class="text-xs">•</span>
+                                        <span>10h</span>
+                                    </div>
+                                </div>
+                            </div>
 
-        {{-- On boucle sur chaque tweet passé par le contrôleur --}}
-        @each(tweet in tweets)
-        <!-- Début du composant Tweet -->
-        <article class="p-4 border-b border-gray-800 hover:bg-gray-900/50 transition-colors duration-200">
-            <div class="flex">
-                <!-- Colonne de l'avatar -->
-                <div class="flex-shrink-0 mr-3">
-                    <img 
-                        class="w-12 h-12 rounded-full" 
-                        src="{{ tweet.user.avatarUrl || 'https://abs.twimg.com/sticky/default_profile_images/default_profile_400x400.png' }}" 
-                        alt="{{ tweet.user.name }} avatar"
-                    >
+                            <div class="flex-shrink-0 text-gray-400 hover:text-white cursor-pointer">
+                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24" aria-hidden="true">
+                                    <path
+                                        d="M12 7c.7 0 1.3-.6 1.3-1.3S12.7 4.4 12 4.4s-1.3.6-1.3 1.3.6 1.3 1.3 1.3zm0 3c-.7 0-1.3.6-1.3 1.3s.6 1.3 1.3 1.3 1.3-.6 1.3-1.3-.6-1.3-1.3-1.3zm0 6c-.7 0-1.3.6-1.3 1.3s.6 1.3 1.3 1.3 1.3-.6 1.3-1.3-.6-1.3-1.3-1.3z">
+                                    </path>
+                                </svg>
+                            </div>
+                        </div>
+
+                        <div class="mb-3">
+                            <p class="text-white leading-relaxed">
+                                Arne Slot: "I saw Manchester City's starting eleven and they didn't have one starter
+                                from the weekend but it felt like their best team".
+                            </p>
+                            <p class="text-white leading-relaxed mt-2">
+                                "That is a bit of an insight. Chelsea can bring Estevao in... then after I made two
+                                substitutions tonight, we had <strong class="font-bold">six teenagers</strong>".
+                            </p>
+                        </div>
+
+                        <div class="rounded-xl overflow-hidden mb-3">
+                            <img src="https://i.imgur.com/vH1rB3X.jpg" alt="Arne Slot se couvrant la bouche sur le banc"
+                                class="w-full h-auto object-cover">
+                        </div>
+
+                        <div class="flex justify-between items-center text-gray-400 text-sm">
+
+                            <div class="flex items-center space-x-1 hover:text-blue-400 cursor-pointer">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M8 12h.01M12 12h.01M16 12h.01M21 12c0 4.418-4.03 8-9 8a9.864 9.864 0 01-4.14-.94C4.162 18.57 2 22 2 22s2-4.43 2-6c0-4.418 4.03-8 9-8s9 3.582 9 8z">
+                                    </path>
+                                </svg>
+                                <span>4.7K</span>
+                            </div>
+
+                            <div class="flex items-center space-x-1 hover:text-green-400 cursor-pointer">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M7 16V9M17 16V9M5 9l7-7 7 7M5 16l7 7 7-7"></path>
+                                </svg>
+                                <span>8.9K</span>
+                            </div>
+
+                            <div class="flex items-center space-x-1 hover:text-red-400 cursor-pointer">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z">
+                                    </path>
+                                </svg>
+                                <span>51K</span>
+                            </div>
+
+                            <div class="flex items-center space-x-1 hover:text-blue-400 cursor-pointer">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"></path>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z">
+                                    </path>
+                                </svg>
+                                <span>6.9M</span>
+                            </div>
+
+                            <div class="flex items-center space-x-1 hover:text-blue-400 cursor-pointer">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24"
+                                    xmlns="http://www.w3.org/2000/svg">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path>
+                                </svg>
+                            </div>
+                        </div>
+                    </div>
+                    <div class="text-center text-gray-500 hidden">Chargement des posts...</div>
                 </div>
 
-                <!-- Colonne du contenu principal -->
-                <div class="flex-1">
-                    <!-- En-tête -->
-                    <div class="flex items-center justify-between">
-                        <div class="flex items-center space-x-1 whitespace-nowrap">
-                            <span class="font-bold text-gray-100 hover:underline cursor-pointer">{{ tweet.user.name }}</span>
-                            <!-- Icône de certification (optionnelle) -->
-                            <!-- <svg viewBox="0 0 22 22" class="h-5 w-5 text-blue-500 fill-current">...</svg> -->
-                            <span class="text-gray-500">@{{ tweet.user.username }}</span>
-                            <span class="text-gray-500">·</span>
-                            <span class="text-gray-500 hover:underline cursor-pointer">{{ tweet.createdAt.toRelative() }}</span>
-                        </div>
-                        <!-- Icône "Options" (trois points) -->
-                        <div class="text-gray-500 hover:text-blue-400 p-2 rounded-full hover:bg-blue-900/50 cursor-pointer">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="currentColor" viewBox="0 0 24 24"><path d="M12 8c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm0 2c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2zm0 6c-1.1 0-2 .9-2 2s.9 2 2 2 2-.9 2-2-.9-2-2-2z"></path></svg>
-                        </div>
-                    </div>
-
-                    <!-- Texte du Tweet -->
-                    <div class="mt-1 text-gray-100 whitespace-pre-wrap">
-                        <p>{{ tweet.content }}</p>
-                    </div>
-
-                    {{-- Section pour l'image (si votre tweet en a une) --}}
-                    {{-- @if(tweet.imageUrl)
-                    <div class="mt-3">
-                        <img class="rounded-xl border border-gray-700 w-full" src="{{ tweet.imageUrl }}" alt="Image du post">
-                    </div>
-                    @endif --}}
-
-                    <!-- Barre d'actions (les chiffres sont des exemples) -->
-                    <div class="flex items-center justify-between text-gray-500 mt-4">
-                        <!-- Actions principales (gauche) -->
-                        <div class="flex items-center -ml-2 space-x-1 md:space-x-4">
-                            <!-- Répondre -->
-                            <div class="flex items-center space-x-1 group cursor-pointer">
-                                <div class="p-2 rounded-full group-hover:bg-blue-900/50">
-                                    <svg class="h-5 w-5 group-hover:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 15c0-4.418-4.03-8-9-8s-9 3.582-9 8c0 1.444.403 2.802 1.11 3.975L3 21l3.525-1.855A9.92 9.92 0 0012 20c4.97 0 9-3.582 9-8z"></path></svg>
-                                </div>
-                                <span class="group-hover:text-blue-400 text-sm">4.7K</span>
-                            </div>
-
-                            <!-- Retweet -->
-                            <div class="flex items-center space-x-1 group cursor-pointer">
-                                <div class="p-2 rounded-full group-hover:bg-green-900/50">
-                                    <svg class="h-5 w-5 group-hover:text-green-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16V4m0 12l-4-4m4 4l4-4m6 0v12m0-12l4 4m-4-4l-4 4"></path></svg>
-                                </div>
-                                <span class="group-hover:text-green-400 text-sm">8.9K</span>
-                            </div>
-
-                            <!-- Aimer -->
-                            <div class="flex items-center space-x-1 group cursor-pointer">
-                                <div class="p-2 rounded-full group-hover:bg-pink-900/50">
-                                    <svg class="h-5 w-5 group-hover:text-pink-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"></path></svg>
-                                </div>
-                                <span class="group-hover:text-pink-400 text-sm">51K</span>
-                            </div>
-
-                            <!-- Vues -->
-                            <div class="flex items-center space-x-1 group cursor-pointer">
-                                <div class="p-2 rounded-full group-hover:bg-blue-900/50">
-                                    <svg class="h-5 w-5 group-hover:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M16 8v5a2 2 0 01-2 2H8a2 2 0 01-2-2V8m10 0a2 2 0 00-2-2H8a2 2 0 00-2 2m8 11V5m-4 14V3"></path></svg>
-                                </div>
-                                <span class="group-hover:text-blue-400 text-sm">6.9M</span>
-                            </div>
-                        </div>
-
-                        <!-- Actions secondaires (droite) -->
-                        <div class="flex items-center space-x-0">
-                            <!-- Favori -->
-                            <div class="p-2 rounded-full hover:bg-blue-900/50 cursor-pointer">
-                                <svg class="h-5 w-5 text-gray-500 hover:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M5 5a2 2 0 012-2h10a2 2 0 012 2v16l-7-3.5L5 21V5z"></path></svg>
-                            </div>
-                             <!-- Partager -->
-                            <div class="p-2 rounded-full hover:bg-blue-900/50 cursor-pointer">
-                                <svg class="h-5 w-5 text-gray-500 hover:text-blue-400" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M4 16v1a3 3 0 003 3h10a3 3 0 003-3v-1m-4-8l-4-4m0 0L8 8m4-4v12"></path></svg>
-                            </div>
-                        </div>
-                    </div>
-                </div>
-            </div>
-        </article>
-        <!-- Fin du composant Tweet -->
-        @end
-    @else
-        {{-- Message si aucun tweet n'est trouvé --}}
-        <div class="text-center text-gray-500 p-8">
-            Aucun tweet à afficher pour le moment.
-        </div>
-    @end
-</div>
             </main>
 
             <aside class="hidden lg:block w-80 p-4 bg-black text-gray-100 flex-shrink-0">
