@@ -5,10 +5,11 @@ import Tweet from '#models/tweet'
 import Media from '#models/media'
 import { v4 as uuidv4 } from 'uuid'
 import app from '@adonisjs/core/services/app'
+import { DateTime } from 'luxon'
 
 export default class TweetsController {
   /**
-   * Lister tous les tweets
+   * Lister tous les tweets avec timeAgo
    */
   async showTweets({ view }: HttpContext) {
     const tweets = await Tweet.query()
@@ -17,11 +18,27 @@ export default class TweetsController {
       .preload('likes')
       .preload('media')
 
-    return view.render('pages/home', { tweets })
+    const tweetsWithTimeAgo = tweets.map((tweet) => {
+      let timeAgo = ''
+      if (tweet.createdAt) {
+        const dt =
+          tweet.createdAt instanceof Date
+            ? DateTime.fromJSDate(tweet.createdAt)
+            : typeof tweet.createdAt === 'string'
+              ? DateTime.fromISO(tweet.createdAt)
+              : tweet.createdAt
+
+        timeAgo = dt.toRelative() || ''
+      }
+
+      return { ...tweet.serialize(), timeAgo }
+    })
+
+    return view.render('pages/home', { tweets: tweetsWithTimeAgo })
   }
 
   /**
-   * Détail d’un tweet
+   * Détail d’un tweet avec timeAgo
    */
   async show({ params, response }: HttpContext) {
     try {
@@ -33,7 +50,19 @@ export default class TweetsController {
         .preload('media')
         .firstOrFail()
 
-      return response.ok({ tweet })
+      const dt =
+        tweet.createdAt instanceof Date
+          ? DateTime.fromJSDate(tweet.createdAt)
+          : typeof tweet.createdAt === 'string'
+            ? DateTime.fromISO(tweet.createdAt)
+            : tweet.createdAt
+
+      const tweetWithTimeAgo = {
+        ...tweet.toJSON(),
+        timeAgo: dt.toRelative() || '',
+      }
+
+      return response.ok({ tweet: tweetWithTimeAgo })
     } catch {
       return response.notFound({ message: 'Tweet non trouvé' })
     }
@@ -60,7 +89,6 @@ export default class TweetsController {
       isPinned: false,
     })
 
-    // Gestion des médias uploadés
     const files = request.files('media', {
       size: '100mb',
       extnames: ['jpg', 'jpeg', 'png', 'gif', 'mp4', 'mov', 'avi', 'mkv', 'webm'],
@@ -95,7 +123,6 @@ export default class TweetsController {
     tweet.merge(request.only(['content', 'visibility', 'isPinned']))
     await tweet.save()
 
-    // Ajout de nouveaux fichiers
     const files = request.files('media', {
       size: '100mb',
       extnames: ['jpg', 'jpeg', 'png', 'gif', 'mp4', 'mov', 'avi', 'mkv', 'webm'],
@@ -127,7 +154,6 @@ export default class TweetsController {
       return response.unauthorized({ message: 'Action non autorisée' })
     }
 
-    // Supprimer les médias associés
     const medias = await Media.query().where('tweetId', tweet.id)
     for (const media of medias) {
       const filePath = path.join(app.publicPath(), media.url.replace(/^\//, ''))

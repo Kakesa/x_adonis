@@ -144,6 +144,7 @@
                         </div>
                     </div>
                 </section>
+
                {{-- Posts section --}}
                 <div id="posts-container" class="p-4 space-y-6 bg-black min-h-screen text-white">
                     @each(tweet in tweets)
@@ -171,6 +172,7 @@
                                     @endif
 
                                     <span class="text-gray-400">{{ `@${tweet.user?.username}` }}</span>
+                                    <span class="text-gray-500">{{ tweet.timeAgo }}</span>
                                 </div>
 
                                 {{-- Contenu du tweet --}}
@@ -245,8 +247,6 @@
 
                     <div class="text-center text-gray-500 hidden">Chargement des posts...</div>
                 </div>
-
-
 
             </main>
 
