@@ -10,15 +10,14 @@ export default class TweetsController {
   /**
    * Lister tous les tweets
    */
-  async index({ response }: HttpContext) {
+  async showTweets({ view }: HttpContext) {
     const tweets = await Tweet.query()
       .preload('user')
       .preload('comments', (q) => q.preload('user'))
       .preload('likes')
       .preload('media')
-      .orderBy('created_at', 'desc')
 
-    return response.ok({ tweets })
+    return view.render('pages/home', { tweets })
   }
 
   /**
@@ -47,20 +46,21 @@ export default class TweetsController {
     const user = auth.user!
     const content = request.input('content')
     const visibility = request.input('visibility') || 'public'
-    const parentTweetId = request.input('parent_tweet_id') || null
+    const parentTweetId = request.input('parentTweetId') || null
 
     const tweet = await Tweet.create({
-      user_id: user.id,
+      userId: user.id,
       content,
       visibility,
-      parent_tweet_id: parentTweetId,
-      likes_count: 0,
-      retweets_count: 0,
-      comments_count: 0,
-      views_count: 0,
-      is_pinned: false,
+      parentTweetId,
+      likesCount: 0,
+      retweetsCount: 0,
+      commentsCount: 0,
+      viewsCount: 0,
+      isPinned: false,
     })
 
+    // Gestion des médias uploadés
     const files = request.files('media', {
       size: '100mb',
       extnames: ['jpg', 'jpeg', 'png', 'gif', 'mp4', 'mov', 'avi', 'mkv', 'webm'],
@@ -74,7 +74,7 @@ export default class TweetsController {
       await file.move(app.publicPath('uploads'), { name: fileName, overwrite: true })
 
       await Media.create({
-        tweet_id: tweet.id,
+        tweetId: tweet.id,
         url: `/uploads/${fileName}`,
         type: ext.match(/mp4|mov|avi|mkv|webm/) ? 'video' : 'image',
       })
@@ -88,12 +88,14 @@ export default class TweetsController {
    */
   async update({ params, request, auth, response }: HttpContext) {
     const tweet = await Tweet.findOrFail(params.id)
-    if (tweet.user_id !== auth.user?.id)
+    if (tweet.userId !== auth.user?.id) {
       return response.unauthorized({ message: 'Action non autorisée' })
+    }
 
-    tweet.merge(request.only(['content', 'visibility', 'is_pinned']))
+    tweet.merge(request.only(['content', 'visibility', 'isPinned']))
     await tweet.save()
 
+    // Ajout de nouveaux fichiers
     const files = request.files('media', {
       size: '100mb',
       extnames: ['jpg', 'jpeg', 'png', 'gif', 'mp4', 'mov', 'avi', 'mkv', 'webm'],
@@ -107,7 +109,7 @@ export default class TweetsController {
       await file.move(app.publicPath('uploads'), { name: fileName, overwrite: true })
 
       await Media.create({
-        tweet_id: tweet.id,
+        tweetId: tweet.id,
         url: `/uploads/${fileName}`,
         type: ext.match(/mp4|mov|avi|mkv|webm/) ? 'video' : 'image',
       })
@@ -121,11 +123,12 @@ export default class TweetsController {
    */
   async destroy({ params, auth, response }: HttpContext) {
     const tweet = await Tweet.findOrFail(params.id)
-    if (tweet.user_id !== auth.user?.id)
+    if (tweet.userId !== auth.user?.id) {
       return response.unauthorized({ message: 'Action non autorisée' })
+    }
 
     // Supprimer les médias associés
-    const medias = await Media.query().where('tweet_id', tweet.id)
+    const medias = await Media.query().where('tweetId', tweet.id)
     for (const media of medias) {
       const filePath = path.join(app.publicPath(), media.url.replace(/^\//, ''))
       if (fs.existsSync(filePath)) fs.unlinkSync(filePath)

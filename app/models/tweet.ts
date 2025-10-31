@@ -11,10 +11,10 @@ export default class Tweet extends BaseModel {
   declare id: number
 
   // Auteur du tweet
-  @column()
-  declare user_id: number
+  @column({ columnName: 'user_id' })
+  declare userId: number
 
-  @belongsTo(() => User, { foreignKey: 'user_id' })
+  @belongsTo(() => User, { foreignKey: 'userId' })
   declare user: BelongsTo<typeof User>
 
   // Contenu texte
@@ -22,14 +22,14 @@ export default class Tweet extends BaseModel {
   declare content: string | null
 
   // Tweet parent (retweet / réponse)
-  @column()
-  declare parent_tweet_id?: number | null
+  @column({ columnName: 'parent_tweet_id' })
+  declare parentTweetId?: number | null
 
-  @belongsTo(() => Tweet, { foreignKey: 'parent_tweet_id' })
-  declare parent_tweet?: BelongsTo<typeof Tweet>
+  @belongsTo(() => Tweet, { foreignKey: 'parentTweetId' })
+  declare parentTweet?: BelongsTo<typeof Tweet>
 
   // Relations pour réponses / retweets
-  @hasMany(() => Tweet, { foreignKey: 'parent_tweet_id' })
+  @hasMany(() => Tweet, { foreignKey: 'parentTweetId' })
   declare replies: HasMany<typeof Tweet>
 
   // Visibilité du tweet
@@ -38,20 +38,20 @@ export default class Tweet extends BaseModel {
 
   // Statistiques locales
   @column()
-  declare likes_count: number
+  declare likesCount: number
 
   @column()
-  declare retweets_count: number
+  declare retweetsCount: number
 
   @column()
-  declare comments_count: number
+  declare commentsCount: number
 
   @column()
-  declare views_count: number
+  declare viewsCount: number
 
   // Tweet épinglé
   @column()
-  declare is_pinned: boolean
+  declare isPinned: boolean
 
   // Dates
   @column.dateTime({ autoCreate: true })
@@ -61,18 +61,17 @@ export default class Tweet extends BaseModel {
   declare updatedAt: DateTime
 
   /*
-  |--------------------------------------------------------------------------
+  |-------------------------------------------------------------------------- 
   | Relations
-  |--------------------------------------------------------------------------
+  |-------------------------------------------------------------------------- 
   */
 
-  @hasMany(() => Comment, { foreignKey: 'tweet_id' })
+  @hasMany(() => Comment, { foreignKey: 'tweetId' })
   declare comments: HasMany<typeof Comment>
 
-  @hasMany(() => Media, { foreignKey: 'tweet_id' })
+  @hasMany(() => Media, { foreignKey: 'tweetId' })
   declare media: HasMany<typeof Media>
 
-  // ✅ Correction ici : ajout du "!" et nom au pluriel
-  @hasMany(() => Like, { foreignKey: 'tweet_id' })
+  @hasMany(() => Like, { foreignKey: 'tweetId' }) // ✅ clé correcte
   declare likes: HasMany<typeof Like>
 }

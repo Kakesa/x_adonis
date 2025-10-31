@@ -18,7 +18,6 @@ export default class HomeController {
       ...tweet.serialize(),
       comments_count: tweet.comments.length,
       likes_count: tweet.likes.length,
-      retweets_count: tweet.retweets_count ?? 0, // si tu as cette colonne
     }))
 
     return view.render('pages/index', { authUser, tweets: tweetsForView })

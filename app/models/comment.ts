@@ -1,7 +1,6 @@
 import { DateTime } from 'luxon'
 import { BaseModel, column, belongsTo, hasMany } from '@adonisjs/lucid/orm'
-import type { BelongsTo } from '@adonisjs/lucid/types/relations'
-import type { HasMany } from '@adonisjs/lucid/types/relations'
+import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations'
 import User from '#models/user'
 import Tweet from '#models/tweet'
 
@@ -10,27 +9,27 @@ export default class Comment extends BaseModel {
   declare id: number
 
   // Auteur du commentaire
-  @column()
-  declare user_id: number
+  @column({ columnName: 'user_id' })
+  declare userId: number
 
-  @belongsTo(() => User)
+  @belongsTo(() => User, { foreignKey: 'userId' })
   declare user: BelongsTo<typeof User>
 
   // Tweet parent
-  @column()
-  declare tweet_id: number
+  @column({ columnName: 'tweet_id' })
+  declare tweetId: number
 
-  @belongsTo(() => Tweet)
+  @belongsTo(() => Tweet, { foreignKey: 'tweetId' })
   declare tweet: BelongsTo<typeof Tweet>
 
   // Si le commentaire est une réponse à un autre commentaire
-  @column()
-  declare parent_comment_id?: number | null
+  @column({ columnName: 'parent_comment_id' })
+  declare parentCommentId?: number | null
 
-  @belongsTo(() => Comment, { foreignKey: 'parent_comment_id' })
-  declare parent_comment?: BelongsTo<typeof Comment>
+  @belongsTo(() => Comment, { foreignKey: 'parentCommentId' })
+  declare parentComment?: BelongsTo<typeof Comment>
 
-  @hasMany(() => Comment, { foreignKey: 'parent_comment_id' })
+  @hasMany(() => Comment, { foreignKey: 'parentCommentId' })
   declare replies: HasMany<typeof Comment>
 
   // Contenu
@@ -39,10 +38,10 @@ export default class Comment extends BaseModel {
 
   // Statistiques
   @column()
-  declare likes_count: number
+  declare likesCount: number
 
   @column()
-  declare replies_count: number
+  declare repliesCount: number
 
   // Dates
   @column.dateTime({ autoCreate: true })

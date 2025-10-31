@@ -8,10 +8,10 @@ export default class Media extends BaseModel {
   declare id: number
 
   // Tweet associé
-  @column()
-  declare tweet_id: number
+  @column({ columnName: 'tweet_id' }) // ✅ correspond à la colonne SQL tweet_id
+  declare tweetId: number
 
-  @belongsTo(() => Tweet)
+  @belongsTo(() => Tweet, { foreignKey: 'tweetId' })
   declare tweet: BelongsTo<typeof Tweet>
 
   // Type de média
@@ -24,7 +24,7 @@ export default class Media extends BaseModel {
 
   // URL de la miniature (optionnel)
   @column()
-  declare thumbnail_url?: string | null
+  declare thumbnailUrl?: string | null
 
   // Durée (pour vidéo/audio)
   @column()

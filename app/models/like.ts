@@ -8,10 +8,10 @@ export default class Like extends BaseModel {
   @column({ isPrimary: true })
   declare id: number
 
-  @column()
+  @column({ columnName: 'user_id' }) // ✅ correspond à la colonne SQL user_id
   declare userId: number
 
-  @column()
+  @column({ columnName: 'tweet_id' }) // ✅ correspond à la colonne SQL tweet_id
   declare tweetId: number
 
   @belongsTo(() => User)

@@ -12,12 +12,11 @@ import { middleware } from '#start/kernel'
 router.get('/', async ({ view }) => view.render('pages/index')).as('index')
 
 // Page home protégée
+// Page home protégée avec les tweets
 router
-  .get('/home', async ({ view, auth, response }) => {
-    if (!auth.user) return response.redirect('/')
-    return view.render('pages/home', { user: auth.user })
-  })
+  .get('/home', (ctx) => new TweetsController().showTweets(ctx))
   .middleware([middleware.auth()])
+  .as('home')
 
 // -------------------
 // Auth
@@ -49,8 +48,7 @@ router.get('/profile', (ctx) => new ProfilesController().show(ctx)).middleware([
 // -------------------
 
 // Lister tous les tweets (public)
-router.get('/tweets', (ctx) => new TweetsController().index(ctx))
-
+router.get('/tweets', (ctx) => new TweetsController().showTweets(ctx))
 // Détail d’un tweet
 router.get('/tweets/:id', (ctx) => new TweetsController().show(ctx))
 
