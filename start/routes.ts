@@ -42,6 +42,7 @@ router.get('/verify-email/:token', (ctx) => new AuthController().verifyEmail(ctx
 // -------------------
 
 router.get('/profile', (ctx) => new ProfilesController().show(ctx)).middleware([middleware.auth()])
+router.get('/profile/:username', (ctx) => new ProfilesController().showByUsername(ctx))
 
 // -------------------
 // CRUD Tweets
