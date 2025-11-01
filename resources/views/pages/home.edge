@@ -154,10 +154,17 @@
                         <div class="flex items-start space-x-3">
                             {{-- Avatar --}}
                             <div class="flex-shrink-0 relative">
-                                <img src="{{ tweet.user?.avatar_url || '/resources/images/logo/users.png' }}"
-                                    alt="Avatar {{ tweet.user?.username }}"
-                                    class="w-10 h-10 rounded-full object-cover">
+                                <!-- Avatar -->
+                                @if(tweet.user.profile_picture)
+                                    <img src="{{ tweet.user.profile_picture }}" alt="Photo {{ tweet.user.name }}"
+                                        class="w-10 h-10 rounded-full object-cover" />
+                                @else
+                                    <div class="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold uppercase bg-gray-700">
+                                        {{ tweet.user.name.split(' ')[0].charAt(0).toUpperCase() }}{{ tweet.user.name.split(' ')[1]?.charAt(0).toUpperCase() || '' }}
+                                    </div>
+                                @endif
                             </div>
+
 
                             {{-- Nom + @username + contenu --}}
                             <div class="flex-grow">
