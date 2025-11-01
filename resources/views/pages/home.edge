@@ -145,16 +145,15 @@
                     </div>
                 </section>
 
-               {{-- Posts section --}}
+              {{-- Posts section --}}
                 <div id="posts-container" class="p-4 mb-8 space-y-6 bg-black min-h-screen text-white">
                     @each(tweet in tweets)
                     <div class="bg-black border border-gray-700 rounded-xl p-4 shadow-lg max-w-lg mx-auto hover:bg-gray-900/30 transition">
 
                         {{-- Header du tweet --}}
-                        <div class="flex items-start space-x-3">
+                        <div class="flex items-start justify-between space-x-3">
                             {{-- Avatar --}}
                             <div class="flex-shrink-0 relative">
-                                <!-- Avatar -->
                                 @if(tweet.user.profile_picture)
                                     <img src="{{ tweet.user.profile_picture }}" alt="Photo {{ tweet.user.name }}"
                                         class="w-10 h-10 rounded-full object-cover" />
@@ -165,10 +164,8 @@
                                 @endif
                             </div>
 
-
-                            {{-- Nom + @username + contenu --}}
+                            {{-- Nom + username + temps --}}
                             <div class="flex-grow">
-                                {{-- Nom + username + vérifié --}}
                                 <div class="flex items-center space-x-1 text-sm">
                                     <span class="font-bold text-white hover:underline cursor-pointer">{{ tweet.user?.name }}</span>
 
@@ -181,79 +178,95 @@
                                     <span class="text-gray-400">{{ `@${tweet.user?.username}` }}</span>
                                     <span class="text-gray-500">{{ tweet.timeAgo }}</span>
                                 </div>
+                            </div>
 
-                                {{-- Contenu du tweet --}}
-                                <div class="mt-1 text-sm leading-relaxed whitespace-pre-line">
-                                    {{ tweet.content }}
+                            {{-- Ellipsis menu pour modifier/supprimer (uniquement si c’est le user connecté) --}}
+                            @if(auth.user.id === tweet.user.id)
+                            <div class="relative ml-2">
+                                <button class="text-gray-400 hover:text-white focus:outline-none" onclick="document.getElementById('menu-{{ tweet.id }}').classList.toggle('hidden')">
+                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                        <path d="M10 6a2 2 0 110-4 2 2 0 010 4zm0 6a2 2 0 110-4 2 2 0 010 4zm0 6a2 2 0 110-4 2 2 0 010 4z"/>
+                                    </svg>
+                                </button>
+
+                                <div id="menu-{{ tweet.id }}" class="hidden absolute right-0 mt-2 w-32 bg-gray-800 border border-gray-700 rounded-md shadow-lg z-10">
+                                    <a href="#" class="block px-4 py-2 text-sm text-white hover:bg-gray-700">Modifier</a>
+                                    <a href="#" class="block px-4 py-2 text-sm text-white hover:bg-gray-700">Supprimer</a>
                                 </div>
+                            </div>
+                            @endif
+                        </div>
 
-                                {{-- Médias --}}
-                                @if(tweet.media && tweet.media.length > 0)
-                                    
-                                    <div class="mt-3 grid gap-2 {{ gridColsClass }}">
-                                        @each(media in tweet.media)
-                                        <div class="relative">
-                                            @if(media.type === 'video')
-                                                <video controls class="w-full h-auto object-cover rounded-lg">
-                                                    <source src="{{ media.url }}" type="video/mp4">
-                                                    Your browser does not support the video tag.
-                                                </video>
-                                            @else
-                                                <img src="{{ media.url }}" alt="Media" class="w-full h-auto object-cover rounded-lg">
-                                            @endif
-                                        </div>
-                                        @endeach
-                                    </div>
-                                @endif
+                        {{-- Contenu du tweet --}}
+                        <div class="mt-2 text-sm leading-relaxed whitespace-pre-line">
+                            {{ tweet.content }}
+                        </div>
 
-                                {{-- Actions (comment, retweet, like, views) --}}
-                                <div class="flex justify-between items-center text-gray-400 text-sm mt-3">
-                                    {{-- Commentaires --}}
-                                    <div class="flex items-center space-x-1 hover:text-blue-400 cursor-pointer">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
-                                        </svg>
-                                        <span>{{ tweet.comments_count || 0 }}</span>
-                                    </div>
-
-                                    {{-- Retweets --}}
-                                    <div class="flex items-center space-x-1 hover:text-green-400 cursor-pointer">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/>
-                                        </svg>
-                                        <span>{{ tweet.retweets_count || 0 }}</span>
-                                    </div>
-
-                                    {{-- Likes --}}
-                                    <div class="flex items-center space-x-1 hover:text-red-400 cursor-pointer">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-                                        </svg>
-                                        <span>{{ tweet.likes_count || 0 }}</span>
-                                    </div>
-
-                                    {{-- Vues --}}
-                                    <div class="flex items-center space-x-1 hover:text-blue-400 cursor-pointer">
-                                        <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                                d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                                        </svg>
-                                        <span>{{ tweet.views_count || 0 }}</span>
-                                    </div>
+                        {{-- Médias --}}
+                        @if(tweet.media && tweet.media.length > 0)
+                            <div class="mt-3 grid gap-2 {{ gridColsClass }}">
+                                @each(media in tweet.media)
+                                <div class="relative">
+                                    @if(media.type === 'video')
+                                        <video controls class="w-full h-auto object-cover rounded-lg">
+                                            <source src="{{ media.url }}" type="video/mp4">
+                                            Your browser does not support the video tag.
+                                        </video>
+                                    @else
+                                        <img src="{{ media.url }}" alt="Media" class="w-full h-auto object-cover rounded-lg">
+                                    @endif
                                 </div>
+                                @endeach
+                            </div>
+                        @endif
 
+                        {{-- Actions (comment, retweet, like, views) --}}
+                        <div class="flex justify-between items-center text-gray-400 text-sm mt-3">
+                            {{-- Commentaires --}}
+                            <div class="flex items-center space-x-1 hover:text-blue-400 cursor-pointer">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
+                                </svg>
+                                <span>{{ tweet.comments_count || 0 }}</span>
+                            </div>
+
+                            {{-- Retweets --}}
+                            <div class="flex items-center space-x-1 hover:text-green-400 cursor-pointer">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/>
+                                </svg>
+                                <span>{{ tweet.retweets_count || 0 }}</span>
+                            </div>
+
+                            {{-- Likes --}}
+                            <div class="flex items-center space-x-1 hover:text-red-400 cursor-pointer">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
+                                </svg>
+                                <span>{{ tweet.likes_count || 0 }}</span>
+                            </div>
+
+                            {{-- Vues --}}
+                            <div class="flex items-center space-x-1 hover:text-blue-400 cursor-pointer">
+                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                                </svg>
+                                <span>{{ tweet.views_count || 0 }}</span>
                             </div>
                         </div>
+
                     </div>
                     @endeach
 
                     <div class="text-center text-gray-500 hidden mb-4">Chargement des posts...</div>
                 </div>
+
 
             </main>
 
