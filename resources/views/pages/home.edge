@@ -155,8 +155,7 @@
                             {{-- Avatar --}}
                             <div class="flex-shrink-0 relative">
                                 @if(tweet.user.profile_picture)
-                                    <img src="{{ tweet.user.profile_picture }}" alt="Photo {{ tweet.user.name }}"
-                                        class="w-10 h-10 rounded-full object-cover" />
+                                    <img src="{{ tweet.user.profile_picture }}" alt="Photo {{ tweet.user.name }}" class="w-10 h-10 rounded-full object-cover" />
                                 @else
                                     <div class="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold uppercase bg-gray-700">
                                         {{ tweet.user.name.split(' ')[0].charAt(0).toUpperCase() }}{{ tweet.user.name.split(' ')[1]?.charAt(0).toUpperCase() || '' }}
@@ -168,19 +167,17 @@
                             <div class="flex-grow">
                                 <div class="flex items-center space-x-1 text-sm">
                                     <span class="font-bold text-white hover:underline cursor-pointer">{{ tweet.user?.name }}</span>
-
                                     @if(tweet.user?.verified)
                                         <svg class="w-4 h-4 text-blue-500 fill-current" viewBox="0 0 24 24">
                                             <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
                                         </svg>
                                     @endif
-
                                     <span class="text-gray-400">{{ `@${tweet.user?.username}` }}</span>
                                     <span class="text-gray-500">{{ tweet.timeAgo }}</span>
                                 </div>
                             </div>
 
-                            {{-- Ellipsis menu pour modifier/supprimer (uniquement si c’est le user connecté) --}}
+                            {{-- Ellipsis menu (modifier/supprimer si user connecté) --}}
                             @if(auth.user.id === tweet.user.id)
                             <div class="relative ml-2">
                                 <button class="text-gray-400 hover:text-white focus:outline-none" onclick="document.getElementById('menu-{{ tweet.id }}').classList.toggle('hidden')">
@@ -190,8 +187,13 @@
                                 </button>
 
                                 <div id="menu-{{ tweet.id }}" class="hidden absolute right-0 mt-2 w-32 bg-gray-800 border border-gray-700 rounded-md shadow-lg z-10">
-                                    <a href="#" class="block px-4 py-2 text-sm text-white hover:bg-gray-700">Modifier</a>
-                                    <a href="#" class="block px-4 py-2 text-sm text-white hover:bg-gray-700">Supprimer</a>
+                                    <a href="#" 
+                                        onclick="openEditModal('{{ tweet.id }}', `{{ tweet.content }}`)" 
+                                        class="block px-4 py-2 text-sm text-white hover:bg-gray-700">
+                                        Modifier
+                                    </a>
+
+                                    <a href="/tweets/{{ tweet.id }}/delete" class="block px-4 py-2 text-sm text-white hover:bg-gray-700">Supprimer</a>
                                 </div>
                             </div>
                             @endif
@@ -222,7 +224,6 @@
 
                         {{-- Actions (comment, retweet, like, views) --}}
                         <div class="flex justify-between items-center text-gray-400 text-sm mt-3">
-                            {{-- Commentaires --}}
                             <div class="flex items-center space-x-1 hover:text-blue-400 cursor-pointer">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -230,8 +231,6 @@
                                 </svg>
                                 <span>{{ tweet.comments_count || 0 }}</span>
                             </div>
-
-                            {{-- Retweets --}}
                             <div class="flex items-center space-x-1 hover:text-green-400 cursor-pointer">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -239,8 +238,6 @@
                                 </svg>
                                 <span>{{ tweet.retweets_count || 0 }}</span>
                             </div>
-
-                            {{-- Likes --}}
                             <div class="flex items-center space-x-1 hover:text-red-400 cursor-pointer">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -248,8 +245,6 @@
                                 </svg>
                                 <span>{{ tweet.likes_count || 0 }}</span>
                             </div>
-
-                            {{-- Vues --}}
                             <div class="flex items-center space-x-1 hover:text-blue-400 cursor-pointer">
                                 <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
@@ -266,7 +261,6 @@
 
                     <div class="text-center text-gray-500 hidden mb-4">Chargement des posts...</div>
                 </div>
-
 
             </main>
 
@@ -485,7 +479,7 @@
             </a>
         </div>
     </div>
-
+ @include('partials/edit_post')
 </body>
 
 </html>

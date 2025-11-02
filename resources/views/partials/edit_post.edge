@@ -1,0 +1,73 @@
+<!-- ========================= -->
+<!-- MODAL DE MODIFICATION DE TWEET -->
+<!-- ========================= -->
+<div id="editTweetModal"
+  class="hidden fixed inset-0 bg-black/50 backdrop-blur-sm flex items-start justify-center z-50 pt-10">
+
+  <div id="editTweetPanel"
+    class="modal-panel bg-black text-white rounded-2xl w-full max-w-xl mx-auto p-5 border border-gray-700 shadow-lg max-h-[70vh] overflow-y-auto flex flex-col justify-start">
+
+    <!-- Header -->
+    <div class="flex justify-between items-center mb-3 border-b border-gray-800 pb-2">
+      <button id="closeEditModal" class="text-gray-400 hover:text-white text-2xl font-light">&times;</button>
+      <span class="text-blue-500 text-sm cursor-pointer hover:underline">Drafts</span>
+    </div>
+
+    <!-- Contenu principal -->
+    <div class="flex gap-3">
+      @if(auth.user)
+      <img src="{{ auth.user.profile_picture }}" alt="avatar" class="w-10 h-10 rounded-full" />
+      @else
+      <div
+        class="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center text-white font-semibold text-lg">
+        {{ auth.user.name.split(' ')[0].charAt(0).toUpperCase() }}
+      </div>
+      @endif
+
+      <div class="flex-1">
+        <form id="editTweetForm" method="POST" enctype="multipart/form-data">
+          {{ csrfField() }}
+          <input type="hidden" name="_method" value="PUT">
+          <input type="hidden" id="editTweetId" name="tweetId">
+
+          <textarea id="editTweetContent" name="content" rows="3"
+            class="w-full resize-none bg-transparent text-gray-200 placeholder-gray-500 text-lg focus:outline-none min-h-[80px]"
+            placeholder="Modifier le contenu du tweet"></textarea>
+
+          <!-- Fichiers & sondage -->
+          <input type="file" name="media" id="editTweetMedia" multiple class="hidden">
+          <input type="hidden" id="editPollData" name="poll_data">
+
+          <div class="border-b border-gray-800 mb-3 mt-2"></div>
+
+          <!-- Boutons d’action -->
+          <div class="flex items-center justify-between">
+            <div class="flex gap-1 text-blue-500">
+              <button type="button" id="addImageBtnEdit"
+                class="p-2 rounded-full hover:bg-blue-900/50 hover:text-blue-400">🖼️</button>
+              <button type="button" id="addGifBtnEdit"
+                class="p-2 rounded-full hover:bg-blue-900/50 hover:text-blue-400">GIF</button>
+              <button type="button" id="addPollBtnEdit"
+                class="p-2 rounded-full hover:bg-blue-900/50 hover:text-blue-400">Poll</button>
+              <button type="button" id="addEmojiBtnEdit"
+                class="p-2 rounded-full hover:bg-blue-900/50 hover:text-blue-400">😊</button>
+            </div>
+
+            <button id="editPostBtn" type="submit"
+              class="bg-blue-500 hover:bg-blue-600 text-white font-semibold rounded-full px-5 py-1.5 transition disabled:opacity-40 disabled:cursor-not-allowed"
+              disabled>
+              Enregistrer
+            </button>
+          </div>
+
+          <!-- Emoji picker -->
+          <div id="editEmojiPicker"
+            class="mt-2 hidden flex flex-wrap gap-1 max-h-32 overflow-y-auto border-t border-gray-800 pt-2"></div>
+        </form>
+      </div>
+    </div>
+  </div>
+</div>
+
+<!-- JS -->
+<script src="/resources/js/edit_post.js"></script>

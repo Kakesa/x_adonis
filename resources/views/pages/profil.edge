@@ -28,135 +28,97 @@
     </header>
 
     <div class="flex max-w-6xl mx-auto min-h-screen">
-       {{-- Sidebar --}}
-         @include('partials/sidebar')
+        {{-- Sidebar --}}
+        @include('partials/sidebar')
 
         <div class="flex-grow flex pt-14 md:pt-0 max-w-full lg:max-w-[calc(100%-18rem)] xl:max-w-[calc(100%-20rem)]">
             <main class="flex-grow border-l border-r border-gray-700 max-w-lg mx-auto md:mx-0">
                 <section class="flex-grow">
                     <div class="border-b border-gray-700 p-4">
-                    <!-- Haut du profil -->
-                    <div class="flex items-center gap-4 mb-4">
-                        <a href="/home" class="text-gray-400 hover:text-white" aria-label="Retour">
-                            <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                            stroke="currentColor" stroke-width="2">
-                            <path stroke-linecap="round" stroke-linejoin="round"
-                                d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                        </svg>
-                        </a>
-                        
-                        <div>
-                        <h1 class="text-xl text-white font-bold">{{ user.name }}</h1>
-                        <p class="text-gray-400 text-sm">{{ tweetsCount }} posts</p>
-                        </div>
-                    </div>
+                        <!-- Haut du profil -->
+                        <div class="flex items-center gap-4 mb-4">
+                            <a href="/home" class="text-gray-400 hover:text-white" aria-label="Retour">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor" stroke-width="2">
+                                    <path stroke-linecap="round" stroke-linejoin="round"
+                                        d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                                </svg>
+                            </a>
 
-                    <!-- Bannière -->
-                    <div class="relative">
-                        <div class="h-48 bg-gray-700 rounded-lg overflow-hidden">
-                        <img src="{{ user.banner_picture || '/assets/images/default-banner.jpg' }}"
-                            alt="Bannière de profil"
-                            class="w-full h-full object-cover">
+                            <div>
+                                <h1 class="text-xl text-white font-bold">{{ user.name }}</h1>
+                                <p class="text-gray-400 text-sm">{{ tweetsCount }} posts</p>
+                            </div>
                         </div>
 
-                        <!-- Avatar ou initiales -->
-                        @if(user.profile_picture)
-                        <img src="{{ user.profile_picture }}"
-                            alt="Avatar de profil"
-                            class="absolute -bottom-16 left-4 w-32 h-32 rounded-full border-4 border-black object-cover">
-                        @else
-                        <div class="absolute -bottom-16 left-4 w-32 h-32 rounded-full border-4 border-black bg-gray-800 flex items-center justify-center text-3xl font-bold text-white">
-                            {{ user.name.split(' ')[0].charAt(0).toUpperCase() }}{{ user.name.split(' ')[1]?.charAt(0).toUpperCase() || '' }}
-                        </div>
-                        @end
+                        <!-- Bannière -->
+                        <div class="relative">
+                            <div class="h-48 bg-gray-700 rounded-lg overflow-hidden">
+                                <img src="{{ user.banner_picture || '/assets/images/default-banner.jpg' }}"
+                                    alt="Bannière de profil" class="w-full h-full object-cover">
+                            </div>
 
-                        
-                        @if(isOwner)
-                        <button id="btnEditProfile"
+                            <!-- Avatar ou initiales -->
+                            @if(user.profile_picture)
+                            <img src="{{ user.profile_picture }}" alt="Avatar de profil"
+                                class="absolute -bottom-16 left-4 w-32 h-32 rounded-full border-4 border-black object-cover">
+                            @else
+                            <div
+                                class="absolute -bottom-16 left-4 w-32 h-32 rounded-full border-4 border-black bg-gray-800 flex items-center justify-center text-3xl font-bold text-white">
+                                {{ user.name.split(' ')[0].charAt(0).toUpperCase() }}{{ user.name.split(' ')[1]?.charAt(0).toUpperCase() || '' }}
+                            </div>
+                            @end
+
+
+                            @if(isOwner)
+                            <button id="btnEditProfile"
                                 class="absolute right-4 bg-transparent text-white border border-gray-700 px-4 py-2 rounded-full font-semibold hover:bg-gray-800 transition">
-                            Éditer le profil
-                        </button>
-                        @endif
-                    </div>
-
-                    <!-- Infos principales -->
-                    <div class="p-4 pt-16">
-                        <h2 class="text-xl text-white font-bold">{{ user.name }}</h2>
-                        <p class="text-gray-400"> {{ `@${user.username}` }}</p>
-
-                        @if(user.bio)
-                        <p class="text-gray-300 mt-2">{{ user.bio }}</p>
-                        @end
-
-                        <div class="flex gap-4 mt-3">
-                        <p class="text-gray-300">
-                            <span class="font-bold">{{ followingCount }}</span>
-                            <a href="#" class="hover:underline"> Abonnements</a>
-                        </p>
-                        <p class="text-gray-300">
-                            <span class="font-bold">{{ followersCount }}</span>
-                            <a href="#" class="hover:underline"> Abonnés</a>
-                        </p>
+                                Éditer le profil
+                            </button>
+                            @endif
                         </div>
-                    </div>
+
+                        <!-- Infos principales -->
+                        <div class="p-4 pt-16">
+                            <h2 class="text-xl text-white font-bold">{{ user.name }}</h2>
+                            <p class="text-gray-400"> {{ `@${user.username}` }}</p>
+
+                            @if(user.bio)
+                            <p class="text-gray-300 mt-2">{{ user.bio }}</p>
+                            @end
+
+                            <div class="flex gap-4 mt-3">
+                                <p class="text-gray-300">
+                                    <span class="font-bold">{{ followingCount }}</span>
+                                    <a href="#" class="hover:underline"> Abonnements</a>
+                                </p>
+                                <p class="text-gray-300">
+                                    <span class="font-bold">{{ followersCount }}</span>
+                                    <a href="#" class="hover:underline"> Abonnés</a>
+                                </p>
+                            </div>
+                        </div>
                     </div>
 
                     <!-- Conteneur des posts -->
                     <div id="user-tweets-container" class="mt-4">
-                    <!-- Tes posts ici -->
+                        <!-- Tes posts ici -->
                     </div>
 
                     <!-- Navigation du profil -->
                     <nav class="flex border-b border-gray-700 text-gray-400 text-center">
-                    <a href="#"
-                        class="flex-1 py-3 hover:bg-gray-800 hover:text-white transition border-b-2 border-blue-500 text-white">Posts</a>
-                    <a href="#" class="flex-1 py-3 hover:bg-gray-800 hover:text-white transition">Réponses</a>
-                    <a href="#" class="flex-1 py-3 hover:bg-gray-800 hover:text-white transition">Médias</a>
-                    <a href="#" class="flex-1 py-3 hover:bg-gray-800 hover:text-white transition">J'aime</a>
+                        <a href="#"
+                            class="flex-1 py-3 hover:bg-gray-800 hover:text-white transition border-b-2 border-blue-500 text-white">Posts</a>
+                        <a href="#" class="flex-1 py-3 hover:bg-gray-800 hover:text-white transition">Réponses</a>
+                        <a href="#" class="flex-1 py-3 hover:bg-gray-800 hover:text-white transition">Médias</a>
+                        <a href="#" class="flex-1 py-3 hover:bg-gray-800 hover:text-white transition">J'aime</a>
                     </nav>
                 </section>
             </main>
 
 
             <aside class="hidden lg:block w-100 p-4 bg-black text-gray-100 flex-shrink-0">
-                <div class="mb-4 sticky top-0 bg-black py-2 z-10">
-                    <input type="text" placeholder="Rechercher"
-                        class="w-full p-2 rounded-full bg-gray-800 text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                </div>
-
-                <div class="bg-gray-800 rounded-lg p-4 mb-4">
-                    <h2 class="text-xl font-bold mb-4">Vous pourriez aimer</h2>
-                    <div id="who-to-follow-list" class="space-y-4">
-                        <div class="text-center text-gray-500">Chargement des suggestions...</div>
-                    </div>
-                    <a href="#" class="text-blue-500 hover:underline mt-4 block">Voir plus</a>
-                </div>
-
-                <div class="bg-gray-800 rounded-lg p-4">
-                    <h2 class="text-xl font-bold mb-4">Ce qui se passe</h2>
-                    <ul class="space-y-3 text-gray-700 dark:text-gray-300">
-                        <li class="hover:bg-gray-700 rounded px-3 py-2 cursor-pointer transition">
-                            <p class="text-sm text-gray-500">Tendances</p>
-                            <p class="font-semibold">Nairobi</p>
-                            <p class="text-sm text-gray-500">91 K publications</p>
-                        </li>
-                        <li class="hover:bg-gray-700 rounded px-3 py-2 cursor-pointer transition">
-                            <p class="text-sm text-gray-500">Tendances</p>
-                            <p class="font-semibold">le m23</p>
-                            <p class="text-sm text-gray-500">2729 publications</p>
-                        </li>
-                        <li class="hover:bg-gray-700 rounded px-3 py-2 cursor-pointer transition">
-                            <p class="text-sm text-gray-500">Tendances</p>
-                            <p class="font-semibold">Le Rwanda</p>
-                            <p class="text-sm text-gray-500">5428 publications</p>
-                        </li>
-                        <li class="hover:bg-gray-700 rounded px-3 py-2 cursor-pointer transition">
-                            <p class="text-sm text-gray-500">Tendances</p>
-                            <p class="font-semibold">AS Monaco</p>
-                            <p class="text-sm text-gray-500">3396 publications</p>
-                        </li>
-                    </ul>
-                </div>
+               @include('partials/right-sidebar')
             </aside>
         </div>
     </div>
@@ -196,8 +158,10 @@
             <img src="/resources/images/logo/message.png" alt="Messages" class="w-6 h-6 mb-0.5" />
         </a>
     </nav>
-    
-    <div id="overlay" class="fixed inset-0 bg-black bg-opacity-50 z-40 opacity-0 pointer-events-none transition-opacity duration-300 ease-in-out" aria-hidden="true"></div>
+
+    <div id="overlay"
+        class="fixed inset-0 bg-black bg-opacity-50 z-40 opacity-0 pointer-events-none transition-opacity duration-300 ease-in-out"
+        aria-hidden="true"></div>
 
     <div id="profileDrawer"
         class="fixed inset-y-0 left-0 w-80 bg-gray-900 text-gray-100 z-50 transform -translate-x-full transition-transform duration-300 ease-in-out flex flex-col overflow-y-auto"
@@ -340,4 +304,5 @@
         </div>
     </div>
 </body>
+
 </html>
