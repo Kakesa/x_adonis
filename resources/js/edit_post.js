@@ -56,16 +56,16 @@ document.addEventListener('DOMContentLoaded', () => {
       });
 
       if (response.ok) {
-        alert('✅ Tweet modifié avec succès');
+        showToast('✅ Tweet modifié avec succès', 'success');
         location.reload();
       } else {
         const text = await response.text();
         console.error('Erreur:', text);
-        alert('❌ Erreur lors de la modification du tweet');
+        showToast('❌ Erreur lors de la modification du tweet', 'error');
       }
     } catch (err) {
       console.error(err);
-      alert('❌ Erreur réseau ou serveur');
+      showToast('❌ Erreur réseau ou serveur', 'error');
     } finally {
       editBtn.disabled = false;
       editBtn.textContent = 'Enregistrer';

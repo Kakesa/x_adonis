@@ -18,7 +18,7 @@
             <img src="{{ auth.user.profile_picture }}" alt="avatar" class="w-10 h-10 rounded-full" />
             @else
             <div class="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center text-white font-semibold text-lg">
-                {{ user.name.split(' ')[0].charAt(0).toUpperCase() }}
+                {{ tweet.user.name.split(' ')[0].charAt(0).toUpperCase() }}{{ tweet.user.name.split(' ')[1]?.charAt(0).toUpperCase() || '' }}
             </div>
             @endif
 

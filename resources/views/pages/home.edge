@@ -187,11 +187,13 @@
                                 </button>
 
                                 <div id="menu-{{ tweet.id }}" class="hidden absolute right-0 mt-2 w-32 bg-gray-800 border border-gray-700 rounded-md shadow-lg z-10">
-                                    <a href="#" 
-                                        onclick="openEditModal('{{ tweet.id }}', `{{ tweet.content }}`)" 
+                                    <a href="#"
+                                        onclick="openEditModal('{{ tweet.id }}', `{{ tweet.content.replace(/`/g, '\\`').replace(/'/g, '\\\'').replace(/"/g, '\\"') }}`)"
                                         class="block px-4 py-2 text-sm text-white hover:bg-gray-700">
                                         Modifier
                                     </a>
+
+
 
                                     <a href="/tweets/{{ tweet.id }}/delete" class="block px-4 py-2 text-sm text-white hover:bg-gray-700">Supprimer</a>
                                 </div>
@@ -480,6 +482,27 @@
         </div>
     </div>
  @include('partials/edit_post')
-</body>
+ <!-- Toast -->
+<div id="toast"
+     class="fixed bottom-5 right-5 z-[9999] px-4 py-3 rounded-lg text-white font-medium hidden transition-all duration-300">
+</div>
 
+<script>
+  function showToast(message, type = 'info') {
+    const toast = document.getElementById('toast');
+    toast.textContent = message;
+
+    toast.className =
+      'fixed bottom-5 right-5 z-[9999] px-4 py-3 rounded-lg text-white font-medium shadow-lg transition-all duration-300 ' +
+      (type === 'success' ? 'bg-green-600' :
+       type === 'error' ? 'bg-red-600' :
+       'bg-gray-700');
+
+    toast.classList.remove('hidden');
+    setTimeout(() => toast.classList.add('hidden'), 3000);
+  }
+</script>
+
+</body>
+ 
 </html>
