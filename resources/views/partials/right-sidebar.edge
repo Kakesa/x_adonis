@@ -1,38 +1,147 @@
- <div class="mb-4 sticky top-0 bg-black py-2 z-10">
-                    <input type="text" placeholder="Rechercher"
-                        class="w-full p-2 rounded-full bg-gray-800 text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
-                </div>
+<div class="mb-4 sticky top-0 bg-black py-2 z-10">
+    <input type="text" placeholder="Rechercher"
+        class="w-full p-2 rounded-full bg-gray-800 text-gray-100 placeholder-gray-400 focus:outline-none focus:ring-2 focus:ring-blue-500">
+</div>
 
-                <div class="bg-gray-800 rounded-lg p-4 mb-4">
-                    <h2 class="text-xl font-bold mb-4">Vous pourriez aimer</h2>
-                    <div id="who-to-follow-list" class="space-y-4">
-                        <div class="text-center text-gray-500">Chargement des suggestions...</div>
-                    </div>
-                    <a href="#" class="text-blue-500 hover:underline mt-4 block">Voir plus</a>
-                </div>
+<div class="bg-gray-800 rounded-lg p-4 mb-4">
+    <h2 class="text-xl font-bold mb-4">Vous pourriez aimer</h2>
+    <div id="who-to-follow-list" class="space-y-4">
+        <div class="text-center text-gray-500">Chargement des suggestions...</div>
+    </div>
+    <a href="#" class="text-blue-500 hover:underline mt-4 block">Voir plus</a>
+</div>
 
-                <div class="bg-gray-800 rounded-lg p-4">
-                    <h2 class="text-xl font-bold mb-4">Ce qui se passe</h2>
-                    <ul class="space-y-3 text-gray-700 dark:text-gray-300">
-                        <li class="hover:bg-gray-700 rounded px-3 py-2 cursor-pointer transition">
-                            <p class="text-sm text-gray-500">Tendances</p>
-                            <p class="font-semibold">Kinshasa</p>
-                            <p class="text-sm text-gray-500">91 K publications</p>
-                        </li>
-                        <li class="hover:bg-gray-700 rounded px-3 py-2 cursor-pointer transition">
-                            <p class="text-sm text-gray-500">Tendances</p>
-                            <p class="font-semibold">le m23</p>
-                            <p class="text-sm text-gray-500">2729 publications</p>
-                        </li>
-                        <li class="hover:bg-gray-700 rounded px-3 py-2 cursor-pointer transition">
-                            <p class="text-sm text-gray-500">Tendances</p>
-                            <p class="font-semibold">Le Rwanda</p>
-                            <p class="text-sm text-gray-500">5428 publications</p>
-                        </li>
-                        <li class="hover:bg-gray-700 rounded px-3 py-2 cursor-pointer transition">
-                            <p class="text-sm text-gray-500">Tendances</p>
-                            <p class="font-semibold">AS Monaco</p>
-                            <p class="text-sm text-gray-500">3396 publications</p>
-                        </li>
-                    </ul>
-                </div>
+<div class="bg-gray-800 rounded-lg p-4">
+    <h2 class="text-xl font-bold mb-4">Ce qui se passe</h2>
+    <ul class="space-y-3 text-gray-700 dark:text-gray-300">
+        <li class="hover:bg-gray-700 rounded px-3 py-2 cursor-pointer transition">
+            <p class="text-sm text-gray-500">Tendances</p>
+            <p class="font-semibold">Kinshasa</p>
+            <p class="text-sm text-gray-500">91 K publications</p>
+        </li>
+        <li class="hover:bg-gray-700 rounded px-3 py-2 cursor-pointer transition">
+            <p class="text-sm text-gray-500">Tendances</p>
+            <p class="font-semibold">le m23</p>
+            <p class="text-sm text-gray-500">2729 publications</p>
+        </li>
+        <li class="hover:bg-gray-700 rounded px-3 py-2 cursor-pointer transition">
+            <p class="text-sm text-gray-500">Tendances</p>
+            <p class="font-semibold">Le Rwanda</p>
+            <p class="text-sm text-gray-500">5428 publications</p>
+        </li>
+        <li class="hover:bg-gray-700 rounded px-3 py-2 cursor-pointer transition">
+            <p class="text-sm text-gray-500">Tendances</p>
+            <p class="font-semibold">AS Monaco</p>
+            <p class="text-sm text-gray-500">3396 publications</p>
+        </li>
+    </ul>
+</div>
+
+<script>
+function stringToColor(str) {
+  let hash = 0;
+  for (let i = 0; i < str.length; i++) {
+    hash = str.charCodeAt(i) + ((hash << 5) - hash);
+  }
+  let color = '#';
+  for (let i = 0; i < 3; i++) {
+    const value = (hash >> (i * 8)) & 0xFF;
+    color += ('00' + value.toString(16)).substr(-2);
+  }
+  return color;
+}
+
+async function loadSuggestions() {
+  const container = document.getElementById('who-to-follow-list');
+  container.innerHTML = '<div class="text-center text-gray-500 py-4">Chargement...</div>';
+
+  try {
+    const res = await fetch('/suggestions', { credentials: 'include' });
+    if (!res.ok) throw new Error('Erreur serveur');
+
+    const data = await res.json();
+    container.innerHTML = '';
+
+    data.suggestions.forEach(user => {
+      const div = document.createElement('div');
+      div.className = `
+        flex items-center justify-between p-3 bg-gray-900 rounded-xl hover:bg-gray-800 transition-all 
+        duration-200 ease-in-out shadow-sm gap-3
+      `;
+
+      // Avatar
+      const initials = user.name.split(' ').map(n => n[0]).join('').slice(0,2).toUpperCase();
+      const avatar = user.profile_picture 
+        ? `<img src="${user.profile_picture}" class="w-10 h-10 rounded-full object-cover shadow-sm hover:brightness-110 transition" />`
+        : `<div class="w-10 h-10 rounded-full flex items-center justify-center text-white font-semibold shadow-sm transition hover:brightness-110"
+                style="background-color: ${stringToColor(user.username)}; font-size: 0.85rem;">
+             ${initials}
+           </div>`;
+
+      // Bouton
+      div.innerHTML = `
+        <div class="flex items-center gap-3">
+          ${avatar}
+          <div>
+            <p class="font-semibold text-white">${user.name}</p>
+            <p class="text-gray-400 text-sm">@${user.username}</p>
+          </div>
+        </div>
+        <button class="bg-blue-500 hover:bg-blue-600 text-white px-4 py-1 rounded-full text-sm transition"
+                onclick="followUser(${user.id}, this)">
+          Suivre
+        </button>
+      `;
+
+      // Animation apparition douce
+      div.style.opacity = 0;
+      container.appendChild(div);
+      setTimeout(() => { 
+        div.style.opacity = 1;
+        div.style.transition = 'opacity 0.3s ease-in-out';
+      }, 50);
+    });
+
+  } catch (err) {
+    container.innerHTML = '<div class="text-center text-red-500 py-4">Impossible de charger les suggestions</div>';
+    console.error(err);
+  }
+}
+
+async function followUser(userId, btn) {
+  try {
+    const res = await fetch(`/follow/${userId}`, { 
+      method: 'POST', 
+      credentials: 'include',
+      headers: { 'Accept': 'application/json' }
+    });
+
+    if (!res.ok) {
+      const data = await res.json();
+      alert(data.message || 'Erreur lors du suivi');
+      return;
+    }
+
+    // Mise à jour du bouton et de l'indicateur
+    btn.textContent = 'Suivi';
+    btn.disabled = true;
+
+    const parentDiv = btn.closest('div.flex.items-center.gap-3');
+    if (parentDiv) {
+      const indicator = document.createElement('span');
+      indicator.className = 'text-green-400 text-xs';
+      indicator.textContent = 'Déjà suivi';
+      parentDiv.querySelector('div')?.appendChild(indicator);
+    }
+
+  } catch (err) {
+    console.error(err);
+    alert('Erreur réseau ou serveur');
+  }
+}
+
+// Charger les suggestions au chargement de la page
+document.addEventListener('DOMContentLoaded', () => loadSuggestions());
+</script>
+
+

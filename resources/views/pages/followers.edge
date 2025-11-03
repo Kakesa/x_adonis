@@ -1,0 +1,86 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Personnes qui suivent {{ user.name }} (@{{ user.username }}) / X</title>
+    
+    {{-- En production, il est préférable d'utiliser un build CSS complet au lieu d'un CDN --}}
+    <script src="https://cdn.tailwindcss.com"></script>
+    
+    {{-- Vous pouvez lier ici une feuille de style personnalisée si besoin --}}
+    {{-- <link rel="stylesheet" href="/style.css"> --}}
+</head>
+<body class="bg-black text-white font-sans">
+
+    <div class="flex max-w-6xl mx-auto min-h-screen">
+        
+        {{-- Barre latérale de gauche (incluse depuis un partiel) --}}
+        @include('partials/sidebar')
+
+        {{-- Contenu principal de la page --}}
+        <main class="flex-grow border-l border-r border-gray-700 max-w-lg w-full">
+            
+            <!-- En-tête de la page (fixe en haut de l'écran) -->
+            <header class="sticky top-0 bg-black bg-opacity-70 backdrop-blur-md z-10 border-b border-gray-700">
+                <div class="flex items-center gap-4 p-4">
+                    {{-- Bouton de retour vers le profil de l'utilisateur --}}
+                    <a 
+                        href="{{ route('profile.show', { username: user.username }) }}" 
+                        class="text-white p-2 rounded-full hover:bg-gray-800 transition-colors" 
+                        aria-label="Retour au profil"
+                    >
+                        <svg class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18" />
+                        </svg>
+                    </a>
+                    
+                    {{-- Nom et @username de l'utilisateur --}}
+                    <div>
+                        <h1 class="text-xl font-bold leading-tight">{{ user.name }}</h1>
+                        <p class="text-gray-400 text-sm leading-tight">@{{ user.username }}</p>
+                    </div>
+                </div>
+
+                <!-- Onglets de navigation : Abonnés / Abonnements -->
+                <nav class="flex text-center text-gray-400 font-semibold">
+                    {{-- Onglet Abonnés (actif sur cette page) --}}
+                    <a 
+                        href="{{ route('profile.followers', { username: user.username }) }}" 
+                        class="flex-1 py-3 text-white border-b-2 border-blue-500 hover:bg-gray-900/50 transition-colors"
+                    >
+                        Abonnés
+                    </a>
+                    
+                    {{-- Onglet Abonnements --}}
+                    <a 
+                        href="{{ route('profile.following', { username: user.username }) }}" 
+                        class="flex-1 py-3 hover:text-white hover:bg-gray-900/50 transition-colors"
+                    >
+                        Abonnements
+                    </a>
+                </nav>
+            </header>
+
+            <!-- Section contenant la liste des abonnés -->
+            <section>
+                {{-- On boucle sur la variable 'list' envoyée par le contrôleur --}}
+                @each(person in list)
+                    {{-- Pour chaque abonné, on affiche une "carte" utilisateur --}}
+                    @include('partials/user_card', { user: person })
+                @else
+                    {{-- Ce message s'affiche si l'utilisateur n'a aucun abonné --}}
+                    <div class="p-8 text-center text-gray-500">
+                        <h2 class="text-2xl font-bold text-white mb-2">En attente d'abonnés</h2>
+                        <p>Lorsque quelqu'un suivra ce compte, il apparaîtra ici.</p>
+                    </div>
+                @end
+            </section>
+        </main>
+
+        {{-- Barre latérale de droite (incluse depuis un partiel) --}}
+        @include('partials/right-sidebar')
+    </div>
+
+</body>
+</html>

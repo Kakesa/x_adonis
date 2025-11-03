@@ -145,138 +145,183 @@
                     </div>
                 </section>
 
-              {{-- Posts section --}}
                 <div id="posts-container" class="p-4 mb-8 space-y-6 bg-black min-h-screen text-white">
                     @each(tweet in tweets)
-                    <div class="bg-black border border-gray-700 rounded-xl p-4 shadow-lg max-w-lg mx-auto hover:bg-gray-900/30 transition">
-
-                        {{-- Header du tweet --}}
-                        <div class="flex items-start justify-between space-x-3">
-                            {{-- Avatar --}}
-                            <div class="flex-shrink-0 relative">
-                                @if(tweet.user.profile_picture)
-                                    <img src="{{ tweet.user.profile_picture }}" alt="Photo {{ tweet.user.name }}" class="w-10 h-10 rounded-full object-cover" />
-                                @else
-                                    <div class="w-10 h-10 rounded-full flex items-center justify-center text-white font-bold uppercase bg-gray-700">
-                                        {{ tweet.user.name.split(' ')[0].charAt(0).toUpperCase() }}{{ tweet.user.name.split(' ')[1]?.charAt(0).toUpperCase() || '' }}
-                                    </div>
-                                @endif
-                            </div>
-
-                            {{-- Nom + username + temps --}}
-                            <div class="flex-grow">
-                                <div class="flex items-center space-x-1 text-sm">
-                                    <span class="font-bold text-white hover:underline cursor-pointer">{{ tweet.user?.name }}</span>
-                                    @if(tweet.user?.verified)
-                                        <svg class="w-4 h-4 text-blue-500 fill-current" viewBox="0 0 24 24">
-                                            <path d="M12 2C6.48 2 2 6.48 2 12s4.48 10 10 10 10-4.48 10-10S17.52 2 12 2zm-2 15l-5-5 1.41-1.41L10 14.17l7.59-7.59L19 8l-9 9z"/>
-                                        </svg>
-                                    @endif
-                                    <span class="text-gray-400">{{ `@${tweet.user?.username}` }}</span>
-                                    <span class="text-gray-500">{{ tweet.timeAgo }}</span>
-                                </div>
-                            </div>
-
-                            {{-- Ellipsis menu (modifier/supprimer si user connecté) --}}
-                            @if(auth.user.id === tweet.user.id)
-                            <div class="relative ml-2">
-                                <button class="text-gray-400 hover:text-white focus:outline-none" onclick="document.getElementById('menu-{{ tweet.id }}').classList.toggle('hidden')">
-                                    <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
-                                        <path d="M10 6a2 2 0 110-4 2 2 0 010 4zm0 6a2 2 0 110-4 2 2 0 010 4zm0 6a2 2 0 110-4 2 2 0 010 4z"/>
-                                    </svg>
-                                </button>
-
-                                <div id="menu-{{ tweet.id }}" class="hidden absolute right-0 mt-2 w-32 bg-gray-800 border border-gray-700 rounded-md shadow-lg z-10">
-                                    <div class="absolute right-0 mt-2 w-40 bg-gray-800 rounded-lg shadow-lg overflow-hidden z-50">
-                                    <a href="#"
-                                        onclick="openEditModal(
-                                        {{ tweet.id }},
-                                        `{{ tweet.content?.replace(/`/g, '\\`').replace(/'/g, '\\\'').replace(/"/g, '\\"') ?? '' }}`,
-                                        {{ JSON.stringify(tweet.media) }}
-                                        )"
-                                        class="block px-4 py-2 text-sm text-white hover:bg-gray-700">
-                                        ✏️ Modifier
-                                    </a>
-
-                                    <a href="#"
-                                        onclick="deleteTweet({{ tweet.id }})"
-                                        class="block px-4 py-2 text-sm text-red-500 hover:bg-gray-700">
-                                        🗑️ Supprimer
-                                    </a>
-                                    </div>
-
-                                </div>
+                    <div class="border-b border-gray-800 p-4 hover:bg-gray-900/30 transition cursor-pointer">
+                        <div class="flex gap-3">
+                            <!-- Avatar -->
+                            @if(tweet.user.profile_picture)
+                            <img src="{{ tweet.user.profile_picture }}" alt="Avatar"
+                                class="w-12 h-12 rounded-full flex-shrink-0">
+                            @else
+                            <div
+                                class="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold uppercase bg-gray-700 flex-shrink-0">
+                                {{ tweet.user.name.split(' ')[0].charAt(0) }}{{ tweet.user.name.split(' ')[1]?.charAt(0)
+                                || '' }}
                             </div>
                             @endif
-                        </div>
 
-                        {{-- Contenu du tweet --}}
-                        <div class="mt-2 text-sm leading-relaxed whitespace-pre-line">
-                            {{ tweet.content }}
-                        </div>
+                            <div class="flex-1">
+                                <!-- En-tête -->
+                                <div class="flex items-center justify-between mb-1">
+                                    <div class="flex items-center gap-2">
+                                        <a href="#" class="font-bold hover:underline text-white">{{ tweet.user.name
+                                            }}</a>
+                                        <span class="text-gray-500 text-sm">{{ `@${tweet.user.username}` }}</span>
+                                        <span class="text-gray-500 text-sm">·</span>
+                                        <span class="text-gray-500 text-sm">{{ tweet.timeAgo }}</span>
+                                    </div>
 
-                        {{-- Médias --}}
-                        @if(tweet.media && tweet.media.length > 0)
-                            <div class="mt-3 grid gap-2 {{ gridColsClass }}">
-                                @each(media in tweet.media)
-                                <div class="relative">
-                                    @if(media.type === 'video')
-                                        <video controls class="w-full h-auto object-cover rounded-lg">
-                                            <source src="{{ media.url }}" type="video/mp4">
-                                            Your browser does not support the video tag.
-                                        </video>
-                                    @else
-                                        <img src="{{ media.url }}" alt="Media" class="w-full h-auto object-cover rounded-lg">
+                                    <!-- Menu (modifier/supprimer) -->
+                                    @if(auth.user.id === tweet.user.id)
+                                    <div class="relative">
+                                        <button class="text-gray-400 hover:text-white focus:outline-none"
+                                            onclick="document.getElementById('menu-{{ tweet.id }}').classList.toggle('hidden')">
+                                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                                <path
+                                                    d="M10 6a2 2 0 110-4 2 2 0 010 4zm0 6a2 2 0 110-4 2 2 0 010 4zm0 6a2 2 0 110-4 2 2 0 010 4z" />
+                                            </svg>
+                                        </button>
+
+                                        <div id="menu-{{ tweet.id }}"
+                                            class="hidden absolute right-0 mt-2 w-32 bg-gray-800 border border-gray-700 rounded-md shadow-lg z-10">
+                                            <div
+                                                class="absolute right-0 mt-2 w-40 bg-gray-800 rounded-lg shadow-lg overflow-hidden z-50">
+                                                <a href="#" onclick="openEditModal(
+                                                    {{ tweet.id }},
+                                                    `{{ tweet.content?.replace(/`/g, '\\`').replace(/'/g, '\\\'').replace(/" /g, '\\"' ) ?? '' }}`, {{
+                                                    JSON.stringify(tweet.media) }} )"
+                                                    class="block px-4 py-2 text-sm text-white hover:bg-gray-700">
+                                                    ✏️ Modifier
+                                                </a>
+                                                <a href="#" onclick="deleteTweet({{ tweet.id }})"
+                                                    class="block px-4 py-2 text-sm text-red-500 hover:bg-gray-700">
+                                                    🗑️ Supprimer
+                                                </a>
+                                            </div>
+                                        </div>
+                                    </div>
                                     @endif
                                 </div>
-                                @endeach
-                            </div>
-                        @endif
 
-                        {{-- Actions (comment, retweet, like, views) --}}
-                        <div class="flex justify-between items-center text-gray-400 text-sm mt-3">
-                            <div class="flex items-center space-x-1 hover:text-blue-400 cursor-pointer">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M8 10h.01M12 10h.01M16 10h.01M21 12c0 4.418-4.03 8-9 8a9.863 9.863 0 01-4.255-.949L3 20l1.395-3.72C3.512 15.042 3 13.574 3 12c0-4.418 4.03-8 9-8s9 3.582 9 8z"/>
-                                </svg>
-                                <span>{{ tweet.comments_count || 0 }}</span>
-                            </div>
-                            <div class="flex items-center space-x-1 hover:text-green-400 cursor-pointer">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M7 16V4m0 0L3 8m4-4l4 4m6 0v12m0 0l4-4m-4 4l-4-4"/>
-                                </svg>
-                                <span>{{ tweet.retweets_count || 0 }}</span>
-                            </div>
-                            <div class="flex items-center space-x-1 hover:text-red-400 cursor-pointer">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M4.318 6.318a4.5 4.5 0 000 6.364L12 20.364l7.682-7.682a4.5 4.5 0 00-6.364-6.364L12 7.636l-1.318-1.318a4.5 4.5 0 00-6.364 0z"/>
-                                </svg>
-                                <span>{{ tweet.likes_count || 0 }}</span>
-                            </div>
-                            <div class="flex items-center space-x-1 hover:text-blue-400 cursor-pointer">
-                                <svg class="w-5 h-5" fill="none" stroke="currentColor" viewBox="0 0 24 24">
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
-                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
-                                        d="M2.458 12C3.732 7.943 7.523 5 12 5c4.477 0 8.268 2.943 9.542 7-1.274 4.057-5.065 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
-                                </svg>
-                                <span>{{ tweet.views_count || 0 }}</span>
+                                <!-- Contenu du tweet -->
+                                <button onclick="window.location.href='/tweet/{{ tweet.id }}'" class="text-left w-full mb-2">
+                                    <div class="mt-2 text-sm leading-relaxed whitespace-pre-line">
+                                        {{ tweet.content }}
+                                    </div>
+                                </button>
+
+                                <!-- Médias -->
+                                @if(tweet.media && tweet.media.length > 0)
+                                @each(media in tweet.media)
+                                @if(media.type === 'image')
+                                <img src="{{ media.url }}"
+                                    class="rounded-2xl max-h-96 w-full object-cover mb-3 border border-gray-700">
+                                @elseif(media.type === 'video')
+                                <video controls
+                                    class="rounded-2xl max-h-96 w-full object-cover mb-3 border border-gray-700">
+                                    <source src="{{ media.url }}" type="video/mp4">
+                                    Your browser does not support the video tag.
+                                </video>
+                                @endif
+                                @endeach
+                                @endif
+
+                                <!-- Barre d'actions -->
+                                <div class="flex justify-between text-gray-500 mt-2 max-w-full">
+                                    <!-- Commentaire -->
+                                    <button class="flex items-center gap-2 hover:text-blue-500 transition group">
+                                        <div class="p-2 rounded-full group-hover:bg-blue-500/10 transition">
+                                            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                                                <path
+                                                    d="M1.751 10c0-4.42 3.584-8 8.005-8h4.366c4.49 0 8.129 3.64 8.129 8.13 0 2.96-1.607 5.68-4.196 7.11l-8.054 4.46v-3.69h-.067c-4.49.1-8.183-3.51-8.183-8.01z" />
+                                            </svg>
+                                        </div>
+                                        <span class="text-sm">{{ tweet.comments_count || 0 }}</span>
+                                    </button>
+
+                                    <!-- Retweet -->
+                                    <button class="flex items-center gap-2 transition group hover:text-green-500"
+                                        type="button">
+                                        <div class="p-2 rounded-full group-hover:bg-green-500/10 transition">
+                                            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                                                <path
+                                                    d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z" />
+                                            </svg>
+                                        </div>
+                                        <span class="text-sm">{{ tweet.retweets_count || 0 }}</span>
+                                    </button>
+
+                                    <!-- Like -->
+                                    <button
+                                        class="flex items-center gap-2 transition group {{ tweet.liked ? 'text-red-500' : 'text-gray-500' }}"
+                                        type="button">
+                                        <div
+                                            class="p-2 rounded-full group-hover:bg-red-500/10 transition {{ tweet.liked ? 'bg-red-500/10' : '' }}">
+                                            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                                                <path
+                                                    d="M20.884 13.19c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z" />
+                                            </svg>
+                                        </div>
+                                        <span class="text-sm">{{ tweet.likes_count || 0 }}</span>
+                                    </button>
+
+
+                                    <!-- Vues -->
+                                    <button class="flex items-center gap-2 hover:text-blue-500 transition group"
+                                        type="button">
+                                        <div class="p-2 rounded-full group-hover:bg-blue-500/10 transition">
+                                            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                                                <path
+                                                    d="M8.75 21V3h2v18h-2zM18 21V8.5h2V21h-2zM4 21l.004-10h2L6 21H4zm9.248 0v-7h2v7h-2z" />
+                                            </svg>
+                                        </div>
+                                        <span class="text-sm">{{ tweet.views_count || 0 }}</span>
+                                    </button>
+
+                                    <!-- Partager -->
+                                    {{-- Share --}}
+                                    <button
+                                        class="flex items-center gap-2 text-gray-500 hover:text-blue-500 transition group">
+                                        <div
+                                            class="p-2 rounded-full group-hover:bg-blue-500/10 transition-all duration-150 transform group-hover:scale-110">
+                                            <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                                                <path
+                                                    d="M12 2.59l5.7 5.7-1.41 1.42L13 6.41V16h-2V6.41l-3.3 3.3-1.41-1.42L12 2.59zM21 15l-.02 3.51c0 1.38-1.12 2.49-2.5 2.49H5.5C4.11 21 3 19.88 3 18.5V15h2v3.5c0 .28.22.5.5.5h12.98c.28 0 .5-.22.5-.5L19 15h2z" />
+                                            </svg>
+                                        </div>
+                                    </button>
+                                </div>
                             </div>
                         </div>
-
                     </div>
                     @endeach
-
-                    <div class="text-center text-gray-500 hidden mb-4">Chargement des posts...</div>
                 </div>
+
+                <script>
+                    function shareTweet(tweetId) {
+                        const url = `${window.location.origin}/tweet/${tweetId}`;
+                        if (navigator.share) {
+                            navigator.share({
+                                title: 'Partage un tweet',
+                                text: 'Regarde ce tweet 👇',
+                                url: url
+                            }).catch(() => { });
+                        } else {
+                            navigator.clipboard.writeText(url);
+                            alert('Lien copié dans le presse-papiers 📋');
+                        }
+                    }
+                </script>
+
+
+
+
 
             </main>
 
             <aside class="hidden lg:block w-80 p-4 bg-black text-gray-100 flex-shrink-0">
-               @include('partials/right-sidebar')
+                @include('partials/right-sidebar')
             </aside>
         </div>
     </div>
@@ -490,28 +535,28 @@
             </a>
         </div>
     </div>
- @include('partials/edit_post')
- <!-- Toast -->
-<div id="toast"
-     class="fixed bottom-5 right-5 z-[9999] px-4 py-3 rounded-lg text-white font-medium hidden transition-all duration-300">
-</div>
+    @include('partials/edit_post')
+    <!-- Toast -->
+    <div id="toast"
+        class="fixed bottom-5 right-5 z-[9999] px-4 py-3 rounded-lg text-white font-medium hidden transition-all duration-300">
+    </div>
 
-<script>
-  function showToast(message, type = 'info') {
-    const toast = document.getElementById('toast');
-    toast.textContent = message;
+    <script>
+        function showToast(message, type = 'info') {
+            const toast = document.getElementById('toast');
+            toast.textContent = message;
 
-    toast.className =
-      'fixed bottom-5 right-5 z-[9999] px-4 py-3 rounded-lg text-white font-medium shadow-lg transition-all duration-300 ' +
-      (type === 'success' ? 'bg-green-600' :
-       type === 'error' ? 'bg-red-600' :
-       'bg-gray-700');
+            toast.className =
+                'fixed bottom-5 right-5 z-[9999] px-4 py-3 rounded-lg text-white font-medium shadow-lg transition-all duration-300 ' +
+                (type === 'success' ? 'bg-green-600' :
+                    type === 'error' ? 'bg-red-600' :
+                        'bg-gray-700');
 
-    toast.classList.remove('hidden');
-    setTimeout(() => toast.classList.add('hidden'), 3000);
-  }
-</script>
+            toast.classList.remove('hidden');
+            setTimeout(() => toast.classList.add('hidden'), 3000);
+        }
+    </script>
 
 </body>
- 
+
 </html>

@@ -87,16 +87,25 @@
                             <p class="text-gray-300 mt-2">{{ user.bio }}</p>
                             @end
 
-                            <div class="flex gap-4 mt-3">
-                                <p class="text-gray-300">
-                                    <span class="font-bold">{{ followingCount }}</span>
-                                    <a href="#" class="hover:underline"> Abonnements</a>
-                                </p>
-                                <p class="text-gray-300">
-                                    <span class="font-bold">{{ followersCount }}</span>
-                                    <a href="#" class="hover:underline"> Abonnés</a>
-                                </p>
+                           <!-- Onglets abonnés / abonnements -->
+                            <div class="border-b border-gray-700 mt-4">
+                                <nav class="flex text-gray-400 text-sm">
+                                    <button 
+                                    id="tab-following"
+                                    class="flex-1 py-3 text-center hover:text-white transition border-b-2 border-transparent"
+                                    onclick="showTab('following')">
+                                    Abonnements <span class="font-bold text-white">{{ followingCount }}</span>
+                                    </button>
+                                    <button 
+                                    id="tab-followers"
+                                    class="flex-1 py-3 text-center hover:text-white transition border-b-2 border-transparent"
+                                    onclick="showTab('followers')">
+                                    Abonnés <span class="font-bold text-white">{{ followersCount }}</span>
+                                    </button>
+                                </nav>
                             </div>
+
+
                         </div>
                     </div>
 

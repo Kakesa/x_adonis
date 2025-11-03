@@ -1,0 +1,16 @@
+<div class="flex items-start p-4 border-b border-gray-800 hover:bg-gray-900/50 transition-colors">
+    <img src="{{ user.profile_picture || '/assets/images/default-avatar.png' }}" alt="avatar" class="w-12 h-12 rounded-full mr-4">
+    <div class="flex-1">
+        <div class="flex items-center justify-between">
+            <div>
+                <a href="{{ route('profile.show', { username: user.username }) }}" class="font-bold text-white hover:underline">{{ user.name }}</a>
+                <p class="text-gray-500">@{{ user.username }}</p>
+            </div>
+            <!-- TODO: Ajouter la logique pour le bouton Suivre/Abonné -->
+            <button class="bg-white text-black font-bold px-4 py-1 rounded-full">Suivre</button>
+        </div>
+        @if(user.bio)
+            <p class="mt-1 text-white">{{ user.bio }}</p>
+        @end
+    </div>
+</div>
