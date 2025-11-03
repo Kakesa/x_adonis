@@ -163,7 +163,7 @@
 
                             <div class="flex-1">
                                 <!-- En-tête -->
-                                <div class="flex items-center justify-between mb-1">
+                                <div class="flex items-center justify-between">
                                     <div class="flex items-center gap-2">
                                         <a href="#" class="font-bold hover:underline text-white">{{ tweet.user.name
                                             }}</a>
@@ -192,11 +192,11 @@
                                                     `{{ tweet.content?.replace(/`/g, '\\`').replace(/'/g, '\\\'').replace(/" /g, '\\"' ) ?? '' }}`, {{
                                                     JSON.stringify(tweet.media) }} )"
                                                     class="block px-4 py-2 text-sm text-white hover:bg-gray-700">
-                                                    ✏️ Modifier
+                                                    Modifier
                                                 </a>
                                                 <a href="#" onclick="deleteTweet({{ tweet.id }})"
                                                     class="block px-4 py-2 text-sm text-red-500 hover:bg-gray-700">
-                                                    🗑️ Supprimer
+                                                    Supprimer
                                                 </a>
                                             </div>
                                         </div>
@@ -206,7 +206,7 @@
 
                                 <!-- Contenu du tweet -->
                                 <button onclick="window.location.href='/tweet/{{ tweet.id }}'" class="text-left w-full mb-2">
-                                    <div class="mt-2 text-sm leading-relaxed whitespace-pre-line">
+                                    <div class="text-sm leading-relaxed whitespace-pre-line">
                                         {{ tweet.content }}
                                     </div>
                                 </button>
