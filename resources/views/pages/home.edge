@@ -187,15 +187,24 @@
                                 </button>
 
                                 <div id="menu-{{ tweet.id }}" class="hidden absolute right-0 mt-2 w-32 bg-gray-800 border border-gray-700 rounded-md shadow-lg z-10">
+                                    <div class="absolute right-0 mt-2 w-40 bg-gray-800 rounded-lg shadow-lg overflow-hidden z-50">
                                     <a href="#"
-                                        onclick="openEditModal('{{ tweet.id }}', `{{ tweet.content.replace(/`/g, '\\`').replace(/'/g, '\\\'').replace(/"/g, '\\"') }}`)"
+                                        onclick="openEditModal(
+                                        {{ tweet.id }},
+                                        `{{ tweet.content?.replace(/`/g, '\\`').replace(/'/g, '\\\'').replace(/"/g, '\\"') ?? '' }}`,
+                                        {{ JSON.stringify(tweet.media) }}
+                                        )"
                                         class="block px-4 py-2 text-sm text-white hover:bg-gray-700">
-                                        Modifier
+                                        ✏️ Modifier
                                     </a>
 
+                                    <a href="#"
+                                        onclick="deleteTweet({{ tweet.id }})"
+                                        class="block px-4 py-2 text-sm text-red-500 hover:bg-gray-700">
+                                        🗑️ Supprimer
+                                    </a>
+                                    </div>
 
-
-                                    <a href="/tweets/{{ tweet.id }}/delete" class="block px-4 py-2 text-sm text-white hover:bg-gray-700">Supprimer</a>
                                 </div>
                             </div>
                             @endif

@@ -112,17 +112,37 @@ export default class TweetsController {
   }
 
   /**
-   * Mettre à jour un tweet et ajouter de nouveaux médias
+   * Mettre à jour un tweet, gérer anciens et nouveaux médias
    */
   async update({ params, request, auth, response }: HttpContext) {
     const tweet = await Tweet.findOrFail(params.id)
+
+    // Vérification de l’utilisateur
     if (tweet.userId !== auth.user?.id) {
       return response.unauthorized({ message: 'Action non autorisée' })
     }
 
+    // Mettre à jour le contenu et la visibilité
     tweet.merge(request.only(['content', 'visibility', 'isPinned']))
     await tweet.save()
 
+    // Récupérer les médias existants envoyés par le frontend à conserver
+    const keptMediaUrls: string[] = request.input('keptMedia', [])
+
+    // Supprimer les médias qui ne sont plus conservés
+    const allMedia = await Media.query().where('tweetId', tweet.id)
+    for (const media of allMedia) {
+      if (!keptMediaUrls.includes(media.url)) {
+        // Supprimer le fichier physique
+        const filePath = path.join(app.publicPath(), media.url.replace(/^\//, ''))
+        if (fs.existsSync(filePath)) fs.unlinkSync(filePath)
+
+        // Supprimer l’entrée en base
+        await media.delete()
+      }
+    }
+
+    // Ajouter les nouveaux fichiers uploadés
     const files = request.files('media', {
       size: '100mb',
       extnames: ['jpg', 'jpeg', 'png', 'gif', 'mp4', 'mov', 'avi', 'mkv', 'webm'],
@@ -130,6 +150,7 @@ export default class TweetsController {
 
     for (const file of files) {
       if (!file || !file.isValid) continue
+
       const ext = file.extname ?? 'bin'
       const fileName = `${uuidv4()}.${ext}`
 
