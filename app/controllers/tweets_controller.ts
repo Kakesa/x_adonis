@@ -112,6 +112,56 @@ export default class TweetsController {
   }
 
   /**
+   * Retweeter un tweet (simple ou avec commentaire)
+   */
+  async retweet({ auth, params, response }: HttpContext) {
+    const user = auth.user
+    if (!user) {
+      return response.unauthorized({ message: 'Authentification requise' })
+    }
+
+    const { id } = params
+    const originalTweet = await Tweet.find(id)
+
+    if (!originalTweet) {
+      return response.notFound({ message: 'Tweet introuvable' })
+    }
+
+    // Vérifier si l'utilisateur a déjà retweeté ce tweet
+    const existingRetweet = await Tweet.query()
+      .where('user_id', user.id)
+      .andWhere('parent_tweet_id', id)
+      .first()
+
+    if (existingRetweet) {
+      // Si l'utilisateur a déjà retweeté → supprimer le retweet
+      await existingRetweet.delete()
+
+      // Décrémenter le compteur de retweets
+      if (originalTweet.retweetsCount > 0) {
+        originalTweet.retweetsCount -= 1
+        await originalTweet.save()
+      }
+
+      return response.ok({ message: 'Retweet supprimé avec succès' })
+    }
+
+    // Sinon → créer un nouveau retweet
+    await Tweet.create({
+      userId: user.id,
+      parentTweetId: id,
+      content: null, // pas de contenu, car c’est un retweet pur
+      visibility: 'public',
+    })
+
+    // Incrémenter le compteur de retweets
+    originalTweet.retweetsCount += 1
+    await originalTweet.save()
+
+    return response.created({ message: 'Retweet effectué avec succès' })
+  }
+
+  /**
    * Mettre à jour un tweet, gérer anciens et nouveaux médias
    */
   async update({ params, request, auth, response }: HttpContext) {

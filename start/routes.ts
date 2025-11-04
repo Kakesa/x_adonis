@@ -68,6 +68,13 @@ router
   .delete('/tweets/:id', (ctx) => new TweetsController().destroy(ctx))
   .middleware([middleware.auth()])
 
+// Retweeter un tweet (auth requis)
+// Retweeter un tweet (auth requis)
+router
+  .post('/tweets/:id/retweet', (ctx) => new TweetsController().retweet(ctx))
+  .middleware([middleware.auth()])
+  .as('tweets.retweet')
+
 // Suivre un utilisateur
 router
   .post('/follow/:id', async (ctx) => new FollowersController().follow(ctx))

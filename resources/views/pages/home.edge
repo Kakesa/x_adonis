@@ -55,6 +55,7 @@
                     </div>
                 </div>
 
+                <!-- New Post Section -->
                 <section class="border-b border-gray-800 p-4">
                     <div class="flex gap-3">
                         <img id="current-user-avatar-post"
@@ -145,6 +146,7 @@
                     </div>
                 </section>
 
+                {{-- Posts --}}
                 <div id="posts-container" class="p-4 mb-8 space-y-6 bg-black min-h-screen text-white">
                     @each(tweet in tweets)
                     <div class="border-b border-gray-800 p-4 hover:bg-gray-900/30 transition cursor-pointer">
@@ -185,27 +187,30 @@
 
                                         <div id="menu-{{ tweet.id }}"
                                             class="hidden absolute right-0 mt-2 w-32 bg-gray-800 border border-gray-700 rounded-md shadow-lg z-10">
-                                            <div
-                                                class="absolute right-0 mt-2 w-40 bg-gray-800 rounded-lg shadow-lg overflow-hidden z-50">
-                                                <a href="#" onclick="openEditModal(
+                                            <div class="absolute right-0 mt-2 w-40 bg-gray-800 rounded-lg shadow-lg overflow-hidden z-50">
+                                                <a href="#"
+                                                onclick="openEditModal(
                                                     {{ tweet.id }},
-                                                    `{{ tweet.content?.replace(/`/g, '\\`').replace(/'/g, '\\\'').replace(/" /g, '\\"' ) ?? '' }}`, {{
-                                                    JSON.stringify(tweet.media) }} )"
-                                                    class="block px-4 py-2 text-sm text-white hover:bg-gray-700">
+                                                    {{ JSON.stringify(tweet.content ?? '') }},
+                                                    {{ JSON.stringify(tweet.media) }}
+                                                )"
+                                                class="block px-4 py-2 text-sm text-white hover:bg-gray-700">
                                                     Modifier
                                                 </a>
                                                 <a href="#" onclick="deleteTweet({{ tweet.id }})"
-                                                    class="block px-4 py-2 text-sm text-red-500 hover:bg-gray-700">
+                                                class="block px-4 py-2 text-sm text-red-500 hover:bg-gray-700">
                                                     Supprimer
                                                 </a>
                                             </div>
                                         </div>
+
                                     </div>
                                     @endif
                                 </div>
 
                                 <!-- Contenu du tweet -->
-                                <button onclick="window.location.href='/tweet/{{ tweet.id }}'" class="text-left w-full mb-2">
+                                <button onclick="window.location.href='/tweet/{{ tweet.id }}'"
+                                    class="text-left w-full mb-2">
                                     <div class="text-sm leading-relaxed whitespace-pre-line">
                                         {{ tweet.content }}
                                     </div>
@@ -241,7 +246,8 @@
                                     </button>
 
                                     <!-- Retweet -->
-                                    <button class="flex items-center gap-2 transition group hover:text-green-500"
+                                    <button onclick="toggleRetweet({{ tweet.id }})"
+                                        class="flex items-center gap-2 transition group hover:text-green-500"
                                         type="button">
                                         <div class="p-2 rounded-full group-hover:bg-green-500/10 transition">
                                             <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
@@ -249,8 +255,10 @@
                                                     d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z" />
                                             </svg>
                                         </div>
-                                        <span class="text-sm">{{ tweet.retweets_count || 0 }}</span>
+                                        <span id="retweet-count-{{ tweet.id }}" class="text-sm">{{ tweet.retweetsCount
+                                            || 0 }}</span>
                                     </button>
+
 
                                     <!-- Like -->
                                     <button
@@ -297,26 +305,6 @@
                     </div>
                     @endeach
                 </div>
-
-                <script>
-                    function shareTweet(tweetId) {
-                        const url = `${window.location.origin}/tweet/${tweetId}`;
-                        if (navigator.share) {
-                            navigator.share({
-                                title: 'Partage un tweet',
-                                text: 'Regarde ce tweet 👇',
-                                url: url
-                            }).catch(() => { });
-                        } else {
-                            navigator.clipboard.writeText(url);
-                            alert('Lien copié dans le presse-papiers 📋');
-                        }
-                    }
-                </script>
-
-
-
-
 
             </main>
 
@@ -555,6 +543,38 @@
             toast.classList.remove('hidden');
             setTimeout(() => toast.classList.add('hidden'), 3000);
         }
+        async function toggleRetweet(tweetId) {
+            try {
+                const res = await fetch(`/tweets/${tweetId}/retweet`, {
+                    method: 'POST',
+                    headers: {
+                        'Content-Type': 'application/json',
+                        'X-CSRF-TOKEN': '{{ csrfToken }}' // si nécessaire pour Adonis
+                    }
+                });
+
+                const data = await res.json();
+
+                if (res.ok) {
+                    // Mettre à jour le compteur en direct
+                    const countEl = document.getElementById(`retweet-count-${tweetId}`);
+                    let currentCount = parseInt(countEl.innerText);
+
+                    if (data.message.includes('supprimé')) {
+                        // Retweet supprimé → décrémenter
+                        countEl.innerText = Math.max(currentCount - 1, 0);
+                    } else {
+                        // Retweet créé → incrémenter
+                        countEl.innerText = currentCount + 1;
+                    }
+                } else {
+                    console.error(data.message || 'Erreur lors du retweet');
+                }
+            } catch (err) {
+                console.error(err);
+            }
+        }
+
     </script>
 
 </body>
