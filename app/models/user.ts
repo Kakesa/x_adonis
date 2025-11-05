@@ -8,6 +8,7 @@ import { withAuthFinder } from '@adonisjs/auth/mixins/lucid'
 import Tweet from '#models/tweet'
 import Like from '#models/like'
 import Comment from '#models/comment'
+import Follower from '#models/follower'
 
 const AuthFinder = withAuthFinder(() => hash.use('scrypt'), {
   uids: ['email'],
@@ -88,19 +89,27 @@ export default class User extends compose(BaseModel, AuthFinder) {
 
   @manyToMany(() => User, {
     pivotTable: 'followers',
-    localKey: 'id',
     pivotForeignKey: 'follower_id',
-    relatedKey: 'id',
     pivotRelatedForeignKey: 'following_id',
   })
   declare following: ManyToMany<typeof User>
 
   @manyToMany(() => User, {
     pivotTable: 'followers',
-    localKey: 'id',
     pivotForeignKey: 'following_id',
-    relatedKey: 'id',
     pivotRelatedForeignKey: 'follower_id',
   })
   declare followers: ManyToMany<typeof User>
+
+  /**
+   * Vérifie si l'utilisateur suit un autre user
+   */
+  async isFollowingUser(targetUserId: number): Promise<boolean> {
+    const existing = await Follower.query()
+      .where('follower_id', this.id)
+      .where('following_id', targetUserId)
+      .first()
+
+    return !!existing
+  }
 }

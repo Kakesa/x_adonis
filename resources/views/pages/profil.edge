@@ -4,312 +4,363 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>X - Profil</title>
+    <title>X - {{ user.name }} ({{ `@${user.username}` }})</title>
+    {{-- Utilisation de Tailwind via CDN pour la simplicité --}}
     <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
-    <link rel="stylesheet" href="style.css">
+    {{--
+    <script src="https://cdn.tailwindcss.com"></script> --}}
+    <style>
+        /* Pour un meilleur rendu de la police, similaire à celle de Twitter/X */
+        body {
+            font-family: "TwitterChirp", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+    </style>
 </head>
 
-<body class="bg-black dark:bg-black text-gray-900 dark:text-gray-100 font-sans relative">
-
-    <header class="fixed md:hidden top-0 left-0 right-0 bg-black dark:bg-black z-50">
-        <div class="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex items-center justify-between h-14">
-            <button id="btnOpenProfile" aria-label="Ouvrir menu profil"
-                class="md:hidden w-10 h-10 rounded-full bg-gray-200 dark:bg-gray-700 flex items-center justify-center hover:bg-gray-300 dark:hover:bg-gray-600 transition">
-                <img id="mobile-nav-avatar" src="https://placehold.co/32x32/cccccc/000000?text=P" alt="Avatar"
-                    class="w-8 h-8 rounded-full" />
-            </button>
-
-            <a href="#" id="mobileLogo" class="md:hidden flex-grow flex items-center justify-center">
-                <img src="/resources/images/logo/logo-mini.png" alt="Logo X" class="w-8 h-8" />
-            </a>
-
-            <div class="w-10 h-10"></div>
-        </div>
-    </header>
+<body class="bg-black text-gray-100 font-sans relative">
 
     <div class="flex max-w-6xl mx-auto min-h-screen">
-        {{-- Sidebar --}}
+
+        {{-- Barre latérale de gauche --}}
         @include('partials/sidebar')
 
-        <div class="flex-grow flex pt-14 md:pt-0 max-w-full lg:max-w-[calc(100%-18rem)] xl:max-w-[calc(100%-20rem)]">
-            <main class="flex-grow border-l border-r border-gray-700 max-w-lg mx-auto md:mx-0">
+        <div class="flex-grow flex max-w-full">
+            <main class="flex-grow border-l border-r border-gray-700 max-w-2xl w-full">
                 <section class="flex-grow">
-                    <div class="border-b border-gray-700 p-4">
-                        <!-- Haut du profil -->
-                        <div class="flex items-center gap-4 mb-4">
-                            <a href="/home" class="text-gray-400 hover:text-white" aria-label="Retour">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                                    stroke="currentColor" stroke-width="2">
-                                    <path stroke-linecap="round" stroke-linejoin="round"
-                                        d="M10 19l-7-7m0 0l7-7m-7 7h18" />
-                                </svg>
-                            </a>
 
-                            <div>
-                                <h1 class="text-xl text-white font-bold">{{ user.name }}</h1>
-                                <p class="text-gray-400 text-sm">{{ tweetsCount }} posts</p>
+                    {{-- 1. En-tête du Profil (fixe en haut de l'écran) --}}
+                    <header class="sticky top-0 z-30 bg-black bg-opacity-70 backdrop-blur-md">
+                        <div class="flex items-center justify-between h-14 px-4">
+                            <div class="flex items-center gap-5">
+                                <a href="/home" class="p-2 rounded-full hover:bg-gray-800" aria-label="Retour">
+                                    <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24"
+                                        stroke="currentColor">
+                                        <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                            d="M10 19l-7-7m0 0l7-7m-7 7h18"></path>
+                                    </svg>
+                                </a>
+                                <div>
+                                    <h1 class="text-xl text-white font-bold leading-tight">{{ user.name }}</h1>
+                                    <p class="text-gray-500 text-sm leading-tight">{{ tweetsCount }} posts</p>
+                                </div>
+                            </div>
+                            <div class="p-2 rounded-full hover:bg-gray-800">
+                                <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path>
+                                </svg>
                             </div>
                         </div>
+                    </header>
 
-                        <!-- Bannière -->
-                        <div class="relative">
-                            <div class="h-48 bg-gray-700 rounded-lg overflow-hidden">
-                                <img src="{{ user.banner_picture || '/assets/images/default-banner.jpg' }}"
-                                    alt="Bannière de profil" class="w-full h-full object-cover">
+                    {{-- 2. Bannière et Avatar --}}
+                    <div class="relative">
+                        {{-- Bannière --}}
+                        <div class="h-52 bg-gray-800">
+                            <img src="{{ user.banner_picture ?? '/assets/images/default-banner.jpg' }}"
+                                alt="Bannière de profil" class="w-full h-full object-cover">
+                        </div>
+
+                        {{-- Conteneur pour l'avatar et le bouton d'édition --}}
+                        <div class="px-4 flex justify-between items-end -mt-16">
+                            {{-- Avatar --}}
+                            <div class="w-32 h-32 rounded-full border-4 border-black bg-black">
+                                @if(user.profile_picture)
+                                <img src="{{ user.profile_picture }}" alt="Avatar de profil"
+                                    class="w-full h-full rounded-full object-cover">
+                                @else
+                                <div
+                                    class="w-full h-full rounded-full bg-gray-800 flex items-center justify-center text-4xl font-bold text-white">
+                                    {{ user.name.split(' ')[0].charAt(0).toUpperCase() }}{{ user.name.split(' ')[1] ?
+                                    user.name.split(' ')[1].charAt(0).toUpperCase() : '' }}
+                                </div>
+                                @endif
                             </div>
 
-                            <!-- Avatar ou initiales -->
-                            @if(user.profile_picture)
-                            <img src="{{ user.profile_picture }}" alt="Avatar de profil"
-                                class="absolute -bottom-16 left-4 w-32 h-32 rounded-full border-4 border-black object-cover">
-                            @else
-                            <div
-                                class="absolute -bottom-16 left-4 w-32 h-32 rounded-full border-4 border-black bg-gray-800 flex items-center justify-center text-3xl font-bold text-white">
-                                {{ user.name.split(' ')[0].charAt(0).toUpperCase() }}{{ user.name.split(' ')[1]?.charAt(0).toUpperCase() || '' }}
-                            </div>
-                            @end
-
-
+                            {{-- Bouton Éditer / Suivre --}}
                             @if(isOwner)
                             <button id="btnEditProfile"
-                                class="absolute right-4 bg-transparent text-white border border-gray-700 px-4 py-2 rounded-full font-semibold hover:bg-gray-800 transition">
-                                Éditer le profil
+                                class="h-fit border border-gray-600 text-white font-bold px-4 py-1.5 rounded-full hover:bg-gray-800 transition">
+                                Edit profile
+                            </button>
+                            @else
+                            {{-- Ici, vous mettriez le bouton "Follow" pour les autres utilisateurs --}}
+                            <button
+                                class="h-fit bg-white text-black font-bold px-4 py-1.5 rounded-full hover:bg-gray-200 transition">
+                                Follow
                             </button>
                             @endif
                         </div>
+                    </div>
 
-                        <!-- Infos principales -->
-                        <div class="p-4 pt-16">
-                            <h2 class="text-xl text-white font-bold">{{ user.name }}</h2>
-                            <p class="text-gray-400"> {{ `@${user.username}` }}</p>
+                    {{-- 3. Informations principales de l'utilisateur --}}
+                    <div class="p-4 mt-2">
+                        <div class="flex flex-col gap-3">
+                            {{-- Nom & Vérification --}}
+                            <div>
+                                <div class="flex items-center gap-2">
+                                    <h2 class="text-xl text-white font-bold">{{ user.name }}</h2>
+                                    <button
+                                        class="flex items-center gap-1 border border-gray-600 rounded-full px-3 py-1 text-sm hover:bg-gray-800 transition">
+                                        <svg viewBox="0 0 22 22" class="h-4 w-4 text-blue-500 fill-current">
+                                            <g>
+                                                <path
+                                                    d="M20.396 11c-.018-.646-.215-1.275-.57-1.816-.354-.54-.852-.972-1.438-1.246.223-.607.27-1.264.14-1.897-.131-.634-.437-1.218-.882-1.687-.47-.445-1.053-.75-1.687-.882-.633-.13-1.29-.083-1.897.14-.273-.587-.706-1.084-1.246-1.438-.54-.354-1.17-.552-1.816-.57-.647-.018-1.276.215-1.817.57s-.972.852-1.246 1.438c-.607-.223-1.264-.27-1.897-.14-.634.131-1.218.437-1.687.882-.445.47-.75 1.053-.882 1.687-.13.633-.083 1.29.14 1.897-.586.274-1.084.706-1.438 1.246-.354.54-.552 1.17-.57 1.816-.018.646.215 1.275.57 1.817.354.54.852.972 1.438 1.246-.223.607-.27 1.264-.14 1.897.131.634.437 1.218.882 1.687.47.445 1.053.75 1.687.882.633.13 1.29.083 1.897-.14.273.587.706-1.084 1.246 1.438.54.354 1.17.552 1.817.57.646.018 1.275-.215 1.816-.57.54-.354.972-.852 1.246-1.438.607.223 1.264.27 1.897.14.634-.131 1.218-.437 1.687-.882.445-.47.75-1.053.882-1.687.13-.633.083-1.29-.14-1.897.587-.273 1.084-.706 1.438-1.246.354-.54.552-1.17.57-1.817zm-5.216-2.89L9.623 13.14l-2.357-2.357c-.273-.273-.715-.273-1.008 0s-.273.715 0 1.008l2.857 2.857c.143.143.327.215.512.215s.368-.072.512-.215l5.05-5.05c.273-.273.273-.715 0-1.008s-.715-.273-1.008 0z">
+                                                </path>
+                                            </g>
+                                        </svg>
+                                        <span class="font-semibold">Get verified</span>
+                                    </button>
+                                </div>
+                                <p class="text-gray-500">{{ `@${user.username}` }}</p>
+                            </div>
 
-                            @if(user.bio)
-                            <p class="text-gray-300 mt-2">{{ user.bio }}</p>
-                            @end
+                            {{-- Date d'inscription --}}
+                            <div class="flex items-center gap-2 text-gray-500">
+                                <svg class="w-5 h-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M8 7V3m8 4V3m-9 8h10M5 21h14a2 2 0 002-2V7a2 2 0 00-2-2H5a2 2 0 00-2 2v12a2 2 0 002 2z">
+                                    </path>
+                                </svg>
+                                <span>Joined {{ user.createdAt.toFormat('MMMM yyyy') }}</span>
+                            </div>
 
-                           <!-- Onglets abonnés / abonnements -->
+                            <!-- Onglets abonnés / abonnements -->
                             <div class="border-b border-gray-700 mt-4">
                                 <nav class="flex text-gray-400 text-sm">
-                                    <button 
-                                    id="tab-following"
-                                    class="flex-1 py-3 text-center hover:text-white transition border-b-2 border-transparent"
-                                    onclick="showTab('following')">
-                                    Abonnements <span class="font-bold text-white">{{ followingCount }}</span>
+                                    <button id="tab-following"
+                                        class="flex-1 py-3 text-center hover:text-white transition border-b-2 border-transparent"
+                                        onclick="showTab('following')">
+                                        Abonnements <span class="font-bold text-white">{{ followingCount }}</span>
                                     </button>
-                                    <button 
-                                    id="tab-followers"
-                                    class="flex-1 py-3 text-center hover:text-white transition border-b-2 border-transparent"
-                                    onclick="showTab('followers')">
-                                    Abonnés <span class="font-bold text-white">{{ followersCount }}</span>
+                                    <button id="tab-followers"
+                                        class="flex-1 py-3 text-center hover:text-white transition border-b-2 border-transparent"
+                                        onclick="showTab('followers')">
+                                        Abonnés <span class="font-bold text-white">{{ followersCount }}</span>
                                     </button>
                                 </nav>
                             </div>
-
-
                         </div>
                     </div>
 
-                    <!-- Conteneur des posts -->
-                    <div id="user-tweets-container" class="mt-4">
-                        <!-- Tes posts ici -->
+                    {{-- 4. Onglets de Navigation du Profil --}}
+                    <nav class="flex border-b border-gray-700 text-gray-500 font-semibold text-center">
+                        <a href="#"
+                            class="flex-1 py-3 hover:bg-gray-800/50 transition border-b-2 border-blue-500 text-white">Posts</a>
+                        <a href="#" class="flex-1 py-3 hover:bg-gray-800/50 transition">Replies</a>
+                        <a href="#" class="flex-1 py-3 hover:bg-gray-800/50 transition">Highlights</a>
+                        <a href="#" class="flex-1 py-3 hover:bg-gray-800/50 transition">Articles</a>
+                        <a href="#" class="flex-1 py-3 hover:bg-gray-800/50 transition">Media</a>
+                        <a href="#" class="flex-1 py-3 hover:bg-gray-800/50 transition">Likes</a>
+                    </nav>
+                    <!-- Conteneur des posts de l'utilisateur -->
+                    <div id="user-tweets-container" class="p-4 mb-8 space-y-6 bg-black text-white">
+                        @each(tweet in tweets)
+                        @if(tweet && tweet.user)
+                        <div class="border-b border-gray-800 p-4 hover:bg-gray-900/30 transition cursor-pointer">
+
+                            <!-- Badge Retweet au-dessus du tweet (si applicable) -->
+                            @if(tweet.parentTweet)
+                            @if(tweet.retweetedBy && tweet.retweetedBy.id === auth.user.id)
+                            <div
+                                class="flex items-center gap-2 text-green-400 text-sm font-semibold bg-green-900/20 px-3 py-1 rounded-full mb-2 animate-bounce-on-hover">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                    <path
+                                        d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z" />
+                                </svg>
+                                Tu as retweeté
+                            </div>
+                            @elseif(tweet.retweetedBy)
+                            <div
+                                class="flex items-center gap-2 text-green-400 text-sm font-semibold bg-green-900/20 px-3 py-1 rounded-full mb-2 animate-bounce-on-hover">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                    <path
+                                        d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z" />
+                                </svg>
+                                {{ `@${tweet.retweetedBy.username}` }} a retweeté
+                            </div>
+                            @else
+                            <div
+                                class="flex items-center gap-2 text-green-400 text-sm font-semibold bg-green-900/20 px-3 py-1 rounded-full mb-2 animate-bounce-on-hover">
+                                <svg class="w-4 h-4" fill="currentColor" viewBox="0 0 24 24">
+                                    <path
+                                        d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z" />
+                                </svg>
+                                Retweeté
+                            </div>
+                            @endif
+                            @endif
+
+                            <div class="flex gap-3">
+                                <!-- Avatar -->
+                                @if(tweet.user.profile_picture)
+                                <img src="{{ tweet.user.profile_picture }}" alt="Avatar"
+                                    class="w-12 h-12 rounded-full flex-shrink-0">
+                                @else
+                                <div
+                                    class="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold uppercase bg-gray-700 flex-shrink-0">
+                                    {{ tweet.user.name.split(' ')[0].charAt(0) }}{{ tweet.user.name.split(' ')[1]?.charAt(0) || '' }}
+                                </div>
+                                @endif
+
+                                <div class="flex-1">
+                                    <!-- En-tête -->
+                                    <div class="flex items-center justify-between">
+                                        <div class="flex items-center gap-2">
+                                            <a href="#" class="font-bold hover:underline text-white">{{ tweet.user.name
+                                                }}</a>
+                                            <span class="text-gray-500 text-sm">{{ `@${tweet.user.username}` }}</span>
+                                            <span class="text-gray-500 text-sm">·</span>
+                                            <span class="text-gray-500 text-sm">{{ tweet.timeAgo ?? '' }}</span>
+                                        </div>
+
+                                        <!-- Menu modifier/supprimer -->
+                                        @if(auth.user.id === tweet.user.id)
+                                        <div class="relative">
+                                            <button class="text-gray-400 hover:text-white focus:outline-none"
+                                                onclick="document.getElementById('menu-{{ tweet.id }}')?.classList.toggle('hidden')">
+                                                <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 20 20">
+                                                    <path
+                                                        d="M10 6a2 2 0 110-4 2 2 0 010 4zm0 6a2 2 0 110-4 2 2 0 010 4zm0 6a2 2 0 110-4 2 2 0 010 4z" />
+                                                </svg>
+                                            </button>
+                                            <div id="menu-{{ tweet.id }}"
+                                                class="hidden absolute right-0 mt-2 w-32 bg-gray-800 border border-gray-700 rounded-md shadow-lg z-10">
+                                                <div
+                                                    class="absolute right-0 mt-2 w-40 bg-gray-800 rounded-lg shadow-lg overflow-hidden z-50">
+                                                    <a href="#"
+                                                        onclick="openEditModal({{ tweet.id }}, {{ JSON.stringify(tweet.content ?? '') }}, {{ JSON.stringify(tweet.media ?? []) }})"
+                                                        class="block px-4 py-2 text-sm text-white hover:bg-gray-700">Modifier</a>
+                                                    <a href="#" onclick="deleteTweet({{ tweet.id }})"
+                                                        class="block px-4 py-2 text-sm text-red-500 hover:bg-gray-700">Supprimer</a>
+                                                </div>
+                                            </div>
+                                        </div>
+                                        @endif
+                                    </div>
+
+                                    <!-- Contenu du tweet ou du parent -->
+                                    <button onclick="window.location.href='/tweet/{{ tweet.id ?? 0 }}'"
+                                        class="text-left w-full mb-2">
+                                        <div class="text-sm leading-relaxed whitespace-pre-line">
+                                            {{ tweet.parentTweet?.content ?? tweet.content ?? '' }}
+                                        </div>
+                                    </button>
+
+                                    @each(tweet in tweets)
+                                    {{-- Vérifier s’il y a un tweet parent ou non --}}
+                                    @if((tweet.parentTweet ?? tweet).media && Array.isArray((tweet.parentTweet ??
+                                    tweet).media) && (tweet.parentTweet ?? tweet).media.length > 0)
+                                    @each(media in (tweet.parentTweet ?? tweet).media)
+                                    @if(media.type === 'image')
+                                    <img src="{{ media.url }}" alt="Media image"
+                                        class="rounded-2xl max-h-96 w-full object-cover mb-3 border border-gray-700">
+                                    @elseif(media.type === 'video')
+                                    <video controls
+                                        class="rounded-2xl max-h-96 w-full object-cover mb-3 border border-gray-700">
+                                        <source src="{{ media.url }}" type="video/mp4">
+                                        Your browser does not support the video tag.
+                                    </video>
+                                    @endif
+                                    @endeach
+                                    @endif
+                                    @endeach
+
+
+                                    <!-- Barre d'actions -->
+                                    <div class="flex justify-between text-gray-500 mt-2 max-w-full">
+                                        <!-- Commentaire -->
+                                        <button class="flex items-center gap-2 hover:text-blue-500 transition group">
+                                            <div class="p-2 rounded-full group-hover:bg-blue-500/10 transition">
+                                                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                                                    <path
+                                                        d="M1.751 10c0-4.42 3.584-8 8.005-8h4.366c4.49 0 8.129 3.64 8.129 8.13 0 2.96-1.607 5.68-4.196 7.11l-8.054 4.46v-3.69h-.067c-4.49.1-8.183-3.51-8.183-8.01z" />
+                                                </svg>
+                                            </div>
+                                            <span class="text-sm">{{ tweet.comments_count || 0 }}</span>
+                                        </button>
+
+                                        <!-- Retweet -->
+                                        <button onclick="toggleRetweet({{ tweet.id }})"
+                                            class="flex items-center gap-2 transition group hover:text-green-500"
+                                            type="button">
+                                            <div class="p-2 rounded-full group-hover:bg-green-500/10 transition">
+                                                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                                                    <path
+                                                        d="M4.5 3.88l4.432 4.14-1.364 1.46L5.5 7.55V16c0 1.1.896 2 2 2H13v2H7.5c-2.209 0-4-1.79-4-4V7.55L1.432 9.48.068 8.02 4.5 3.88zM16.5 6H11V4h5.5c2.209 0 4 1.79 4 4v8.45l2.068-1.93 1.364 1.46-4.432 4.14-4.432-4.14 1.364-1.46 2.068 1.93V8c0-1.1-.896-2-2-2z" />
+                                                </svg>
+                                            </div>
+                                            <span id="retweet-count-{{ tweet.id }}" class="text-sm">{{
+                                                tweet.retweetsCount || 0 }}</span>
+                                        </button>
+
+                                        <!-- Like -->
+                                        <button
+                                            class="flex items-center gap-2 transition group {{ tweet.liked ? 'text-red-500' : 'text-gray-500' }}"
+                                            type="button">
+                                            <div
+                                                class="p-2 rounded-full group-hover:bg-red-500/10 transition {{ tweet.liked ? 'bg-red-500/10' : '' }}">
+                                                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                                                    <path
+                                                        d="M20.884 13.19c-1.351 2.48-4.001 5.12-8.379 7.67l-.503.3-.504-.3c-4.379-2.55-7.029-5.19-8.382-7.67-1.36-2.5-1.41-4.86-.514-6.67.887-1.79 2.647-2.91 4.601-3.01 1.651-.09 3.368.56 4.798 2.01 1.429-1.45 3.146-2.1 4.796-2.01 1.954.1 3.714 1.22 4.601 3.01.896 1.81.846 4.17-.514 6.67z" />
+                                                </svg>
+                                            </div>
+                                            <span class="text-sm">{{ tweet.likes_count || 0 }}</span>
+                                        </button>
+
+                                        <!-- Vues -->
+                                        <button class="flex items-center gap-2 hover:text-blue-500 transition group"
+                                            type="button">
+                                            <div class="p-2 rounded-full group-hover:bg-blue-500/10 transition">
+                                                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                                                    <path
+                                                        d="M8.75 21V3h2v18h-2zM18 21V8.5h2V21h-2zM4 21l.004-10h2L6 21H4zm9.248 0v-7h2v7h-2z" />
+                                                </svg>
+                                            </div>
+                                            <span class="text-sm">{{ tweet.views_count || 0 }}</span>
+                                        </button>
+
+                                        <!-- Partager -->
+                                        <button class="flex items-center gap-2 hover:text-blue-500 transition group"
+                                            type="button">
+                                            <div class="p-2 rounded-full group-hover:bg-blue-500/10 transition">
+                                                <svg class="w-5 h-5" viewBox="0 0 24 24" fill="currentColor">
+                                                    <path
+                                                        d="M12 3v2.5a4.5 4.5 0 1 0 0 9V21h2V14.5a4.5 4.5 0 1 0 0-9V3h-2z" />
+                                                </svg>
+                                            </div>
+                                            <span class="text-sm">{{ tweet.shares_count || 0 }}</span>
+                                        </button>
+                                    </div>
+
+                                </div>
+                            </div>
+
+                        </div>
+                        @endif
+                        @endeach
                     </div>
 
-                    <!-- Navigation du profil -->
-                    <nav class="flex border-b border-gray-700 text-gray-400 text-center">
-                        <a href="#"
-                            class="flex-1 py-3 hover:bg-gray-800 hover:text-white transition border-b-2 border-blue-500 text-white">Posts</a>
-                        <a href="#" class="flex-1 py-3 hover:bg-gray-800 hover:text-white transition">Réponses</a>
-                        <a href="#" class="flex-1 py-3 hover:bg-gray-800 hover:text-white transition">Médias</a>
-                        <a href="#" class="flex-1 py-3 hover:bg-gray-800 hover:text-white transition">J'aime</a>
-                    </nav>
+                    <style>
+                        .animate-bounce-on-hover {
+                            transition: transform 0.2s ease-in-out;
+                        }
+
+                        .animate-bounce-on-hover:hover {
+                            transform: scale(1.1);
+                        }
+                    </style>
+
+
+
+
                 </section>
             </main>
 
-
-            <aside class="hidden lg:block w-100 p-4 bg-black text-gray-100 flex-shrink-0">
-               @include('partials/right-sidebar')
+            {{-- Barre latérale de droite --}}
+            <aside class="hidden lg:block w-full lg:w-96 p-4 bg-black text-gray-100 flex-shrink-0">
+                @include('partials/right-sidebar')
             </aside>
-        </div>
-    </div>
-
-    <!-- Nav mobile -->
-    <nav
-        class="fixed bottom-0 left-0 right-0 bg-black dark:bg-gray-800 border-t border-gray-200 dark:border-gray-700 z-50 flex justify-around md:hidden h-14 items-center text-gray-700 dark:text-gray-300">
-        <a href="/pages/accueil.html"
-            class="flex flex-col items-center justify-center text-sm hover:text-blue-600 dark:hover:text-blue-400 transition"
-            aria-label="Accueil">
-            <img src="/resources/images/logo/home.png" alt="Accueil" class="w-6 h-6 mb-0.5" />
-        </a>
-        <a href="#"
-            class="flex flex-col items-center justify-center text-sm hover:text-blue-600 dark:hover:text-blue-400 transition"
-            aria-label="Explorer">
-            <img src="/resources/images/logo/search.png" alt="Explorer" class="w-6 h-6 mb-0.5" />
-        </a>
-        <a href="#"
-            class="flex flex-col items-center justify-center text-sm hover:text-blue-600 dark:hover:text-blue-400 transition"
-            aria-label="Grok">
-            <img src="/resources/images/logo/grok.png" alt="Explorer" class="w-6 h-6 mb-0.5" />
-        </a>
-
-        <a href="#"
-            class="flex flex-col items-center justify-center text-sm hover:text-blue-600 dark:hover:text-blue-400 transition"
-            aria-label="Communautés">
-            <img src="/resources/images/logo/communaute.png" alt="Messages" class="w-6 h-6 mb-0.5" />
-        </a>
-        <a href="#"
-            class="flex flex-col items-center justify-center text-sm hover:text-blue-600 dark:hover:text-blue-400 transition"
-            aria-label="Notifications">
-            <img src="/resources/images/logo/notifications.png" alt="Notifications" class="w-6 h-6 mb-0.5" />
-        </a>
-        <a href="#"
-            class="flex flex-col items-center justify-center text-sm hover:text-blue-600 dark:hover:text-blue-400 transition"
-            aria-label="Messages">
-            <img src="/resources/images/logo/message.png" alt="Messages" class="w-6 h-6 mb-0.5" />
-        </a>
-    </nav>
-
-    <div id="overlay"
-        class="fixed inset-0 bg-black bg-opacity-50 z-40 opacity-0 pointer-events-none transition-opacity duration-300 ease-in-out"
-        aria-hidden="true"></div>
-
-    <div id="profileDrawer"
-        class="fixed inset-y-0 left-0 w-80 bg-gray-900 text-gray-100 z-50 transform -translate-x-full transition-transform duration-300 ease-in-out flex flex-col overflow-y-auto"
-        aria-hidden="true" role="dialog" aria-modal="true" aria-labelledby="profileDrawerTitle">
-        <div class="sticky top-0 bg-gray-900 p-5 border-b border-gray-700 z-10 flex flex-col gap-4">
-            <div class="flex items-center justify-between">
-                <img id="drawer-profile-avatar" src="https://placehold.co/56x56/cccccc/000000?text=H" alt="Avatar"
-                    class="w-14 h-14 rounded-full flex-shrink-0" />
-                <button id="btnOpenAccountOptions" aria-label="Ouvrir les options de compte"
-                    class="ml-auto text-gray-400 hover:text-white focus:outline-none p-2 rounded-full">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="h-6 w-6" fill="none" viewBox="0 0 24 24"
-                        stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round" d="M12 4v16m8-8H4" />
-                    </svg>
-                </button>
-            </div>
-            <div class="flex flex-col">
-                <h3 id="drawer-profile-name" class="font-bold text-xl leading-tight">Espoir Kakesa</h3>
-                <p id="drawer-profile-username" class="text-gray-400 text-sm">@KakesaEspo29091</p>
-            </div>
-            <div class="flex gap-4 text-center">
-                <div>
-                    <span id="drawer-following" class="font-bold text-lg block">1</span>
-                    <p class="text-gray-400 text-sm">Abonnement</p>
-                </div>
-                <div>
-                    <span id="drawer-followers" class="font-bold text-lg block">1</span>
-                    <p class="text-gray-400 text-sm">Abonné</p>
-                </div>
-            </div>
-        </div>
-
-        <nav class="flex-grow overflow-y-auto p-4 space-y-4 font-semibold text-lg border-b border-gray-700">
-            <a href="#" class="flex items-center gap-4 hover:bg-gray-800 rounded px-3 py-2 transition">
-                <img src="/resources/images/logo/logo-mini.png" alt="Premium" class="w-7 h-7 flex-shrink-0" />
-                Premium
-            </a>
-            <a href="#" class="flex items-center gap-4 hover:bg-gray-800 rounded px-3 py-2 transition">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 flex-shrink-0" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M8 10h.01M12 10h.01M16 10h.01M9 16H5a2 2 0 01-2-2V6a2 2 0 012-2h14a2 2 0 012 2v8a2 2 0 01-2 2h-5l-5 5v-5z" />
-                </svg>
-                Chat <span class="ml-2 px-2 py-1 bg-blue-500 text-white text-xs rounded-full">BÊTA</span>
-            </a>
-            <a href="#" class="flex items-center gap-4 hover:bg-gray-800 rounded px-3 py-2 transition">
-                <img src="/resources/images/logo/bookmarks.png" alt="Signets" class="w-7 h-7 flex-shrink-0" />
-                Signets
-            </a>
-            <a href="#" class="flex items-center gap-4 hover:bg-gray-800 rounded px-3 py-2 transition">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 flex-shrink-0" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M19 11H5m14 0a2 2 0 012 2v5a2 2 0 01-2 2H5a2 2 0 01-2-2v-5a2 2 0 012-2m7 0V5a2 2 0 012-2h2a2 2 0 012 2v6m-7 0z" />
-                </svg>
-                Offres d'emploi
-            </a>
-            <a href="#" class="flex items-center gap-4 hover:bg-gray-800 rounded px-3 py-2 transition">
-                <img src="/resources/images/logo/lists.png" alt="Listes" class="w-7 h-7 flex-shrink-0" />
-                Listes
-            </a>
-            <a href="#" class="flex items-center gap-4 hover:bg-gray-800 rounded px-3 py-2 transition">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 flex-shrink-0" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M14.752 11.168l-3.197 3.197m0 0a5.1 5.1 0 01-7.17-7.17L2.1 7.23a2 2 0 000 2.828l10.51 10.51a2 2 0 002.828 0l3.182-3.182m-4.992-4.992l3.197 3.197m0 0a5.1 5.1 0 017.17-7.17L21.9 7.23a2 2 0 000 2.828l-7.17 7.17a2 2 0 00-2.828 0Z" />
-                </svg>
-                Spaces
-            </a>
-            <a href="#" class="flex items-center gap-4 hover:bg-gray-800 rounded px-3 py-2 transition">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-7 h-7 flex-shrink-0" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M12 8c-1.657 0-3 .895-3 2v2H7a2 2 0 00-2 2v5a2 2 0 002 2h10a2 2 0 002-2v-5a2 2 0 00-2-2h-2v-2c0-1.105-.333-2-1-3V8z" />
-                </svg>
-                Monétisation
-            </a>
-        </nav>
-
-        <nav class="p-4 space-y-4 font-semibold text-base">
-            <a href="#" class="flex items-center gap-4 hover:bg-gray-800 rounded px-3 py-2 transition">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 flex-shrink-0" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M12 10.5v6m0 0l-3-3m3 3l3-3m-8-9v-3a2 2 0 012-2h.5c.29 0 .58.056.845.168L12 3.5m-6 6V7a3 3 0 013-3h.5m3.5 3.5V10.5m0-7a3 3 0 013-3h.5a2 2 0 012 2v.5m0 0l2 2m-2-2v.5a2 2 0 01-2 2h-.5c-.29 0-.58-.056-.845-.168L12 3.5M12 7V3h.5m-6 6v.5a2 2 0 012 2h.5" />
-                </svg>
-                Télécharger Grok
-            </a>
-            <a href="#" class="flex items-center gap-4 hover:bg-gray-800 rounded px-3 py-2 transition">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 flex-shrink-0" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M10.325 4.317c.426-1.756 2.924-1.756 3.35 0a1.724 1.724 0 002.573 1.066c1.543-.94 3.31.826 2.37 2.37a1.724 1.724 0 001.065 2.572c1.756.426 1.756 2.924 0 3.35a1.724 1.724 0 00-1.066 2.573c.94 1.543-.826 3.31-2.37 2.37a1.724 1.724 0 00-2.572 1.065c-.426 1.756-2.924 1.756-3.35 0a1.724 1.724 0 00-2.573-1.066c-1.543.94-3.31-.826-2.37-2.37a1.724 1.724 0 00-1.065-2.572c-1.756-.426-1.756-2.924 0-3.35a1.724 1.724 0 001.066-2.573c-.94-1.543.826-3.31 2.37-2.37.585.356 1.13.845 1.636 1.39Z" />
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M15 12a3 3 0 11-6 0 3 3 0 016 0Z" />
-                </svg>
-                Réglages et confidentialité
-            </a>
-            <a href="#" class="flex items-center gap-4 hover:bg-gray-800 rounded px-3 py-2 transition">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 flex-shrink-0" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M8.25 18.75a1.5 1.5 0 01-3 0V7.5a1.5 1.5 0 013 0v11.25zM15 18.75a1.5 1.5 0 01-3 0V7.5a1.5 1.5 0 013 0v11.25zM18.75 6a1.5 1.5 0 00-3 0v12.75a1.5 1.5 0 003 0V6zM12 3a1.5 1.5 0 00-3 0v15.75a1.5 1.5 0 003 0V3z" />
-                </svg>
-                Centre d'assistance
-            </a>
-            <a href="#" class="flex items-center gap-4 hover:bg-gray-800 rounded px-3 py-2 transition">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 flex-shrink-0" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round"
-                        d="M3 3h2l.4 2M7 13h10l4-8H5.4M7 13L5.4 5M7 13l-2.293 2.293c-.63.63-.184 1.707.707 1.707H17m0 0a2 2 0 100 4 2 2 0 000-4zm-8 2a2 2 0 11-4 0 2 2 0 014 0z" />
-                </svg>
-                Achats
-            </a>
-            <div class="flex items-center justify-between hover:bg-gray-800 rounded px-3 py-2 transition">
-                <a href="#" class="flex items-center gap-4 flex-grow">
-                    <svg xmlns="http://www.w3.org/2000/svg" class="w-6 h-6 flex-shrink-0" fill="none"
-                        viewBox="0 0 24 24" stroke="currentColor" stroke-width="2">
-                        <path stroke-linecap="round" stroke-linejoin="round"
-                            d="M12 3v1m0 16v1m9-9h-1M4 12H3m15.364 6.364l-.707-.707M6.343 6.343l-.707-.707m12.728 0l-.707.707M6.343 17.657l-.707.707M16 12a4 4 0 11-8 0 4 4 0 018 0z" />
-                    </svg>
-                    Mode nuit
-                </a>
-                <label class="relative inline-flex items-center cursor-pointer">
-                    <input type="checkbox" value="" class="sr-only peer">
-                    <div
-                        class="w-11 h-6 bg-gray-200 peer-focus:outline-none peer-focus:ring-4 peer-focus:ring-blue-300 dark:peer-focus:ring-blue-800 rounded-full peer dark:bg-gray-700 peer-checked:after:translate-x-full peer-checked:after:border-white after:content-[''] after:absolute after:top-[2px] after:left-[2px] after:bg-white after:border-gray-300 after:border after:rounded-full after:h-5 after:w-5 after:transition-all dark:border-gray-600 peer-checked:bg-blue-600">
-                    </div>
-                </label>
-            </div>
-        </nav>
-
-        <div class="p-4 border-t border-gray-700">
-            <button id="btnCloseProfileBottom" aria-label="Fermer menu profil"
-                class="w-full text-gray-400 hover:text-white focus:outline-none flex justify-center py-2">
-                <svg xmlns="http://www.w3.org/2000/svg" class="w-8 h-8" fill="none" viewBox="0 0 24 24"
-                    stroke="currentColor" stroke-width="2">
-                    <path stroke-linecap="round" stroke-linejoin="round" d="M6 18L18 6M6 6l12 12" />
-                </svg>
-            </button>
         </div>
     </div>
 </body>

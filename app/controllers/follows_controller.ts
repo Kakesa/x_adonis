@@ -1,79 +1,72 @@
 import type { HttpContext } from '@adonisjs/core/http'
+import User from '#models/user'
 import Follower from '#models/follower'
 
-export default class FollowersController {
-  // -----------------------
-  // Suivre un utilisateur
-  // -----------------------
-  public async follow({ auth, params, response }: HttpContext) {
-    if (!auth.user) {
-      return response.unauthorized({ message: 'Utilisateur non authentifié' })
+export default class FollowController {
+  /**
+   * 🔹 Suivre ou se désabonner d’un utilisateur
+   */
+  async toggle({ auth, params, response }: HttpContext) {
+    const user = auth.user
+    const { id } = params // ID de l'utilisateur à suivre
+
+    if (!user) {
+      return response.unauthorized({ message: 'Authentification requise' })
     }
 
-    const followerId = auth.user.id
-    const followingId = Number(params.id)
-
-    if (followerId === followingId) {
-      return response.badRequest({ message: 'Impossible de se suivre soi-même' })
+    if (user.id === Number(id)) {
+      return response.badRequest({ message: 'Tu ne peux pas te suivre toi-même' })
     }
 
-    // Vérifier si le follow existe déjà
-    const exists = await Follower.query()
-      .where('follower_id', followerId)
-      .andWhere('following_id', followingId)
+    const existingFollow = await Follower.query()
+      .where('follower_id', user.id)
+      .where('following_id', id)
       .first()
 
-    if (exists) {
-      return response.badRequest({ message: 'Vous suivez déjà cet utilisateur' })
+    if (existingFollow) {
+      await existingFollow.delete()
+      return response.ok({ message: 'Désabonné avec succès', following: false })
     }
 
-    await Follower.create({ followerId, followingId })
+    await Follower.create({
+      followerId: user.id,
+      followingId: id,
+    })
 
-    return response.json({ message: 'Vous suivez maintenant cet utilisateur' })
+    return response.ok({ message: 'Abonné avec succès', following: true })
   }
 
-  // -----------------------
-  // Se désabonner
-  // -----------------------
-  public async unfollow({ auth, params, response }: HttpContext) {
-    if (!auth.user) {
-      return response.unauthorized({ message: 'Utilisateur non authentifié' })
-    }
+  /**
+   * 🔹 Liste des abonnés (followers)
+   */
+  async followers({ params, view }: HttpContext) {
+    const { username } = params
 
-    const followerId = auth.user.id
-    const followingId = Number(params.id)
+    const user = await User.query()
+      .where('username', username)
+      .preload('followers') // charge les utilisateurs qui suivent
+      .firstOrFail()
 
-    const deleted = await Follower.query()
-      .where('follower_id', followerId)
-      .andWhere('following_id', followingId)
-      .delete()
-
-    if (deleted) {
-      return response.json({ message: 'Désabonné !' })
-    } else {
-      return response.notFound({ message: 'Vous ne suivez pas cet utilisateur' })
-    }
+    return view.render('pages/followers', {
+      user,
+      followers: user.followers, // déjà une liste d'objets User
+    })
   }
 
-  // -----------------------
-  // Liste des abonnés
-  // -----------------------
-  public async followers({ params, response }: HttpContext) {
-    const userId = Number(params.id)
+  /**
+   * 🔹 Liste des abonnements (following)
+   */
+  async following({ params, view }: HttpContext) {
+    const { username } = params
 
-    const followers = await Follower.query().where('following_id', userId).preload('follower')
+    const user = await User.query()
+      .where('username', username)
+      .preload('following') // charge les utilisateurs suivis
+      .firstOrFail()
 
-    return response.json(followers.map((f) => f.follower))
-  }
-
-  // -----------------------
-  // Liste des abonnements
-  // -----------------------
-  public async following({ params, response }: HttpContext) {
-    const userId = Number(params.id)
-
-    const following = await Follower.query().where('follower_id', userId).preload('following')
-
-    return response.json(following.map((f) => f.following))
+    return view.render('pages/following', {
+      user,
+      following: user.following,
+    })
   }
 }

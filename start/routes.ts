@@ -3,8 +3,8 @@ import AuthController from '#controllers/auth_controller'
 import ProfilesController from '#controllers/profiles_controller'
 import TweetsController from '#controllers/tweets_controller'
 import { middleware } from '#start/kernel'
-import FollowersController from '#controllers/follows_controller'
 import SuggestionsController from '#controllers/suggestions_controller'
+const FollowController = () => import('#controllers/follows_controller')
 
 // -------------------
 // Pages publiques
@@ -75,21 +75,12 @@ router
   .middleware([middleware.auth()])
   .as('tweets.retweet')
 
-// Suivre un utilisateur
-router
-  .post('/follow/:id', async (ctx) => new FollowersController().follow(ctx))
-  .middleware([middleware.auth()])
+// Suivre / se désabonner
+router.post('/follow/:id', [FollowController, 'toggle']).as('follow.toggle')
 
-// Se désabonner
-router
-  .post('/unfollow/:id', async (ctx) => new FollowersController().unfollow(ctx))
-  .middleware([middleware.auth()])
-
-// Liste des abonnés d’un utilisateur
-router.get('/users/:id/followers', async (ctx) => new FollowersController().followers(ctx))
-
-// Liste des utilisateurs suivis
-router.get('/users/:id/following', async (ctx) => new FollowersController().following(ctx))
+// Liste des abonnés et abonnements
+router.get('/u/:username/followers', [FollowController, 'followers']).as('user.followers')
+router.get('/u/:username/following', [FollowController, 'following']).as('user.following')
 
 // Suggestions d’utilisateurs à suivre
 router

@@ -3,20 +3,27 @@ import { BaseModel, column, belongsTo } from '@adonisjs/lucid/orm'
 import type { BelongsTo } from '@adonisjs/lucid/types/relations'
 import User from '#models/user'
 
-export default class Follower extends BaseModel {
+export default class Follow extends BaseModel {
+  public static table = 'follows' // 👈 Nom de la table pivot cohérent avec User
+
   @column({ isPrimary: true })
   declare id: number
 
-  @column()
-  declare followerId: number
+  @column({ columnName: 'follower_id' })
+  declare followerId: number // 👈 celui qui suit
 
-  @column()
-  declare followingId: number
+  @column({ columnName: 'following_id' })
+  declare followingId: number // 👈 celui qui est suivi
 
-  @belongsTo(() => User, { foreignKey: 'followerId' })
+  // 👇 Relations avec le modèle User
+  @belongsTo(() => User, {
+    foreignKey: 'followerId',
+  })
   declare follower: BelongsTo<typeof User>
 
-  @belongsTo(() => User, { foreignKey: 'followingId' })
+  @belongsTo(() => User, {
+    foreignKey: 'followingId',
+  })
   declare following: BelongsTo<typeof User>
 
   @column.dateTime({ autoCreate: true })
