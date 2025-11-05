@@ -208,9 +208,9 @@
                                     <!-- En-tête -->
                                     <div class="flex items-center justify-between">
                                         <div class="flex items-center gap-2">
-                                            <a href="#" class="font-bold hover:underline text-white">{{ tweet.user.name
+                                            <a href="#" class="font-bold hover:underline text-white truncate max-w-[120px]">{{ tweet.user.name
                                                 }}</a>
-                                            <span class="text-gray-500 text-sm">{{ `@${tweet.user.username}` }}</span>
+                                            <span class="text-gray-500 text-sm truncate max-w-[120px]">{{ `@${tweet.user.username}` }}</span>
                                             <span class="text-gray-500 text-sm">·</span>
                                             <span class="text-gray-500 text-sm">{{ tweet.timeAgo ?? '' }}</span>
                                         </div>
