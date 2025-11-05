@@ -153,6 +153,7 @@
                         <a href="#" class="flex-1 py-3 hover:bg-gray-800/50 transition">Media</a>
                         <a href="#" class="flex-1 py-3 hover:bg-gray-800/50 transition">Likes</a>
                     </nav>
+
                     <!-- Conteneur des posts de l'utilisateur -->
                     <div id="user-tweets-container" class="p-4 mb-8 space-y-6 bg-black text-white">
                         @each(tweet in tweets)
@@ -246,27 +247,22 @@
                                             {{ tweet.parentTweet?.content ?? tweet.content ?? '' }}
                                         </div>
                                     </button>
-
-                                    @each(tweet in tweets)
-                                    {{-- Vérifier s’il y a un tweet parent ou non --}}
-                                    @if((tweet.parentTweet ?? tweet).media && Array.isArray((tweet.parentTweet ??
-                                    tweet).media) && (tweet.parentTweet ?? tweet).media.length > 0)
-                                    @each(media in (tweet.parentTweet ?? tweet).media)
-                                    @if(media.type === 'image')
-                                    <img src="{{ media.url }}" alt="Media image"
-                                        class="rounded-2xl max-h-96 w-full object-cover mb-3 border border-gray-700">
-                                    @elseif(media.type === 'video')
-                                    <video controls
-                                        class="rounded-2xl max-h-96 w-full object-cover mb-3 border border-gray-700">
-                                        <source src="{{ media.url }}" type="video/mp4">
-                                        Your browser does not support the video tag.
-                                    </video>
+                            <!-- Médias -->
+                                    @if(((tweet.parentTweet && tweet.parentTweet.media) ? tweet.parentTweet.media : tweet.media)?.length > 0)
+                                        @each(media in ((tweet.parentTweet && tweet.parentTweet.media) ? tweet.parentTweet.media : tweet.media))
+                                            @if(media && media.type === 'image')
+                                                <img src="{{ media.url }}"
+                                                    class="rounded-2xl max-h-96 w-full object-cover mb-3 border border-gray-700">
+                                            @elseif(media && media.type === 'video')
+                                                <video controls
+                                                    class="rounded-2xl max-h-96 w-full object-cover mb-3 border border-gray-700">
+                                                    <source src="{{ media.url }}" type="video/mp4">
+                                                    Your browser does not support the video tag.
+                                                </video>
+                                            @endif
+                                        @endeach
                                     @endif
-                                    @endeach
-                                    @endif
-                                    @endeach
-
-
+                                    
                                     <!-- Barre d'actions -->
                                     <div class="flex justify-between text-gray-500 mt-2 max-w-full">
                                         <!-- Commentaire -->
