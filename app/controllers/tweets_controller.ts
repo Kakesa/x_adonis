@@ -121,7 +121,12 @@ export default class TweetsController {
     }
 
     const { id } = params
-    const originalTweet = await Tweet.find(id)
+
+    // Récupère le tweet original avec ses médias
+    const originalTweet = await Tweet.query()
+      .where('id', id)
+      .preload('media') // précharge les médias
+      .first()
 
     if (!originalTweet) {
       return response.notFound({ message: 'Tweet introuvable' })
@@ -134,7 +139,7 @@ export default class TweetsController {
       .first()
 
     if (existingRetweet) {
-      // Si l'utilisateur a déjà retweeté → supprimer le retweet
+      // Supprimer le retweet existant
       await existingRetweet.delete()
 
       // Décrémenter le compteur de retweets
@@ -146,13 +151,22 @@ export default class TweetsController {
       return response.ok({ message: 'Retweet supprimé avec succès' })
     }
 
-    // Sinon → créer un nouveau retweet
-    await Tweet.create({
+    // Créer un nouveau retweet
+    const retweet = await Tweet.create({
       userId: user.id,
       parentTweetId: id,
       content: originalTweet.content, // copie du contenu
       visibility: 'public',
     })
+
+    // Copier les médias du tweet original dans le retweet
+    for (const media of originalTweet.media) {
+      await Media.create({
+        tweetId: retweet.id,
+        url: media.url,
+        type: media.type,
+      })
+    }
 
     // Incrémenter le compteur de retweets
     originalTweet.retweetsCount += 1
