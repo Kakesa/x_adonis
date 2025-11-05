@@ -150,7 +150,7 @@ export default class TweetsController {
     await Tweet.create({
       userId: user.id,
       parentTweetId: id,
-      content: null, // pas de contenu, car c’est un retweet pur
+      content: originalTweet.content, // copie du contenu
       visibility: 'public',
     })
 
