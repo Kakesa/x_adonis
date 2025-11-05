@@ -4,16 +4,16 @@ import type { BelongsTo } from '@adonisjs/lucid/types/relations'
 import User from '#models/user'
 
 export default class Follow extends BaseModel {
-  public static table = 'follows' // 👈 Nom de la table pivot cohérent avec User
+  public static table = 'follows'
 
   @column({ isPrimary: true })
   declare id: number
 
   @column({ columnName: 'follower_id' })
-  declare followerId: number // 👈 celui qui suit
+  declare followerId: number //  celui qui suit
 
   @column({ columnName: 'following_id' })
-  declare followingId: number // 👈 celui qui est suivi
+  declare followingId: number // celui qui est suivi
 
   // 👇 Relations avec le modèle User
   @belongsTo(() => User, {

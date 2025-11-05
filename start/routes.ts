@@ -43,12 +43,14 @@ router
     // --- Profil utilisateur ---
     // L'ordre est crucial : du plus spécifique au plus général
     router.get('/profil', [ProfilesController, 'showMe']).as('pages.profil')
+    router.post('/users/:id/follow', [FollowsController, 'toggle']).as('users.follow.toggle')
     router
       .get('/profil/:username/following', [FollowsController, 'following'])
       .as('profile.following')
     router
       .get('/profil/:username/followers', [FollowsController, 'followers'])
       .as('profile.followers')
+
     router.get('/profil/:username', [ProfilesController, 'showByUsername']).as('profile.show')
 
     // --- CRUD Tweets ---
@@ -61,9 +63,6 @@ router
     // router.post('/tweets/:id/like', [TweetsController, 'like']).as('tweets.like')
     // comment
     // router.post('/tweets/:id/comment', [TweetsController, 'comment']).as('tweets.comment')
-
-    // --- Suivre / Ne plus suivre ---
-    router.post('/users/:id/follow', [FollowsController, 'toggle']).as('users.follow.toggle')
 
     // --- Suggestions ---
     router.get('/suggestions', [SuggestionsController, 'index']).as('suggestions')

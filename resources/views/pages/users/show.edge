@@ -13,6 +13,31 @@
         body {
             font-family: "TwitterChirp", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
         }
+/* Styles généraux pour le bouton */
+.follow-btn {
+  border: 1px solid transparent;
+  cursor: pointer;
+}
+
+/* Etat Follow */
+.follow-btn.follow {
+  background-color: white;
+  color: black;
+  border-color: transparent;
+}
+.follow-btn.follow:hover {
+  background-color: #f0f0f0;
+}
+
+/* Etat Following */
+.follow-btn.following {
+  background-color: #1d9bf0; /* bleu X/Twitter */
+  color: white;
+  border-color: transparent;
+}
+.follow-btn.following:hover {
+  background-color: #1a8cd8; /* bleu plus foncé au hover */
+}
     </style>
 </head>
 
@@ -86,8 +111,12 @@
                                 </g>
                             </svg>
                         </button>
-                        <button class="bg-white text-black font-bold px-4 py-1.5 rounded-full hover:bg-gray-200 transition">
-                            Follow
+                        <!-- Bouton Follow dynamique -->
+                        <button
+                            id="followBtn"
+                            data-user-id="{{ user.id }}"
+                            class="follow-btn px-4 py-1.5 rounded-full font-bold transition">
+                            {{ isFollowing ? 'Following' : 'Follow' }}
                         </button>
                     </div>
 
@@ -152,5 +181,50 @@
         </div>
     </div>
 
+
+<script>
+document.addEventListener("DOMContentLoaded", () => {
+  const btn = document.getElementById("followBtn");
+  if (!btn) return;
+
+  // Initialisation selon l'état actuel
+  if (btn.textContent.trim() === "Following") {
+    btn.classList.add("following");
+  } else {
+    btn.classList.add("follow");
+  }
+
+  btn.addEventListener("click", async () => {
+    const userId = btn.dataset.userId;
+    if (!userId) return;
+
+    try {
+      const response = await fetch(`/users/${userId}/follow`, {
+        method: "POST",
+        headers: {
+          "Content-Type": "application/json",
+          "X-CSRF-TOKEN": "{{ csrfToken }}"
+        },
+      });
+
+      if (!response.ok) throw new Error("Erreur lors du follow/unfollow");
+
+      // Toggle état
+      if (btn.classList.contains("follow")) {
+        btn.classList.remove("follow");
+        btn.classList.add("following");
+        btn.textContent = "Following";
+      } else {
+        btn.classList.remove("following");
+        btn.classList.add("follow");
+        btn.textContent = "Follow";
+      }
+
+    } catch (err) {
+      console.error(err);
+    }
+  });
+});
+</script>
 </body>
 </html>

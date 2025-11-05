@@ -2,71 +2,47 @@ import type { HttpContext } from '@adonisjs/core/http'
 import User from '#models/user'
 import Follower from '#models/follower'
 
-export default class FollowController {
-  /**
-   * 🔹 Suivre ou se désabonner d’un utilisateur
-   */
-  async toggle({ auth, params, response }: HttpContext) {
+export default class FollowsController {
+  // Toggle follow / unfollow
+  public async toggle({ auth, params, response }: HttpContext) {
     const user = auth.user
-    const { id } = params // ID de l'utilisateur à suivre
+    const targetUser = await User.findBy('id', params.id)
 
-    if (!user) {
-      return response.unauthorized({ message: 'Authentification requise' })
+    if (!targetUser || !user) {
+      return response.notFound('Utilisateur introuvable')
     }
 
-    if (user.id === Number(id)) {
-      return response.badRequest({ message: 'Tu ne peux pas te suivre toi-même' })
-    }
-
-    const existingFollow = await Follower.query()
+    // Vérifier si on suit déjà
+    const existing = await Follower.query()
       .where('follower_id', user.id)
-      .where('following_id', id)
+      .where('following_id', targetUser.id)
       .first()
 
-    if (existingFollow) {
-      await existingFollow.delete()
-      return response.ok({ message: 'Désabonné avec succès', following: false })
+    if (existing) {
+      await existing.delete()
+      return response.json({ message: 'Vous ne suivez plus cet utilisateur', following: false })
+    } else {
+      await Follower.create({
+        followerId: user.id,
+        followingId: targetUser.id,
+      })
+      return response.json({ message: 'Vous suivez maintenant cet utilisateur', following: true })
     }
-
-    await Follower.create({
-      followerId: user.id,
-      followingId: id,
-    })
-
-    return response.ok({ message: 'Abonné avec succès', following: true })
   }
 
-  /**
-   * 🔹 Liste des abonnés (followers)
-   */
-  async followers({ params, view }: HttpContext) {
-    const { username } = params
+  // Liste des abonnements
+  public async following({ params, view }: HttpContext) {
+    const user = await User.findByOrFail('username', params.username)
+    await user.load('following') // charger les utilisateurs suivis
 
-    const user = await User.query()
-      .where('username', username)
-      .preload('followers') // charge les utilisateurs qui suivent
-      .firstOrFail()
-
-    return view.render('pages/followers', {
-      user,
-      followers: user.followers, // déjà une liste d'objets User
-    })
+    return view.render('pages/following', { user, following: user.following })
   }
 
-  /**
-   * 🔹 Liste des abonnements (following)
-   */
-  async following({ params, view }: HttpContext) {
-    const { username } = params
+  // Liste des abonnés
+  public async followers({ params, view }: HttpContext) {
+    const user = await User.findByOrFail('username', params.username)
+    await user.load('followers') // charger les abonnés
 
-    const user = await User.query()
-      .where('username', username)
-      .preload('following') // charge les utilisateurs suivis
-      .firstOrFail()
-
-    return view.render('pages/following', {
-      user,
-      following: user.following,
-    })
+    return view.render('pages/followers', { user, followers: user.followers })
   }
 }
