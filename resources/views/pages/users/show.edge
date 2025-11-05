@@ -1,0 +1,151 @@
+<!DOCTYPE html>
+<html lang="fr" class="scroll-smooth">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>X - {{ user.name }} ({{ `@${user.username}` }})</title>
+    {{-- Utilisation de Tailwind via un CDN pour la simplicité --}}
+    <script src="https://cdn.tailwindcss.com"></script>
+    <style>
+        /* Pour un meilleur rendu de la police, similaire à celle de Twitter/X */
+        body {
+            font-family: "TwitterChirp", -apple-system, BlinkMacSystemFont, "Segoe UI", Roboto, Helvetica, Arial, sans-serif;
+        }
+    </style>
+</head>
+
+<body class="bg-black text-gray-100 font-sans">
+
+    <div class="flex max-w-6xl mx-auto min-h-screen">
+
+        {{-- Barre latérale de gauche --}}
+        @include('partials/sidebar')
+
+        <div class="flex-grow flex max-w-full">
+            <main class="flex-grow border-l border-r border-gray-700 max-w-2xl w-full">
+                <section>
+
+                    {{-- 1. En-tête du Profil (fixe en haut de l'écran) --}}
+                    <header class="sticky top-0 z-30 bg-black bg-opacity-70 backdrop-blur-md">
+                        <div class="flex items-center justify-between h-14 px-4">
+                            <div class="flex items-center gap-5">
+                                <a href="/home" class="p-2 rounded-full hover:bg-gray-800/80" aria-label="Retour">
+                                    <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M10 19l-7-7m0 0l7-7m-7 7h18"></path></svg>
+                                </a>
+                                <div>
+                                    <h1 class="text-xl text-white font-bold leading-tight flex items-center gap-1">
+                                        {{ user.name }}
+                                        <span class="text-rose-500"></span>
+                                        <svg viewBox="0 0 22 22" class="h-5 w-5 text-blue-500 fill-current"><g><path d="M20.396..."></path></g></svg> <!-- SVG de certification complet -->
+                                    </h1>
+                                    <p class="text-gray-500 text-sm leading-tight">{{ tweetsCount }} posts</p>
+                                </div>
+                            </div>
+                            <div class="flex items-center gap-3">
+                                <button class="p-2 rounded-full hover:bg-gray-800/80">
+                                    <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M3 5h12M9 3v2m4 13-4-4m0 0l4-4m-4 4h12.75M21 12a9 9 0 11-18 0 9 9 0 0118 0z"></path></svg>
+                                </button>
+                                <button class="p-2 rounded-full hover:bg-gray-800/80">
+                                   <svg class="w-5 h-5 text-white" fill="none" viewBox="0 0 24 24" stroke="currentColor"><path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M21 21l-6-6m2-5a7 7 0 11-14 0 7 7 0 0114 0z"></path></svg>
+                                </button>
+                            </div>
+                        </div>
+                    </header>
+
+                    {{-- 2. Bannière et Avatar --}}
+                    <div>
+                        <div class="relative">
+                            {{-- Bannière --}}
+                            <div class="h-52 bg-gray-800">
+                                <img src="{{ user.banner_picture ?? '/assets/images/default-banner.jpg' }}" alt="Bannière de profil" class="w-full h-full object-cover">
+                            </div>
+                            {{-- Avatar --}}
+                            <div class="absolute -bottom-16 left-4 w-32 h-32 rounded-full border-4 border-black bg-black">
+                                @if(user.profile_picture)
+                                    <img src="{{ user.profile_picture }}" alt="Avatar de profil" class="w-full h-full rounded-full object-cover">
+                                @else
+                                    <div class="w-full h-full rounded-full bg-gray-700 flex items-center justify-center text-4xl font-bold">
+                                        {{ user.name.split(' ')[0].charAt(0).toUpperCase() }} {{ user.name.split(' ')[1]?.charAt(0).toUpperCase() || '' }}
+                                    </div>
+                                @endif
+                            </div>
+                        </div>
+                    </div>
+
+                    {{-- 3. Boutons d'Action --}}
+                    <div class="flex justify-end items-center p-4 gap-3 border-b border-gray-800">
+                        <button class="border border-gray-600 rounded-full p-2 hover:bg-gray-800 transition">
+                            <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24"><g><path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path></g></svg>
+                        </button>
+                        <button class="border border-gray-600 rounded-full p-2 hover:bg-gray-800 transition">
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><g><path d="M21.75 8.93l-3.36-2.56c-.3-.23-.7-.27-1.04-.1l-2.05.98c-.34.16-.76.08-1.01-.2l-1.08-1.2c-.25-.28-.63-.44-1.03-.44H9.52c-.4 0-.78.16-1.03.44l-1.08 1.2c-.25.28-.67.36-1.01.2l-2.05-.98c-.34-.17-.74-.13-1.04.1L.25 8.93c-.29.22-.44.57-.42.93l.8 7.28c.07.64.6 1.13 1.25 1.13h18.24c.65 0 1.18-.49 1.25-1.13l.8-7.28c.02-.36-.13-.71-.42-.93zM12 14.25c-1.24 0-2.25-1.01-2.25-2.25S10.76 9.75 12 9.75s2.25 1.01 2.25 2.25-1.01 2.25-2.25 2.25z"></path></g></svg>
+                        </button>
+                        <button class="bg-white text-black font-bold px-4 py-1.5 rounded-full hover:bg-gray-200 transition">
+                            Follow
+                        </button>
+                    </div>
+
+                    {{-- 4. Informations principales de l'utilisateur --}}
+                    <div class="p-4 flex flex-col gap-3">
+                        {{-- Nom & @username --}}
+                        <div>
+                            <h2 class="text-xl text-white font-bold flex items-center gap-1">
+                                {{ user.name }} <span class="text-rose-500"></span>
+                                <svg viewBox="0 0 22 22" class="h-5 w-5 text-blue-500 fill-current"><g><path d="M20.396..."></path></g></svg> <!-- SVG de certification complet -->
+                            </h2>
+                            <p class="text-gray-500">{{ `@${user.username}` }}</p>
+                        </div>
+
+                        {{-- Bio --}}
+                        @if(user.bio)
+                            <p class="text-white whitespace-pre-wrap">{{-- On utilise une regex pour remplacer les @mentions par des liens --}}
+                                {{{ user.bio.replace(/(@\w+)/g, '<a href="/$1" class="text-blue-400 hover:underline">$1</a>') }}}
+                            </p>
+                        @endif
+
+                        {{-- Date d'inscription --}}
+                        <div class="flex items-center gap-2 text-gray-500">
+                            <svg class="w-5 h-5" fill="currentColor" viewBox="0 0 24 24"><g><path d="M7 4V3h2v1h6V3h2v1h1.5C19.89 4 21 5.12 21 6.5v12c0 1.38-1.11 2.5-2.5 2.5h-13C4.11 21 3 19.88 3 18.5v-12C3 5.12 4.11 4 5.5 4H7zm0 2H5.5c-.27 0-.5.22-.5.5v12c0 .28.23.5.5.5h13c.28 0 .5-.22.5-.5v-12c0-.28-.22-.5-.5-.5H17v1h-2V6H9v1H7V6zm0 6h10v2H7v-2z"></path></g></svg>
+                            <span>Joined {{ user.createdAt.toFormat('MMMM yyyy') }}</span>
+                        </div>
+
+                        {{-- Statistiques abonnés/abonnements --}}
+                        <div class="flex gap-4 text-sm">
+                            <a href="{{ route('profile.following', { username: user.username }) }}" class="hover:underline">
+                                <span class="font-bold text-white">{{ followingCount }}</span>
+                                <span class="text-gray-500">Following</span>
+                            </a>
+                            <a href="{{ route('profile.followers', { username: user.username }) }}" class="hover:underline">
+                                <span class="font-bold text-white">{{ followersCount }}</span>
+                                <span class="text-gray-500">Followers</span>
+                            </a>
+                        </div>
+                        
+                        {{-- Social Proof --}}
+                        <p class="text-gray-500 text-sm">Not followed by anyone you're following</p>
+                    </div>
+                    
+                    {{-- 5. Onglets de Navigation du Profil --}}
+                    <nav class="flex border-b border-gray-700 text-gray-500 font-semibold text-center">
+                        <a href="#" class="flex-1 py-3 hover:bg-gray-800/50 transition border-b-2 border-blue-500 text-white">Posts</a>
+                        <a href="#" class="flex-1 py-3 hover:bg-gray-800/50 transition">Replies</a>
+                        <a href="#" class="flex-1 py-3 hover:bg-gray-800/50 transition">Media</a>
+                    </nav>
+
+                   {{-- 6. Conteneur du Tweet Épinglé et des autres tweets --}}
+                    <div id="user-tweets-container">
+                        @include('partials/tweet')
+                    </div>
+                </section>
+            </main>
+
+            {{-- Barre latérale de droite --}}
+            <aside class="hidden lg:block w-full lg:w-96 p-4 bg-black text-gray-100 flex-shrink-0">
+                @include('partials/right-sidebar')
+            </aside>
+        </div>
+    </div>
+
+</body>
+</html>

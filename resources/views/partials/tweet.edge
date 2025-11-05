@@ -34,7 +34,7 @@
         <!-- En-tête -->
         <div class="flex items-center justify-between">
           <div class="flex items-center gap-2">
-            <a href="#" class="font-bold hover:underline text-white">{{ tweet.user.name }}</a>
+            <a href="/profil/{{ tweet.user.username }}" class="font-bold hover:underline text-white">{{ tweet.user.name }}</a>
             <span class="text-gray-500 text-sm">{{ `@${tweet.user.username}` }}</span>
             <span class="text-gray-500 text-sm">·</span>
             <span class="text-gray-500 text-sm">{{ tweet.timeAgo }}</span>
@@ -69,21 +69,20 @@
         </button>
 
         <!-- Médias -->
-        @php
-        const medias = tweet.parentTweet ? tweet.parentTweet.media : tweet.media;
-        @endphp
-        @if(medias && medias.length > 0)
-        @each(media in medias)
-        @if(media.type === 'image')
-        <img src="{{ media.url }}" class="rounded-2xl max-h-96 w-full object-cover mb-3 border border-gray-700">
-        @elseif(media.type === 'video')
-        <video controls class="rounded-2xl max-h-96 w-full object-cover mb-3 border border-gray-700">
-          <source src="{{ media.url }}" type="video/mp4">
-          Your browser does not support the video tag.
-        </video>
-        @endif
-        @endeach
-        @endif
+         @if(((tweet.parentTweet && tweet.parentTweet.media) ? tweet.parentTweet.media : tweet.media)?.length > 0)
+          @each(media in ((tweet.parentTweet && tweet.parentTweet.media) ? tweet.parentTweet.media : tweet.media))
+              @if(media && media.type === 'image')
+                  <img src="{{ media.url }}"
+                      class="rounded-2xl max-h-96 w-full object-cover mb-3 border border-gray-700">
+              @elseif(media && media.type === 'video')
+                  <video controls
+                      class="rounded-2xl max-h-96 w-full object-cover mb-3 border border-gray-700">
+                      <source src="{{ media.url }}" type="video/mp4">
+                      Your browser does not support the video tag.
+                  </video>
+              @endif
+          @endeach
+      @endif
 
         <!-- Barre d'actions -->
         <div class="flex justify-between text-gray-500 mt-2 max-w-full">

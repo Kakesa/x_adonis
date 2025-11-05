@@ -7,7 +7,7 @@ export default class ProfilesController {
   /**
    * Profil de l'utilisateur connecté
    */
-  public async show({ auth, view }: HttpContext) {
+  public async showMe({ auth, view }: HttpContext) {
     const user = auth.user
 
     if (!user) {
@@ -103,7 +103,7 @@ export default class ProfilesController {
         (await auth.user.related('following').query().where('users.id', user.id).first()) !== null
     }
 
-    return view.render('pages/profil', {
+    return view.render('pages/users/show', {
       user,
       tweets: tweetsWithTimeAgo,
       tweetsCount: tweetsWithTimeAgo.length,

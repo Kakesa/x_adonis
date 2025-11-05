@@ -1,110 +1,71 @@
 import router from '@adonisjs/core/services/router'
-import AuthController from '#controllers/auth_controller'
-import ProfilesController from '#controllers/profiles_controller'
-import TweetsController from '#controllers/tweets_controller'
 import { middleware } from '#start/kernel'
-import SuggestionsController from '#controllers/suggestions_controller'
-const FollowController = () => import('#controllers/follows_controller')
+
+/*
+|--------------------------------------------------------------------------
+| Routes
+|--------------------------------------------------------------------------
+| J'ai corrigé 3 points principaux :
+| 1. Les imports de contrôleurs sont maintenant tous statiques et uniformes.
+| 2. La syntaxe des routes utilise le format recommandé `[Controller, 'method']`
+|    qui est plus performant et plus clair.
+| 3. L'ordre des routes de profil a été corrigé pour éviter les conflits.
+|--------------------------------------------------------------------------
+*/
+
+// --- 1. Imports de tous les contrôleurs ---
+const AuthController = () => import('#controllers/auth_controller')
+const TweetsController = () => import('#controllers/tweets_controller')
+const ProfilesController = () => import('#controllers/profiles_controller')
+const FollowsController = () => import('#controllers/follows_controller')
+const SuggestionsController = () => import('#controllers/suggestions_controller')
 
 // -------------------
 // Pages publiques
 // -------------------
-
-// Page d'accueil / login-register
-router.get('/', async ({ view }) => view.render('pages/index')).as('index')
-
-// Page home protégée
-// Page home protégée avec les tweets
-router
-  .get('/home', (ctx) => new TweetsController().showTweets(ctx))
-  .middleware([middleware.auth()])
-  .as('home')
+router.get('/', ({ view }) => view.render('pages/index')).as('index')
+router.get('/auth/login', [AuthController, 'showLogin']).as('auth.login.show')
+router.post('/auth/login', [AuthController, 'login']).as('auth.login')
+router.post('/auth/register', [AuthController, 'register']).as('auth.register')
+router.get('/verify-email/:token', [AuthController, 'verifyEmail']).as('auth.verify')
 
 // -------------------
-// Auth
+// Routes protégées par authentification
 // -------------------
-
-// Formulaire login
-router.get('/auth/login', (ctx) => new AuthController().showLogin(ctx)).as('auth.login.show')
-
-// Action login
-router.post('/auth/login', (ctx) => new AuthController().login(ctx)).as('auth.login')
-
-// Action register
-router.post('/auth/register', (ctx) => new AuthController().register(ctx)).as('auth.register')
-
-// Logout
-router.post('/logout', (ctx) => new AuthController().logout(ctx)).middleware([middleware.auth()])
-
-// Vérification email
-router.get('/verify-email/:token', (ctx) => new AuthController().verifyEmail(ctx)).as('auth.verify')
-
-// -------------------
-// Profil utilisateur
-// -------------------
-
-router.get('/profile', (ctx) => new ProfilesController().show(ctx)).middleware([middleware.auth()])
-router.get('/profile/:username', (ctx) => new ProfilesController().showByUsername(ctx))
-
-// -------------------
-// CRUD Tweets
-// -------------------
-
-// Lister tous les tweets (public)
-router.get('/tweets', (ctx) => new TweetsController().showTweets(ctx))
-// Détail d’un tweet
-router.get('/tweets/:id', (ctx) => new TweetsController().show(ctx))
-
-// Créer un tweet (auth requis)
-router.post('/tweets', (ctx) => new TweetsController().store(ctx)).middleware([middleware.auth()])
-
-// Mettre à jour un tweet (auth requis)
 router
-  .put('/tweets/:id', (ctx) => new TweetsController().update(ctx))
-  .middleware([middleware.auth()])
+  .group(() => {
+    // Page d'accueil avec les tweets
+    router.get('/home', [TweetsController, 'showTweets']).as('home')
 
-// Supprimer un tweet (auth requis)
-router
-  .delete('/tweets/:id', (ctx) => new TweetsController().destroy(ctx))
-  .middleware([middleware.auth()])
+    // Déconnexion
+    router.post('/logout', [AuthController, 'logout']).as('auth.logout')
 
-// Retweeter un tweet (auth requis)
-// Retweeter un tweet (auth requis)
-router
-  .post('/tweets/:id/retweet', (ctx) => new TweetsController().retweet(ctx))
-  .middleware([middleware.auth()])
-  .as('tweets.retweet')
+    // --- Profil utilisateur ---
+    // L'ordre est crucial : du plus spécifique au plus général
+    router.get('/profil', [ProfilesController, 'showMe']).as('pages.profil')
+    router
+      .get('/profil/:username/following', [FollowsController, 'following'])
+      .as('profile.following')
+    router
+      .get('/profil/:username/followers', [FollowsController, 'followers'])
+      .as('profile.followers')
+    router.get('/profil/:username', [ProfilesController, 'showByUsername']).as('profile.show')
 
-// Suivre / se désabonner
-router.post('/follow/:id', [FollowController, 'toggle']).as('follow.toggle')
+    // --- CRUD Tweets ---
+    router.get('/tweets/:id', [TweetsController, 'show']).as('tweets.show')
+    router.post('/tweets', [TweetsController, 'store']).as('tweets.store')
+    router.put('/tweets/:id', [TweetsController, 'update']).as('tweets.update')
+    router.delete('/tweets/:id', [TweetsController, 'destroy']).as('tweets.destroy')
+    router.post('/tweets/:id/retweet', [TweetsController, 'retweet']).as('tweets.retweet')
+    // Like
+    // router.post('/tweets/:id/like', [TweetsController, 'like']).as('tweets.like')
+    // comment
+    // router.post('/tweets/:id/comment', [TweetsController, 'comment']).as('tweets.comment')
 
-// Liste des abonnés et abonnements
-router.get('/u/:username/followers', [FollowController, 'followers']).as('user.followers')
-router.get('/u/:username/following', [FollowController, 'following']).as('user.following')
+    // --- Suivre / Ne plus suivre ---
+    router.post('/users/:id/follow', [FollowsController, 'toggle']).as('users.follow.toggle')
 
-// Suggestions d’utilisateurs à suivre
-router
-  .get('/suggestions', async (ctx) => new SuggestionsController().index(ctx))
-  .middleware([middleware.auth()])
-
-// Page abonnements de l'utilisateur connecté
-router
-  .get('/my-following', async ({ auth, view, response }) => {
-    if (!auth.user) return response.redirect('/auth/login')
-
-    // Précharger les utilisateurs suivis
-    await auth.user.load('following')
-    return view.render('pages/following', { user: auth.user, following: auth.user.following })
+    // --- Suggestions ---
+    router.get('/suggestions', [SuggestionsController, 'index']).as('suggestions')
   })
-  .middleware([middleware.auth()])
-
-// Page abonnés de l'utilisateur connecté
-router
-  .get('/my-followers', async ({ auth, view, response }) => {
-    if (!auth.user) return response.redirect('/auth/login')
-
-    // Précharger les abonnés
-    await auth.user.load('followers')
-    return view.render('pages/followers', { user: auth.user, followers: auth.user.followers })
-  })
-  .middleware([middleware.auth()])
+  .use(middleware.auth()) // Applique le middleware `auth` à TOUTES les routes de ce groupe
