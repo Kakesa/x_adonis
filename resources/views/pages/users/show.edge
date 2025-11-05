@@ -7,6 +7,7 @@
     <title>X - {{ user.name }} ({{ `@${user.username}` }})</title>
     {{-- Utilisation de Tailwind via un CDN pour la simplicité --}}
     <script src="https://cdn.tailwindcss.com"></script>
+    <link rel="shortcut icon" href="resources/images/logo/logo.png" class="w-2" type="image/x-icon">
     <style>
         /* Pour un meilleur rendu de la police, similaire à celle de Twitter/X */
         body {
@@ -79,7 +80,11 @@
                             <svg class="w-5 h-5 text-white" fill="currentColor" viewBox="0 0 24 24"><g><path d="M3 12c0-1.1.9-2 2-2s2 .9 2 2-.9 2-2 2-2-.9-2-2zm9 2c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2zm7 0c1.1 0 2-.9 2-2s-.9-2-2-2-2 .9-2 2 .9 2 2 2z"></path></g></svg>
                         </button>
                         <button class="border border-gray-600 rounded-full p-2 hover:bg-gray-800 transition">
-                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24"><g><path d="M21.75 8.93l-3.36-2.56c-.3-.23-.7-.27-1.04-.1l-2.05.98c-.34.16-.76.08-1.01-.2l-1.08-1.2c-.25-.28-.63-.44-1.03-.44H9.52c-.4 0-.78.16-1.03.44l-1.08 1.2c-.25.28-.67.36-1.01.2l-2.05-.98c-.34-.17-.74-.13-1.04.1L.25 8.93c-.29.22-.44.57-.42.93l.8 7.28c.07.64.6 1.13 1.25 1.13h18.24c.65 0 1.18-.49 1.25-1.13l.8-7.28c.02-.36-.13-.71-.42-.93zM12 14.25c-1.24 0-2.25-1.01-2.25-2.25S10.76 9.75 12 9.75s2.25 1.01 2.25 2.25-1.01 2.25-2.25 2.25z"></path></g></svg>
+                            <svg class="w-5 h-5 text-white" fill="none" stroke="currentColor" viewBox="0 0 24 24">
+                                <g>
+                                    <path d="M21.75 8.93l-3.36-2.56c-.3-.23-.7-.27-1.04-.1l-2.05.98c-.34.16-.76.08-1.01-.2l-1.08-1.2c-.25-.28-.63-.44-1.03-.44H9.52c-.4 0-.78.16-1.03.44l-1.08 1.2c-.25.28-.67.36-1.01.2l-2.05-.98c-.34-.17-.74-.13-1.04.1L.25 8.93c-.29.22-.44.57-.42.93l.8 7.28c.07.64.6 1.13 1.25 1.13h18.24c.65 0 1.18-.49 1.25-1.13l.8-7.28c.02-.36-.13-.71-.42-.93zM12 14.25c-1.24 0-2.25-1.01-2.25-2.25S10.76 9.75 12 9.75s2.25 1.01 2.25 2.25-1.01 2.25-2.25 2.25z"></path>
+                                </g>
+                            </svg>
                         </button>
                         <button class="bg-white text-black font-bold px-4 py-1.5 rounded-full hover:bg-gray-200 transition">
                             Follow
