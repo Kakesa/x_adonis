@@ -10,7 +10,6 @@
 
 import router from '@adonisjs/core/services/router'
 import server from '@adonisjs/core/services/server'
-import copyStaticAssets from '#start/copy_static_assets'
 
 /**
  * The error handler is used to convert an exception
@@ -48,8 +47,3 @@ export const middleware = router.named({
   guest: () => import('#middleware/guest_middleware'),
   auth: () => import('#middleware/auth_middleware'),
 })
-
-/**
- * 👇 Appelle la fonction de copie au lancement
- */
-await copyStaticAssets()
