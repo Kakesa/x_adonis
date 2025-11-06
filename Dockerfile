@@ -51,5 +51,8 @@ ENV DB_DATABASE=${DB_DATABASE}
 WORKDIR /app
 COPY --from=production-deps /app/node_modules /app/node_modules
 COPY --from=build /app/build /app
+
+RUN node ace migration:run --force
+
 EXPOSE 8080
 CMD ["node", "./bin/server.js"]
