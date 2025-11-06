@@ -8,6 +8,8 @@
     - Real-time notifications.
     - Responsive design for mobile and desktop.
 
+   ## Link to live demo
+   in progress...
 
     ## Installation
     1. Clone the repository: `git clone <repository-url>`
@@ -27,6 +29,6 @@
     - Luxon
     - SQLite
     ## Contact
-    For any inquiries, please contact us at contact@x-cloune.com
+    For any inquiries, please contact us at espoirkakesa2@gmail.com
 
     © 2023 X-Cloune. All rights reserved.
