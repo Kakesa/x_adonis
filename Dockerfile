@@ -1,26 +1,34 @@
+# ----------------------------------------
+# Base image
+# ----------------------------------------
 FROM node:22.16.0-alpine3.22 AS base
-
-# All deps stage
-FROM base AS deps
 WORKDIR /app
-ADD package.json package-lock.json ./
+
+# ----------------------------------------
+# Dépendances
+# ----------------------------------------
+FROM base AS deps
+COPY package.json package-lock.json ./
 RUN npm ci
 
-# Production only deps stage
+# Production dependencies
 FROM base AS production-deps
-WORKDIR /app
-ADD package.json package-lock.json ./
+COPY package.json package-lock.json ./
 RUN npm ci --omit=dev
 
 # Build stage
 FROM base AS build
-WORKDIR /app
 COPY --from=deps /app/node_modules /app/node_modules
-ADD . .
+COPY . .
 RUN node ace build
 
-# Production stage
-FROM base
+# ----------------------------------------
+# Production image
+# ----------------------------------------
+FROM node:22.16.0-alpine3.22 AS prod
+WORKDIR /app
+
+# Variables d'environnement
 ARG TZ
 ARG PORT
 ARG HOST
@@ -40,7 +48,6 @@ ENV PORT=${PORT}
 ENV HOST=${HOST}
 ENV LOG_LEVEL=${LOG_LEVEL}
 ENV APP_KEY=${APP_KEY}
-ENV NODE_ENV=${NODE_ENV}
 ENV SESSION_DRIVER=${SESSION_DRIVER}
 ENV DB_HOST=${DB_HOST}
 ENV DB_PORT=${DB_PORT}
@@ -48,11 +55,17 @@ ENV DB_USER=${DB_USER}
 ENV DB_PASSWORD=${DB_PASSWORD}
 ENV DB_DATABASE=${DB_DATABASE}
 
-WORKDIR /app
+# Copier node_modules production
 COPY --from=production-deps /app/node_modules /app/node_modules
+# Copier le build
 COPY --from=build /app/build /app
 
-RUN node ace migration:run --force
+# Script pour démarrage + migrations
+COPY start.sh /app/start.sh
+RUN chmod +x /app/start.sh
 
+# Exposer le port
 EXPOSE 8080
-CMD ["node", "./bin/server.js"]
+
+# Lancer le script
+CMD ["/app/start.sh"]
