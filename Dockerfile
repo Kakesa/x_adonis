@@ -60,12 +60,11 @@ COPY --from=production-deps /app/node_modules /app/node_modules
 # Copier le build
 COPY --from=build /app/build /app
 
-# Script pour démarrage + migrations
+# Copie ton script
 COPY start.sh /app/start.sh
 RUN chmod +x /app/start.sh
 
-# Exposer le port
+# Lancer ton script au démarrage
 EXPOSE 8080
+CMD ["./start.sh"]
 
-# Lancer le script
-CMD ["/app/start.sh"]
