@@ -175,6 +175,27 @@ export default class TweetsController {
     return response.created({ message: 'Retweet effectué avec succès' })
   }
 
+  async like({ auth, params, response }: HttpContext) {
+    const user = auth.user
+    if (!user) return response.unauthorized()
+
+    const tweet = await Tweet.findOrFail(params.id)
+
+    const alreadyLiked = await tweet.related('likes').query().where('user_id', user.id).first()
+
+    if (alreadyLiked) {
+      await tweet.related('likes').detach([user.id])
+      tweet.likesCount = Math.max((tweet.likesCount || 1) - 1, 0)
+      await tweet.save()
+      return { liked: false, likesCount: tweet.likesCount }
+    } else {
+      await tweet.related('likes').attach([user.id])
+      tweet.likesCount = (tweet.likesCount || 0) + 1
+      await tweet.save()
+      return { liked: true, likesCount: tweet.likesCount }
+    }
+  }
+
   /**
    * Mettre à jour un tweet, gérer anciens et nouveaux médias
    */

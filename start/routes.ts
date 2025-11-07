@@ -59,8 +59,10 @@ router
     router.put('/tweets/:id', [TweetsController, 'update']).as('tweets.update')
     router.delete('/tweets/:id', [TweetsController, 'destroy']).as('tweets.destroy')
     router.post('/tweets/:id/retweet', [TweetsController, 'retweet']).as('tweets.retweet')
-    // Like
-    // router.post('/tweets/:id/like', [TweetsController, 'like']).as('tweets.like')
+
+    // Like / Unlike un tweet
+    router.post('/tweets/:id/like', [TweetsController, 'like']).as('tweets.like')
+
     // comment
     // router.post('/tweets/:id/comment', [TweetsController, 'comment']).as('tweets.comment')
 

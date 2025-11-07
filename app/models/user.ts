@@ -89,6 +89,8 @@ export default class User extends compose(BaseModel, AuthFinder) {
 
   @manyToMany(() => User, {
     pivotTable: 'followers',
+    localKey: 'id',
+    relatedKey: 'id',
     pivotForeignKey: 'follower_id',
     pivotRelatedForeignKey: 'following_id',
   })
@@ -96,6 +98,8 @@ export default class User extends compose(BaseModel, AuthFinder) {
 
   @manyToMany(() => User, {
     pivotTable: 'followers',
+    localKey: 'id',
+    relatedKey: 'id',
     pivotForeignKey: 'following_id',
     pivotRelatedForeignKey: 'follower_id',
   })

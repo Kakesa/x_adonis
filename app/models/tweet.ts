@@ -1,10 +1,9 @@
 import { DateTime } from 'luxon'
-import { BaseModel, column, belongsTo, hasMany } from '@adonisjs/lucid/orm'
-import type { BelongsTo, HasMany } from '@adonisjs/lucid/types/relations'
+import { BaseModel, column, belongsTo, hasMany, manyToMany } from '@adonisjs/lucid/orm'
+import type { BelongsTo, HasMany, ManyToMany } from '@adonisjs/lucid/types/relations'
 import User from '#models/user'
 import Comment from '#models/comment'
 import Media from '#models/media'
-import Like from '#models/like'
 
 export default class Tweet extends BaseModel {
   @column({ isPrimary: true })
@@ -85,7 +84,13 @@ export default class Tweet extends BaseModel {
   @hasMany(() => Media, { foreignKey: 'tweetId' })
   declare media: HasMany<typeof Media>
 
-  // ❤️ Likes
-  @hasMany(() => Like, { foreignKey: 'tweetId' })
-  declare likes: HasMany<typeof Like>
+  // 🔹 Likes (manyToMany)
+  @manyToMany(() => User, {
+    pivotTable: 'likes', // table pivot
+    localKey: 'id', // clé locale du tweet
+    pivotForeignKey: 'tweet_id', // colonne tweet_id dans pivot
+    relatedKey: 'id', // clé de l'user
+    pivotRelatedForeignKey: 'user_id', // colonne user_id dans pivot
+  })
+  declare likes: ManyToMany<typeof User>
 }

@@ -9,17 +9,19 @@
     - Responsive design for mobile and desktop.
 
    ## Link to live demo
-     https://tweeter-hk.onrender.com
-
+    
     ## Installation
     1. Clone the repository: `git clone <repository-url>`
     2. Install dependencies: `npm install`
     3. Configure your environment variables.
     4. Start the development server: `npm run dev`
+    5. Open your browser and navigate to `http://localhost:3000`
+    6. link to live demo here:  https://tweeter-hk.onrender.com/
     ## Contributing
     Contributions are welcome! Please fork the repository and create a pull request.
     ## License
     This project is licensed under the MIT License.
+
 
 
     ## technologies used
@@ -27,7 +29,7 @@
     - AdonisJS
     - Tailwind CSS
     - Luxon
-    - SQLite
+    - postgreSQL
     ## Contact
     For any inquiries, please contact us at espoirkakesa2@gmail.com
 
