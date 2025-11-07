@@ -45,11 +45,24 @@ export default class AuthController {
         data: request.body(),
       })
 
+      // Vérifier si l'email existe déjà
+      const existingUser = await User.findBy('email', payload.email)
+      if (existingUser) {
+        const errorMessage = 'Cette adresse e-mail est déjà utilisée. Vous pouvez vous connecter.'
+
+        // Si c’est une requête AJAX → on renvoie du JSON
+        if (request.ajax()) {
+          return response.status(400).json({ message: errorMessage })
+        }
+
+        session.flash('error', errorMessage)
+        return response.redirect('/login')
+      }
+
       const birthdate = DateTime.fromISO(payload.birthdate)
       const username = await this.generateUsername(payload.name)
       const emailToken = crypto.randomBytes(32).toString('hex')
 
-      // Création utilisateur (mot de passe hashé automatiquement par le hook @beforeSave)
       const user = await User.create({
         ...payload,
         username,
@@ -58,9 +71,8 @@ export default class AuthController {
         email_token: emailToken,
       })
 
-      const verifyUrl = `http://localhost:3333/verify-email/${emailToken}`
+      const verifyUrl = `${process.env.APP_URL || 'http://localhost:3333'}/verify-email/${emailToken}`
 
-      // Envoi email de vérification
       await mail.send((message) => {
         message
           .to(user.email)
@@ -69,14 +81,27 @@ export default class AuthController {
           .htmlView('emails/verify', { name: user.name, verifyUrl })
       })
 
-      session.flash(
-        'success',
-        'Votre compte a été créé ! Vérifiez votre boîte mail pour activer votre compte.'
-      )
+      if (request.ajax()) {
+        return response.json({ message: 'Compte créé ! Vérifiez votre email.' })
+      }
+
+      session.flash('success', 'Compte créé ! Vérifiez votre email.')
       return response.redirect('/')
     } catch (error) {
       console.error('❌ Erreur register:', error)
-      session.flash('error', 'Erreur lors de la création du compte.')
+
+      // Gestion erreur "email déjà pris" côté DB (PostgreSQL)
+      if (error.code === '23505' && error.detail?.includes('users_email_unique')) {
+        const msg = 'Cette adresse e-mail est déjà utilisée. Vous pouvez vous connecter.'
+        if (request.ajax()) return response.status(400).json({ message: msg })
+        session.flash('error', msg)
+        return response.redirect('/login')
+      }
+
+      const errMsg = 'Erreur lors de la création du compte.'
+      if (request.ajax()) return response.status(500).json({ message: errMsg })
+
+      session.flash('error', errMsg)
       return response.redirect().back()
     }
   }
