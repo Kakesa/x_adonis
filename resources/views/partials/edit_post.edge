@@ -15,14 +15,17 @@
 
     <!-- Contenu principal -->
     <div class="flex gap-3">
-      @if(auth.user)
-      <img src="{{ auth.user.profile_picture }}" alt="avatar" class="w-10 h-10 rounded-full" />
-      @else
-      <div
-        class="w-10 h-10 rounded-full bg-gray-700 flex items-center justify-center text-white font-semibold text-lg">
-        {{ auth.user.name.split(' ')[0].charAt(0).toUpperCase() }}
-      </div>
-      @endif
+     <!-- Avatar -->
+        @if(auth.user.profile_picture)
+        <img src="{{ auth.user.profile_picture }}" alt="Avatar"
+            class="w-12 h-12 rounded-full flex-shrink-0">
+        @else
+        <div
+            class="w-12 h-12 rounded-full flex items-center justify-center text-white font-bold uppercase bg-gray-700 flex-shrink-0">
+            {{ auth.user.name.split(' ')[0].charAt(0) }}{{ auth.user.name.split(' ')[1]?.charAt(0) || ''
+            }}
+        </div>
+        @endif
 
       <div class="flex-1">
         <form id="editTweetForm" method="POST" enctype="multipart/form-data">

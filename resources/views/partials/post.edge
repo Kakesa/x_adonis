@@ -14,7 +14,7 @@
 
         <!-- Contenu principal -->
         <div class="flex gap-3">
-             <!-- Avatar -->
+            <!-- Avatar -->
             @if(auth.user.profile_picture)
             <img src="{{ auth.user.profile_picture }}" alt="Avatar" class="w-12 h-12 rounded-full flex-shrink-0">
             @else
@@ -34,9 +34,11 @@
                     <input type="file" name="media" id="tweetMedia" multiple class="hidden">
                     <input type="hidden" id="pollData" name="poll_data">
 
-                    <div class="flex items-center gap-1 text-blue-500 text-sm cursor-pointer w-fit mb-2 hover:underline">
+                    <div
+                        class="flex items-center gap-1 text-blue-500 text-sm cursor-pointer w-fit mb-2 hover:underline">
                         <svg xmlns="http://www.w3.org/2000/svg" class="h-4 w-4" fill="currentColor" viewBox="0 0 24 24">
-                            <path d="M12 12c2.21 0 4-1.79 4-4S14.21 4 12 4 8 5.79 8 8s1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
+                            <path
+                                d="M12 12c2.21 0 4-1.79 4-4S14.21 4 12 4 8 5.79 8 8s1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z" />
                         </svg>
                         <span>Everyone can reply</span>
                     </div>
@@ -47,18 +49,46 @@
                     <div class="flex items-center justify-between">
                         <div class="flex gap-1 text-blue-500">
                             <!-- Image -->
-                            <button type="button" aria-label="Add image" class="p-2 rounded-full hover:bg-blue-900/50 hover:text-blue-400">
-                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+                            <button type="button" aria-label="Add image"
+                                class="p-2 rounded-full hover:bg-blue-900/50 hover:text-blue-400">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor">
                                     <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
                                         d="M4 16l4.586-4.586a2 2 0 012.828 0L16 16m-2-2l1.586-1.586a2 2 0 012.828 0L20 14m-6-6h.01M6 20h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
                                 </svg>
                             </button>
-                            <!-- GIF -->
-                            <button type="button" id="addGifBtn" aria-label="Add GIF" class="p-2 rounded-full hover:bg-blue-900/50 hover:text-blue-400">GIF</button>
-                            <!-- Poll -->
-                            <button type="button" id="addPollBtn" aria-label="Add poll" class="p-2 rounded-full hover:bg-blue-900/50 hover:text-blue-400">Poll</button>
+                            <button aria-label="Add GIF"
+                                class="p-2 rounded-full hover:bg-blue-900/50 hover:text-blue-400">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M4 8h16M4 16h16M8 4v4m8-4v4" />
+                                    <rect x="3" y="3" width="18" height="18" rx="2" ry="2" stroke-width="2" />
+                                </svg>
+                            </button>
+                            <!-- Icône Sondage -->
+                            <button aria-label="Add poll"
+                                class="p-2 rounded-full hover:bg-blue-900/50 hover:text-blue-400">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M16 8v8m-4-5v5m-4-2v2m-2 4h12a2 2 0 002-2V6a2 2 0 00-2-2H6a2 2 0 00-2 2v12a2 2 0 002 2z" />
+                                </svg>
+                            </button>
                             <!-- Emoji -->
-                            <button type="button" id="addEmojiBtn" aria-label="Add emoji" class="p-2 rounded-full hover:bg-blue-900/50 hover:text-blue-400">😊</button>
+                            <button type="button" id="addEmojiBtn" aria-label="Add emoji"
+                                class="p-2 rounded-full hover:bg-blue-900/50 hover:text-blue-400">😊</button>
+                            <!-- Icône Localisation -->
+                            <button aria-label="Add location"
+                                class="p-2 rounded-full hover:bg-blue-900/50 hover:text-blue-400 opacity-50 cursor-not-allowed">
+                                <svg xmlns="http://www.w3.org/2000/svg" class="h-5 w-5" fill="none" viewBox="0 0 24 24"
+                                    stroke="currentColor">
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M17.657 16.657L13.414 20.9a1.998 1.998 0 01-2.827 0l-4.244-4.243a8 8 0 1111.314 0z" />
+                                    <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2"
+                                        d="M15 11a3 3 0 11-6 0 3 3 0 016 0z" />
+                                </svg>
+                            </button>
                         </div>
 
                         <button id="postFromModal" type="submit"
@@ -74,11 +104,14 @@
                             <input type="text" placeholder="Option 1" class="flex-1 bg-gray-800 rounded px-2 py-1">
                             <input type="text" placeholder="Option 2" class="flex-1 bg-gray-800 rounded px-2 py-1">
                         </div>
-                        <button type="button" id="addPollOption" class="text-blue-400 text-sm hover:underline self-start">Add option</button>
+                        <button type="button" id="addPollOption"
+                            class="text-blue-400 text-sm hover:underline self-start">Add option</button>
                     </div>
 
                     <!-- Emoji picker -->
-                    <div id="emojiPicker" class="mt-2 hidden flex flex-wrap gap-1 max-h-32 overflow-y-auto border-t border-gray-800 pt-2"></div>
+                    <div id="emojiPicker"
+                        class="mt-2 hidden flex flex-wrap gap-1 max-h-32 overflow-y-auto border-t border-gray-800 pt-2">
+                    </div>
                 </form>
             </div>
         </div>
@@ -87,13 +120,21 @@
 
 <!-- CSS -->
 <style>
-.modal-panel {
-    opacity: 0;
-    transform: translateY(12px) scale(0.99);
-    transition: opacity .18s ease-out, transform .22s cubic-bezier(.2,.8,.2,1);
-}
-.modal-panel.open { opacity: 1; transform: translateY(0) scale(1); }
-#emojiPicker span { cursor: pointer; font-size: 1.2rem; }
+    .modal-panel {
+        opacity: 0;
+        transform: translateY(12px) scale(0.99);
+        transition: opacity .18s ease-out, transform .22s cubic-bezier(.2, .8, .2, 1);
+    }
+
+    .modal-panel.open {
+        opacity: 1;
+        transform: translateY(0) scale(1);
+    }
+
+    #emojiPicker span {
+        cursor: pointer;
+        font-size: 1.2rem;
+    }
 </style>
 
 <!-- JS -->

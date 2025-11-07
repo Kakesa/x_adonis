@@ -5,11 +5,9 @@
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>X - {{ user.name }} ({{ `@${user.username}` }})</title>
-    {{-- Utilisation de Tailwind via CDN pour la simplicité --}}
-    <link href="https://cdn.jsdelivr.net/npm/tailwindcss@2.2.19/dist/tailwind.min.css" rel="stylesheet">
+    
     <link rel="shortcut icon" href="/images/logo/logo.png" class="w-2" type="image/x-icon">
-    {{--
-    <script src="https://cdn.tailwindcss.com"></script> --}}
+    <script src="https://cdn.tailwindcss.com"></script>
     <style>
         /* Pour un meilleur rendu de la police, similaire à celle de Twitter/X */
         body {
